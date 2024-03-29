@@ -1,5 +1,4 @@
 export interface KhachHang{
-    [x: string]: any
     _id?: string
     TenKH?: string
     taiKhoan?: string
@@ -10,4 +9,5 @@ export interface KhachHang{
     sdt?: string
     trangThai?: boolean
     token?: string
+    [x: string]: any
 }

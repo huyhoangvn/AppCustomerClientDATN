@@ -5,7 +5,7 @@ interface Data {
     idKH?: string;
     idCH?: string;
     idMon?: string;
-    tenKH: string;
+    tenKH?: string;
 
     isChecked?: boolean;
     taiKhoan?: string
