@@ -5,8 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMoneyBillAlt, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { appColors } from '../../constants/appColors';
-import GoiYKhuyenMaiScreen from './GoiYKhuyenMaiScreen';
-import CuaBanKhuyenMaiScreen from './CuaBanKhuyenMaiScreen';
+import GoiYKhuyenMaiScreen from './KhuyenMaiGoiYScreen';
+import CuaBanKhuyenMaiScreen from './KhuyenMaiCuaBanScreen';
+import KhuyenMaiCuaBanScreen from './KhuyenMaiCuaBanScreen';
+import { appIcon } from '../../constants/appIcon';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -14,7 +16,7 @@ const KhuyenMaiScreen = () => {
 
   const renderTabScreenOptions = (label: string, icon?: IconProp) => ({
     tabBarIcon: icon ? ({ focused, color }: { focused: boolean; color: string }) => (
-       <FontAwesomeIcon icon={icon} size={focused ? 24 : 20} color={color} />
+       <FontAwesomeIcon icon={icon} size={focused ? appIcon.big : appIcon.normal} color={color} />
     ) : undefined,
     tabBarLabel: label,
   });
@@ -25,13 +27,13 @@ const KhuyenMaiScreen = () => {
         tabBarInactiveTintColor: "#929292",
         tabBarActiveTintColor: appColors.primary,
         tabBarIndicatorStyle : { backgroundColor: appColors.primary },
-        tabBarLabelStyle: { fontWeight: 'bold', textTransform: 'capitalize' },
+        tabBarLabelStyle: {textTransform: 'capitalize' },
         tabBarStyle: { backgroundColor: '#ffffff' }
       }}
     >
       <Tab.Screen 
-        name="CuaBanKhuyenMaiScreen" 
-        component={CuaBanKhuyenMaiScreen} 
+        name="KhuyenMaiCuaBanScreen" 
+        component={KhuyenMaiCuaBanScreen} 
         options={renderTabScreenOptions('Gợi ý')}
       />
       <Tab.Screen 

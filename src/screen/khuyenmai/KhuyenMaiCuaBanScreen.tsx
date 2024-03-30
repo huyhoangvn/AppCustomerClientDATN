@@ -2,10 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import NavProps from '../../models/props/NavProps';
 
-const RegisterScreen: React.FC<NavProps> = ({ navigation }) =>  {
+const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation }) =>  {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Đăng ký</Text>
+      <Text style={styles.text}>Welcome to món bán chạy Screen!</Text>
     </View>
   );
 };
@@ -15,7 +15,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white'
   },
   text: {
     fontSize: 24,
@@ -23,4 +22,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen;
+export default KhuyenMaiCuaBanScreen;

@@ -5,7 +5,8 @@ interface NavProps {
       routes: { name: string; params?: { [key: string]: string } }[];
     }) => void;
     setOptions: (options: object) => void;
-    navigate: (name: string, params?: object) => void; // Add navigate property
+    navigate: (name: string, params?: object) => void;
+    goBack: () => void; // Add goBack property
   };
 }
 
