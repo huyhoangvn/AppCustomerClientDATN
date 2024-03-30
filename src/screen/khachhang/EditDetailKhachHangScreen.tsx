@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import NavProps from '../../models/props/NavProps';
 
-const DoiMatKhauScreen : React.FC<NavProps> = ({ navigation }) =>  {
+const EditDetailKhachHangScreen : React.FC<NavProps> = ({ navigation }) =>  {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Trang Chủ</Text>
@@ -23,4 +23,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DoiMatKhauScreen;
+export default EditDetailKhachHangScreen;

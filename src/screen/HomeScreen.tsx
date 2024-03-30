@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faHome, faShoppingCart, faSearch, faReceipt, faGift } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faShoppingCart, faSearch, faReceipt, faGift, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import { TransitionPresets, TransitionSpecs } from '@react-navigation/stack';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -11,16 +11,17 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import NavProps from '../models/props/NavProps';
 import TrangChuScreen from './trangchu/TrangChuScreen';
 import GioHangScreen from './giohang/GioHangScreen';
-import TimKiemMonScreen from './timkiem/TimKiemMonScreen';
 import HoaDonScreen from './hoadon/HoaDonScreen';
 import KhuyenMaiScreen from './khuyenmai/KhuyenMaiScreen';
+import KhachHangDetailScreen from './khachhang/DetailKhachHangScreen';
+import { appIcon } from '../constants/appIcon';
 
 const Tab = createMaterialBottomTabNavigator();
 
 const HomeScreen: React.FC<NavProps> = ({ navigation,route } : any) =>  {
   const renderTabScreenOptions = (label: string, icon: IconProp) : any => ({
     tabBarIcon: ({ color, size, focused }: { color: string; size: number; focused: boolean }) => (
-      <FontAwesomeIcon icon={icon} size={focused ? 23 : 19} color={color} />
+      <FontAwesomeIcon icon={icon} size={focused ? appIcon.big : appIcon.normal} color={color} />
     ),
     tabBarLabel: label,
     headerShown: false, // Ẩn tiêu đề header
@@ -67,11 +68,6 @@ const HomeScreen: React.FC<NavProps> = ({ navigation,route } : any) =>  {
         options={renderTabScreenOptions('Giỏ Hàng', faShoppingCart)}
       />
       <Tab.Screen 
-        name="TimKiemMonScreen" 
-        component={TimKiemMonScreen} 
-        options={renderTabScreenOptions('Tìm món', faSearch)}
-      />
-      <Tab.Screen 
         name="HoaDonScreen" 
         component={HoaDonScreen} 
         options={renderTabScreenOptions('Hóa đơn', faReceipt)}
@@ -80,6 +76,11 @@ const HomeScreen: React.FC<NavProps> = ({ navigation,route } : any) =>  {
         name="KhuyenMaiScreen" 
         component={KhuyenMaiScreen} 
         options={renderTabScreenOptions('Ưu đãi', faGift)}
+      />
+      <Tab.Screen 
+        name="KhachHangDetailScreen" 
+        component={KhachHangDetailScreen} 
+        options={renderTabScreenOptions('Tôi', faUser)}
       />
     </Tab.Navigator>
   );

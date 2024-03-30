@@ -32,7 +32,7 @@ const ListHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
         tabBarInactiveTintColor: "#929292",
         tabBarActiveTintColor: appColors.primary,
         tabBarIndicatorStyle : { backgroundColor: appColors.primary },
-        tabBarLabelStyle: { fontWeight: 'bold', textTransform: 'capitalize' }, // Set textTransform to 'capitalize'
+        tabBarLabelStyle: { textTransform: 'capitalize' }, // Set textTransform to 'capitalize'
         tabBarStyle: { backgroundColor: '#ffffff' }
       }}
     >

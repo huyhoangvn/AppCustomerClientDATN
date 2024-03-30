@@ -16,11 +16,18 @@ import { appColors } from './src/constants/appColors';
 import {LogoNoText} from './src/assest/svgs/index';
 import { View, Text } from 'react-native';
 import { appFontSize } from './src/constants/appFontSizes';
-import RegisterScreen from './src/screen/register/RegisterScreen';
-import KhachHangDetailScreen from './src/screen/khachhang/KhachHangDetailScreen';
-import DoiMatKhauScreen from './src/screen/khachhang/DoiMatKhauScreen';
 import { useState, useEffect } from 'react';
 import { getData } from './src/utils/storageUtils';
+
+import RegisterScreen from './src/screen/register/RegisterScreen';
+import ChangeMatKhauScreen from './src/screen/khachhang/ChangeMatKhauScreen';
+import EditDetailKhachHangScreen from './src/screen/khachhang/EditDetailKhachHangScreen';
+import DetailCuaHangScreen from './src/screen/trangchu/DetailCuaHangScreen';
+import DetailMonScreen from './src/screen/trangchu/DetailMonScreen';
+import SearchMonScreen from './src/screen/trangchu/SearchMonScreen';
+import AddHoaDonScreen from './src/screen/giohang/AddHoaDonScreen';
+import DetailHoaDonScreen from './src/screen/hoadon/DetailHoaDonScreen';
+import DetailDatMonScreen from './src/screen/hoadon/DetailDatMonScreen';
 
 const CustomHeader: React.FC<{ title?: string }> = ({ title = 'Default Title' }) => (
   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -83,6 +90,7 @@ const App: React.FC<AppProps> = () => {
                 name="RegisterScreen"
                 component={RegisterScreen}
                 options={{headerShown: false}}
+                // options={{title: 'Đăng ký'}}
               />
               {/* Trang chủ với nav bar */}
               <Stack.Screen
@@ -96,16 +104,48 @@ const App: React.FC<AppProps> = () => {
                   headerTitle: () => <CustomHeader title="Food Center"/>
                 })}
               />
-              {/* Option menu trên header của trang home */}
+              {/* Khách hàng */}
               <Stack.Screen
-                name="DoiMatKhauScreen"
-                component={DoiMatKhauScreen}
+                name="ChangeMatKhauScreen"
+                component={ChangeMatKhauScreen}
                 options={{title: 'Đổi mật khẩu'}}
               />
               <Stack.Screen
-                name="KhachHangDetailScreen"
-                component={KhachHangDetailScreen}
-                options={{title: 'Thông tin khách hàng'}}
+                name="EditDetailKhachHangScreen"
+                component={EditDetailKhachHangScreen}
+                options={{title: 'Sửa thông tin cá nhân'}}
+              />
+              {/* Tìm kiếm */}
+              <Stack.Screen
+                name="DetailCuaHangScreen"
+                component={DetailCuaHangScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="DetailMonScreen"
+                component={DetailMonScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="SearchMonScreen"
+                component={SearchMonScreen}
+                options={{headerShown: false}}
+              />
+              {/* Hóa đơn */}
+              <Stack.Screen
+                name="AddHoaDonScreen"
+                component={AddHoaDonScreen}
+                options={{title: 'Tạo hóa đơn'}}
+              />
+              <Stack.Screen
+                name="DetailHoaDonScreen"
+                component={DetailHoaDonScreen}
+                options={{title: 'Chi tiết hóa đơn'}}
+              />
+              <Stack.Screen
+                name="DetailDatMonScreen"
+                component={DetailDatMonScreen}
+                options={{title: 'Chi tiết đặt món'}}
               />
             </Stack.Navigator>
           </NavigationContainer>

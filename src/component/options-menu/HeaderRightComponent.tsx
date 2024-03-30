@@ -6,6 +6,7 @@ import { faEllipsisH, faUser, faSmile  } from '@fortawesome/free-solid-svg-icons
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import { appFontSize } from '../../constants/appFontSizes';
 import { appColors } from '../../constants/appColors';
+import { deleteToken } from './../../utils/storageUtils'; // Update this import path with the correct path to your AsyncStorage functions file
 
 const HeaderRightComponent: React.FC<NavProps & { tenKH: string }> = ({ navigation, tenKH }) => {
     
@@ -19,12 +20,18 @@ const HeaderRightComponent: React.FC<NavProps & { tenKH: string }> = ({ navigati
         navigation.navigate(screenName);
     };
 
-    const logout = () => {
+    const logout = async () => {
         setShowOptionsMenu(false); // Close the menu when an option is clicked
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'LoginScreen' }],
-          });
+        //Xóa thông tin đăng nhâp
+        try {
+            await deleteToken();
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'LoginScreen' }],
+            })
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
     };
     
     return (
@@ -42,8 +49,6 @@ const HeaderRightComponent: React.FC<NavProps & { tenKH: string }> = ({ navigati
             <View style={{ flexDirection: 'column', alignItems: 'flex-start', margin: 5 }}>
                 {/* <FontAwesomeIcon icon={faSmile} size={appFontSize.normal} color={appColors.coolPurple} /> */}
                 <Text style={{ fontWeight: 'bold', margin: 5, color: appColors.primary }}>{tenKH}</Text>
-                <MenuOption  onSelect={() => handleOptionClick("KhachHangDetailScreen")}><Text>Thông tin cá nhân</Text></MenuOption>
-                <MenuOption onSelect={() => handleOptionClick("DoiMatKhauScreen")}><Text>Đổi mật khẩu</Text></MenuOption>
                 <MenuOption onSelect={() => logout()}><Text>Đăng xuất</Text></MenuOption>
             </View>
 

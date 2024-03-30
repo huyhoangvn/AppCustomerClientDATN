@@ -100,3 +100,13 @@ export const clearAllData = async (): Promise<void> => {
         console.error('Error clearing all data:', error);
     }
 };
+
+//Dùng để đăng xuất
+export const deleteToken = async (): Promise<void> => {
+    try {
+        await AsyncStorage.removeItem('Token');
+        console.log('Token deleted successfully');
+    } catch (error) {
+        console.error('Error deleting token:', error);
+    }
+};

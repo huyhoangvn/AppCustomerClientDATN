@@ -2,10 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import NavProps from '../../models/props/NavProps';
 
-const RegisterScreen: React.FC<NavProps> = ({ navigation }) =>  {
+const ChangeMatKhauScreen : React.FC<NavProps> = ({ navigation }) =>  {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Đăng ký</Text>
+      <Text style={styles.text}>Trang Chủ</Text>
     </View>
   );
 };
@@ -23,4 +23,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen;
+export default ChangeMatKhauScreen;
