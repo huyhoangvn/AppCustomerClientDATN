@@ -7,12 +7,15 @@ import { appIcon } from '../../constants/appIcon';
 
 const TrangChuScreen: React.FC<NavProps> = ({ navigation }) =>  {
   const [searchValue, setSearchValue] = useState('');
+
+  //Di chuyển qua màn hình tìm kiếm
   const openSearchScreen = () => {
     navigation.navigate('SearchMonScreen', { searchValue });
   };
 
   return (
     <View style={styles.container}>
+
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -23,6 +26,7 @@ const TrangChuScreen: React.FC<NavProps> = ({ navigation }) =>  {
           <FontAwesomeIcon icon={faSearch} style={styles.icon} size={appIcon.normal}/>
         </TouchableOpacity>
       </View>
+
     </View>
   );
 };
@@ -43,20 +47,19 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     marginBottom: 10,
     paddingHorizontal: 10,
-    flexDirection: 'row', // To allow the TouchableOpacity to fill width
+    flexDirection: 'row', 
     margin: 10,
     borderRadius: 10,
     alignItems: 'center'
   },
   input: {
-    flex: 1, // To make TextInput fill the remaining space
+    flex: 1,
     height: 40,
-    color: 'black', // Set the text color to black
-    // Add any other input styles as needed
+    color: 'black',
   },
   icon: {
-    marginLeft: 10, // Adjust the spacing between input and icon as needed
-    alignSelf: 'center', // Align the icon vertically center with the text input
+    marginLeft: 10, 
+    alignSelf: 'center',
   }
 });
 

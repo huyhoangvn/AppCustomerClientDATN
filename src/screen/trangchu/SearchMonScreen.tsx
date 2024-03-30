@@ -12,17 +12,19 @@ const SearchMonScreen: React.FC<NavProps> = ({ navigation }) => {
   const route: any = useRoute();
   const [searchValue, setSearchValue] = useState("Tìm kiếm món ngon...");
 
+  //Tìm kiếm món
   const searchMon = async (tenMon: string) => {
-    console.log("Searching for:", tenMon);
+    // console.log("Searching for:", tenMon);
     // Implement your search logic here
   };
 
+  //Đi về trang trước
   const goBackEvent = () => {
     navigation.goBack();
   };
 
   useEffect(() => {
-    const value = route.params?.searchValue || "";
+    const value = route.params?.searchValue || "";//Lấy thông tin tìm kiếm từ bên trang chủ
     searchMon(value);
     setSearchValue(value);
   }, []); 
