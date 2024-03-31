@@ -1,11 +1,27 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import NavProps from '../../models/props/NavProps';
+import React, {useState, useEffect} from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import Header from './../../component/detail/Header'; // Import the Header component
+import { appColors } from '../../constants/appColors';
 
-const DetailCuaHangScreen: React.FC<NavProps> = ({ navigation }) =>  {
+const DetailMonScreen = ({ navigation } : any) =>  {
+  const route: any = useRoute();
+  const [idCH, setIdCH] = useState("");
+  const [backgroundImage, setBackgroundImage] = useState(require('./../../assest/image/default-image.jpg')); // Default image path
+
+  useEffect(() => {
+    const value = route.params?.idCH || "";// Lấy thông tin tìm kiếm từ bên trang chủ
+    setIdCH(value);
+  }, []);
+
+  const goBackEvent = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Trang Chủ</Text>
+      <Header backgroundImageUrl={backgroundImage} goBackEvent={goBackEvent} />
+      <Text style={{ color: appColors.coolPurple }}>{idCH}</Text>
     </View>
   );
 };
@@ -13,14 +29,8 @@ const DetailCuaHangScreen: React.FC<NavProps> = ({ navigation }) =>  {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white'
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    backgroundColor: 'white',
   },
 });
 
-export default DetailCuaHangScreen;
+export default DetailMonScreen;

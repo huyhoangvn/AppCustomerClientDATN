@@ -1,52 +1,59 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { faSearch, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import NavProps from '../../models/props/NavProps';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { appColors } from '../../constants/appColors';
-import { appFontSize } from '../../constants/appFontSizes';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { appIcon } from '../../constants/appIcon';
+import { appColors } from '../../constants/appColors';
+import SearchHeader from './../../component/search/searchHeader'; // Import the SearchHeader component
+import NavProps from '../../models/props/NavProps';
 
 const SearchMonScreen: React.FC<NavProps> = ({ navigation }) => {
   const route: any = useRoute();
   const [searchValue, setSearchValue] = useState("Tìm kiếm món ngon...");
 
-  //Tìm kiếm món
+  // Tìm kiếm món
   const searchMon = async (tenMon: string) => {
-    // console.log("Searching for:", tenMon);
+    console.log("Searching for:", tenMon);
     // Implement your search logic here
   };
 
-  //Đi về trang trước
+  // Di chuyển qua màn hình chi tiết món
+  const openSearchScreen = (idMon: string) => {
+    navigation.navigate('DetailMonScreen', {
+      idMon: idMon,
+    });
+  };
+
+  // Đi về trang trước
   const goBackEvent = () => {
     navigation.goBack();
   };
 
+  const handleChangeText = (text: string) => {
+    searchMon(text)
+    setSearchValue(text)
+  }
+
   useEffect(() => {
-    const value = route.params?.searchValue || "";//Lấy thông tin tìm kiếm từ bên trang chủ
+    const value = route.params?.searchValue || "";// Lấy thông tin tìm kiếm từ bên trang chủ
     searchMon(value);
     setSearchValue(value);
-  }, []); 
+  }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={goBackEvent}>
-          <FontAwesomeIcon icon={faArrowLeft} style={styles.backIcon} size={appIcon.backArrowIcon} />
-        </TouchableOpacity>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Tìm kiếm món ngon..."
-            onChangeText={(text) => setSearchValue(text)}
-            defaultValue={route.params?.searchValue}
-          />
-          <TouchableOpacity onPress={() => searchMon(searchValue)}>
-            <FontAwesomeIcon icon={faSearch} style={styles.icon} size={appIcon.normal} />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <SearchHeader 
+        goBackEvent={goBackEvent}
+        setSearchValue={setSearchValue}
+        searchValue={searchValue}
+        searchAction={()=> searchMon(searchValue)}
+        searchOnTextChange={true}
+        handleChangeText={(text: string)=>handleChangeText(text)}
+      />
+      <TouchableOpacity onPress={() => openSearchScreen("idMon")}>
+        <Text style={{ color: appColors.red }}>Chi tiết món</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -57,35 +64,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignContent: 'center',
-  },
-  backIcon: {
-    flex: 1,
-    marginRight: 10,
-  },
-  inputContainer: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingHorizontal: 10,
-    flexDirection: 'row',
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    color: 'black',
-    alignSelf: 'center', // Align input text vertically center
-  },
-  icon: {
-    marginLeft: 10,
-    alignSelf: 'center',
-  }
 });
 
 export default SearchMonScreen;
-
