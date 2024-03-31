@@ -1,11 +1,38 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import NavProps from '../../models/props/NavProps';
+import React, {useState, useEffect} from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import Header from './../../component/detail/Header'; // Import the Header component
+import { appColors } from '../../constants/appColors';
 
-const DetailMonScreen: React.FC<NavProps> = ({ navigation }) =>  {
+const DetailMonScreen = ({ navigation } : any) =>  {
+  const route: any = useRoute();
+  const [idMon, setIdMon] = useState("");
+  const [backgroundImage, setBackgroundImage] = useState(require('./../../assest/image/default-image.jpg')); // Default image path
+
+  useEffect(() => {
+    const value = route.params?.idMon || "";
+    setIdMon(value);
+  }, []);
+
+  const goBackEvent = () => {
+    navigation.goBack();
+  };
+
+  // Di chuyển qua màn hình chi tiết cửa hàng
+  const openSearchScreen = (idCH: string) => {
+    navigation.navigate('DetailCuaHangScreen', {
+      idCH: idCH,
+    });
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Trang Chủ</Text>
+      <Header backgroundImageUrl={backgroundImage} goBackEvent={goBackEvent} />
+
+      <Text style={{ color: appColors.coolPurple }}>{idMon}</Text>
+      <TouchableOpacity onPress={()=>openSearchScreen("idCH")}>
+        <Text style={{ color: appColors.red }}>Chi tiết cửa hàng</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -13,13 +40,7 @@ const DetailMonScreen: React.FC<NavProps> = ({ navigation }) =>  {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white'
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    backgroundColor: 'white',
   },
 });
 
