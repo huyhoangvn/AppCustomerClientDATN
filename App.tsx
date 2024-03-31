@@ -28,6 +28,7 @@ import SearchMonScreen from './src/screen/trangchu/SearchMonScreen';
 import AddHoaDonScreen from './src/screen/giohang/AddHoaDonScreen';
 import DetailHoaDonScreen from './src/screen/hoadon/DetailHoaDonScreen';
 import DetailDatMonScreen from './src/screen/hoadon/DetailDatMonScreen';
+import { text } from '@fortawesome/fontawesome-svg-core';
 
 const CustomHeader: React.FC<{ title?: string }> = ({ title = 'Default Title' }) => (
   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -44,7 +45,7 @@ const navTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: '#ffffff', 
+    background: '#ffffff',
     // card: appColors.primary
     // text: appColors.primary,
   },
