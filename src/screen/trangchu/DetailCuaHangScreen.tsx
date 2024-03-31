@@ -14,13 +14,9 @@ const DetailMonScreen = ({ navigation } : any) =>  {
     setIdCH(value);
   }, []);
 
-  const goBackEvent = () => {
-    navigation.goBack();
-  };
-
   return (
     <View style={styles.container}>
-      <Header backgroundImageUrl={backgroundImage} goBackEvent={goBackEvent} />
+      <Header backgroundImageUrl={backgroundImage} color={appColors.white}/>
       <Text style={{ color: appColors.coolPurple }}>{idCH}</Text>
     </View>
   );

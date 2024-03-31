@@ -5,6 +5,7 @@ import SplashScreenBg from './SplashScreenBg.svg';
 import LogoNoText from './LogoNoText.svg';
 import DefaultImage from './default-image.svg';
 import DefaultAvatar from './default-avatar.svg';
+import Delivery from './delivery-image.svg';
 
 export {
     Facebook, 
@@ -13,5 +14,6 @@ export {
     SplashScreenBg, 
     LogoNoText,
     DefaultImage,
-    DefaultAvatar
+    DefaultAvatar,
+    Delivery
 };
