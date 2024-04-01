@@ -76,7 +76,7 @@ const EditTextComponent = (props: Props) => {
       {icon && (
         <FontAwesomeIcon
           icon={icon}
-          style={[styles.icon, { color: iconColor }]}
+          style={[styles.icon, { color: iconColor } as ViewStyle]} // Cast the style object to ViewStyle
         />
       )}
       <TextInput
@@ -92,7 +92,7 @@ const EditTextComponent = (props: Props) => {
         <TouchableOpacity onPress={toggleVisibility}>
           <FontAwesomeIcon
             icon={iconRight}
-            style={[styles.icon, { color: iconColor }]}
+            style={[styles.icon, { color: iconColor } as ViewStyle]} // Add 'as ViewStyle' to specify the 'color' property
           />
         </TouchableOpacity>
       )}
@@ -106,7 +106,7 @@ const EditTextComponent = (props: Props) => {
                   : faEye
                 : faCalendarTimes
             }
-            style={[styles.icon, { color: iconColor }]}
+            style={[styles.icon, { color: iconColor } as ViewStyle]} // Add 'as ViewStyle' to specify the 'color' property
           />
         </TouchableOpacity>
       )}
