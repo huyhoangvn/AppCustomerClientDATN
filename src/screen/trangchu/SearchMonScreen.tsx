@@ -22,7 +22,8 @@ const SearchMonScreen: React.FC<NavProps> = ({ navigation }) => {
   const openSearchScreen = (idMon: string) => {
     navigation.navigate('DetailMonScreen', {
       idMon: idMon,
-      showMoreContent: true
+      showMoreContent: true,
+      uniqueId: Math.random() 
     });
   };
 

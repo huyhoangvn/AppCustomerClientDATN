@@ -128,6 +128,11 @@ const App: React.FC<AppProps> = () => {
                 options={{headerShown: false}}
               />
               <Stack.Screen
+                name="DetailMonScreenFromCuaHang"
+                component={DetailMonScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
                 name="SearchMonScreen"
                 component={SearchMonScreen}
                 options={{headerShown: false}}
