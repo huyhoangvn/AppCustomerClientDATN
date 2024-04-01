@@ -24,12 +24,12 @@ const SearchHeader = ({ goBackEvent = null, setSearchValue, searchValue, searchA
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Tìm kiếm món ngon..."
+          placeholder="Tìm kiếm món"
           onChangeText={handleTextChange}
           value={searchValue}
         />
         <TouchableOpacity onPress={searchAction}>
-          <FontAwesomeIcon icon={faSearch} style={styles.icon} size={appIcon.normal} />
+          <FontAwesomeIcon icon={faSearch} style={styles.icon} color={appColors.primary} size={appIcon.normal} />
         </TouchableOpacity>
       </View>
     </View>
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: appColors.primary,
     paddingHorizontal: 10,
     flexDirection: 'row',
     borderRadius: 10,

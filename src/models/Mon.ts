@@ -8,4 +8,5 @@ export interface Mon{
     giaTien?: number
     hinhAnh?: string
     trangThai?: boolean
+    soLuong?: number
 }

@@ -21,7 +21,6 @@ export const appColors = {
   coolPurple: "#414EC4",//Màu tím
   inactiveGray: "#D2D2D2",//Màu xám nút ko hoạt động
   textGray: "#8A8A8A",//Màu xám cho chữ trên nền trắng
-  chuaThanhToan: "#FF7144",//Màu chưa thanh toán
   daThanhToan: "#5A9324",//Màu đã thanh toán
 };
 
