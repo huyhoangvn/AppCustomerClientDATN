@@ -8,11 +8,13 @@ import authenticationAPI from '../../apis/authApi';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { appFontSize } from '../../constants/appFontSizes';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faChevronRight, faStar  } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight, faStar, faStore  } from '@fortawesome/free-solid-svg-icons';
 import { appIcon } from '../../constants/appIcon';
 import StarDanhGia from '../../component/detail/StarDanhGia';
 import { appImageSize } from '../../constants/appImageSize';
 import { Delivery } from '../../assest/svgs';
+import MoreDetail from '../../component/detail/MoreDetail';
+import DeliveryNote from '../../component/detail/DeliveryNote';
 
 const chiTietMonResExample = {
   success: true,
@@ -83,7 +85,7 @@ const DanhSachDanhGiaResExampleLoadingMore = {
   msg: ""
 }
 
-const DetailMonScreen = ({ navigation } : any) =>  {
+const DetailMonScreen = ({ navigation} : any) =>  {
   const route: any = useRoute();
 
   const [idMon, setIdMon] = useState("");
@@ -101,9 +103,11 @@ const DetailMonScreen = ({ navigation } : any) =>  {
   const [rating, setRating] = useState(1); //Đánh giá chọn
   const [trang, setTrang] = useState(1);
   const [msg, setMsg] = useState("");
+  const [showMoreContent, setShowMoreContent] = useState(true);
 
   useEffect(() => {
     const id = route.params?.idMon || "";
+    setShowMoreContent(route.params?.showMoreContent);
     layChiTietMon(id);
     layTrungBinhDanhGiaMon(id);
     layDanhSachDanhGia(id);
@@ -193,7 +197,7 @@ const DetailMonScreen = ({ navigation } : any) =>  {
       //   '/khachhang/danhGia' + "/" + id,
       //   'get',
       // );
-      const res : any = DanhSachDanhGiaResExampleLoadingMore
+      const res : any = DanhSachDanhGiaResExample
 
       if (res.success === true) {
         const { list, count, currentPage, totalPage } = res;
@@ -213,7 +217,7 @@ const DetailMonScreen = ({ navigation } : any) =>  {
       //   '/khachhang/danhGia' + "/" + id + "?trang=" + (trang+1),
       //   'get',
       // );
-      const res : any = DanhSachDanhGiaResExample
+      const res : any = DanhSachDanhGiaResExampleLoadingMore
 
       if (res.success === true) {
         const { list, count, currentPage, totalPage } = res;
@@ -268,27 +272,23 @@ const DetailMonScreen = ({ navigation } : any) =>  {
             <Text style={styles.normal}>{giaTien}</Text>
             <Text style={[styles.normal, { textDecorationLine: 'underline', paddingLeft: 5 }]}>đ</Text>
           </View>
-          <View style={styles.cuahang}>
-            <Text style={styles.special}>{tenCH}</Text>
-            <TouchableOpacity onPress={() => openDetailCuaHangScreen(idCH)}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{color: appColors.coolPurple, fontSize: appFontSize.normal}}>Xem cửa hàng</Text>
-                <FontAwesomeIcon icon={faChevronRight} color={appColors.coolPurple} size={appIcon.normal}/>
-              </View>
-            </TouchableOpacity>
-          </View>
 
-          <View style={{backgroundColor: appColors.secondary, padding: 10, flexDirection: 'row', borderRadius: 12}}>
-              <Delivery
-                  width={appImageSize.size50.width} 
-                  height={appImageSize.size50.height} 
-              />
-              <View style={{marginLeft: 10}}>
-                  <Text style={{fontWeight: 'bold', fontSize: appFontSize.normal, color: appColors.text}}>Giao hàng tiêu chuẩn</Text>
-                  <Text style={{fontSize: appFontSize.normal, color: appColors.text}}>Dự kiến giao lúc {thoiGianGiaoHang}p từ khi đặt hàng</Text>
-              </View>
-              {/* Add your icon here, aligned with the text */}
-          </View>
+          {showMoreContent && (
+            <MoreDetail 
+              title={tenCH} 
+              moreText="Xem cửa hàng"
+              onPress={() => openDetailCuaHangScreen(idCH)} 
+              icon={faStore} // Icon tùy chọn
+              iconColor={appColors.coolPurple}
+              titleColor={appColors.coolPurple}
+              moreTextColor ={appColors.coolPurple}
+            />          
+          )}
+
+          <DeliveryNote 
+            deliveryText="Giao hàng tiêu chuẩn"
+            deliveryTime={thoiGianGiaoHang}
+          />
 
           <View style={styles.chonDanhGia}>
             <Text style={styles.label}>Đánh giá của bạn!</Text>
@@ -367,16 +367,6 @@ const styles = StyleSheet.create({
     color: appColors.text,
     fontWeight: '500',
   },
-  cuahang: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    marginVertical: 10,
-    borderColor: appColors.boderColor
-  },
   //Text
   title: {
     fontSize: appFontSize.title,
@@ -386,11 +376,6 @@ const styles = StyleSheet.create({
   normal: {
     fontSize: appFontSize.normal,
     color: appColors.text
-  },
-  special: {
-    fontSize: appFontSize.normal,
-    color: appColors.coolPurple,
-    fontWeight: 'bold',
   },
   time: {
     fontSize: appFontSize.small,
