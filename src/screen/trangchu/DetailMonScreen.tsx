@@ -15,6 +15,7 @@ import { appImageSize } from '../../constants/appImageSize';
 import { Delivery } from '../../assest/svgs';
 import MoreDetail from '../../component/detail/MoreDetail';
 import DeliveryNote from '../../component/detail/DeliveryNote';
+import { getData } from '../../utils/storageUtils';
 
 const chiTietMonResExample = {
   success: true,
@@ -116,9 +117,15 @@ const DetailMonScreen = ({ navigation} : any) =>  {
 
   const handleSaveReview = async () => {
     try {
+
+      //Lấy idKH
+      const storedData = await getData();
+      const idKH = storedData?.idKH;
+      if(!idKH){return;}
+
       // const res : any = await authenticationAPI.HandleAuthentication(
       //   '/khachhang/danhgia',
-      //    {danhGia: rating}
+      //    {danhGia: rating, idKH: idKh}
       //   'post',
       // );
       const res : any = TrungBinhDanhGiaResExample;
