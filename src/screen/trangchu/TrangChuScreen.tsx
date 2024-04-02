@@ -19,10 +19,11 @@ import {appFontSize} from '../../constants/appFontSizes';
 import {appColors} from '../../constants/appColors';
 import {Mon} from '../../models/Mon';
 import Swiper from 'react-native-swiper';
+import FlatListHomeComponent from '../../component/FlatListHomeComponent';
 
 const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const [searchValue, setSearchValue] = useState('');
-  const swiperRef = useRef<any>(null); 
+  const swiperRef = useRef<any>(null);
   const [autoplay, setAutoplay] = useState(true); // State để điều khiển autoplay
 
   const openScreen = (screen: string) => {
@@ -96,44 +97,8 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
     console.log('item', item);
   };
 
-  const renderItem = ({item}: {item: Mon}) => {
-    return (
-      <TouchableOpacity>
-        <View style={styles.item}>
-          <Image
-            source={
-              !item?.hinhAnh || item?.hinhAnh === 'N/A'
-                ? require('./../../assest/image/default-avatar.jpg')
-                : {uri: item?.hinhAnh}
-            }
-            style={{
-              width: 140,
-              height: 135,
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-            }}
-            resizeMode="cover"
-            defaultSource={require('./../../assest/image/default-avatar.jpg')}
-          />
-
-          <Text style={{fontWeight: 'bold', color: 'black'}}>
-            {item?.tenMon}
-          </Text>
-          <Text style={{color: 'black'}}>
-            {' '}
-            {new Intl.NumberFormat('vi-VN', {
-              style: 'currency',
-              currency: 'VND',
-            }).format(item?.giaTien ?? 0)}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   const onScrollBeginDrag = () => {
     setAutoplay(false); // Tắt autoplay
-
   };
   return (
     <ScrollView style={styles.container}>
@@ -151,67 +116,53 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
           style={{
             flex: 1,
           }}>
- <Swiper
-          ref={swiperRef}
-          style={styles.wrapper}
-          autoplay={autoplay} // Sử dụng state để điều khiển autoplay
-          autoplayTimeout={5}
-          onScrollBeginDrag={onScrollBeginDrag} // Tạm thời tắt tự động chuyển slide khi người dùng thao tác
-        >
-          {data.map((item, index) => (
-            <TouchableOpacity key={index} onPress={() => handlePress(item)}>
-              <View style={styles.slide}>
-                <Image source={{ uri: item.poster_path }} style={styles.image} />
-              </View>
-            </TouchableOpacity>
-          ))}
-        </Swiper>
+          <Swiper
+            ref={swiperRef}
+            style={styles.wrapper}
+            autoplay={autoplay} // Sử dụng state để điều khiển autoplay
+            autoplayTimeout={5}
+            onScrollBeginDrag={onScrollBeginDrag} // Tạm thời tắt tự động chuyển slide khi người dùng thao tác
+          >
+            {data.map((item, index) => (
+              <TouchableOpacity key={index} onPress={() => handlePress(item)}>
+                <View style={styles.slide}>
+                  <Image
+                    source={{uri: item.poster_path}}
+                    style={styles.image}
+                  />
+                </View>
+              </TouchableOpacity>
+            ))}
+          </Swiper>
         </View>
       </View>
       <View style={styles.main}>
         <View style={{backgroundColor: appColors.white}}>
-          <Text
-            style={{
-              fontSize: appFontSize.normal,
-              fontWeight: '500',
-              color: appColors.warmOrange,
-              padding: 10,
-            }}>
-            Món bán chạy
-          </Text>
-          <FlatList
-            horizontal={true}
+          <FlatListHomeComponent
             data={dish}
-            renderItem={renderItem}
-            keyExtractor={item => item._id || ''}
-            style={{height: 200, marginTop: 10}}
-            showsHorizontalScrollIndicator={false} // Tắt thanh cuộn ngang
-            // onScroll={() => { setScroll(true), setLastList(false) }} // Khi cuộn, đánh dấu là đã cuộn
-            // onEndReached={() => { setLastList(true), setScroll(false) }} // Kích hoạt khi đạt đến cuối danh sách
-            // onEndReachedThreshold={.1}
+            showIndicator={false}
+            textTitle="Món bán chạy"
+            textSeeMore='Xem thêm >'
+            textTag="Món ngon"
+            styleTag={{color: appColors.warmOrange,borderColor: appColors.warmOrange,}}
+            styleTitle={{
+              color: appColors.warmOrange,
+            }}
           />
         </View>
 
         <View style={{backgroundColor: appColors.white}}>
-          <Text
-            style={{
-              fontSize: appFontSize.normal,
-              fontWeight: '500',
-              color: appColors.coolPurple,
-              padding: 10,
-            }}>
-            Giải nhiệt mùa hè
-          </Text>
-          <FlatList
-            horizontal={true}
+          <FlatListHomeComponent
             data={dish}
-            renderItem={renderItem}
-            keyExtractor={item => item._id || ''}
-            style={{height: 200, marginTop: 10}}
-            showsHorizontalScrollIndicator={false} // Tắt thanh cuộn ngang
-            // onScroll={() => { setScroll(true), setLastList(false) }} // Khi cuộn, đánh dấu là đã cuộn
-            // onEndReached={() => { setLastList(true), setScroll(false) }} // Kích hoạt khi đạt đến cuối danh sách
-            // onEndReachedThreshold={.1}
+            showIndicator={false}
+            textTitle="Giải nhiệu mùa hè"
+            textTag='Giải khát'
+            textSeeMore='Xem thêm gì đó >'
+            styleTitle={{
+              color: appColors.coolPurple,
+            }}
+         
+            styleTag = {{color: appColors.coolPurple,borderColor: appColors.coolPurple,}}
           />
         </View>
       </View>
@@ -237,15 +188,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1.5,
   },
-  item: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    borderRadius: 10,
-    marginHorizontal: 5,
-    backgroundColor: appColors.white,
-    elevation: 4,
-    paddingBottom: 20,
-  },
+
   wrapper: {height: 200},
   slide: {
     justifyContent: 'center',
