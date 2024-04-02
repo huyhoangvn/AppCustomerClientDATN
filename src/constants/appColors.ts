@@ -18,7 +18,9 @@ export const appColors = {
   primary: '#5A9324',//Màu xanh đậm
   secondary : '#CFE7B9',//Màu xanh nhạt
   warmOrange: "#FF7144",//Màu cam
+  lighterOrange: "#FFC0AC",//Màu cam nhạt
   coolPurple: "#414EC4",//Màu tím
+  lighterPurple: "#D4D7F4",//Màu tím nhạt
   inactiveGray: "#D2D2D2",//Màu xám nút ko hoạt động
   textGray: "#8A8A8A",//Màu xám cho chữ trên nền trắng
   daThanhToan: "#5A9324",//Màu đã thanh toán

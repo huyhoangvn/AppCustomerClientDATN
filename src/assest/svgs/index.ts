@@ -6,8 +6,10 @@ import LogoNoText from './LogoNoText.svg';
 import DefaultImage from './default-image.svg';
 import DefaultAvatar from './default-avatar.svg';
 import Delivery from './delivery-image.svg';
+import BillCreateNote from './bill-create-image.svg';
 
 export {
+    BillCreateNote,
     Facebook, 
     Google,
     Logo, 

@@ -36,6 +36,7 @@
     "react-native": "^0.73.6",
     "react-native-bouncy-checkbox": "^3.0.7",
     "react-native-dropdown-picker": "^5.4.6",
+    "react-native-floating-action": "^1.22.0",
     "react-native-gesture-handler": "^2.15.0",
     "react-native-image-crop-picker": "^0.40.3",
     "react-native-image-picker": "^7.1.2",
