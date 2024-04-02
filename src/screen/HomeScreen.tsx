@@ -15,10 +15,12 @@ import HoaDonScreen from './hoadon/HoaDonScreen';
 import KhuyenMaiScreen from './khuyenmai/KhuyenMaiScreen';
 import KhachHangDetailScreen from './khachhang/DetailKhachHangScreen';
 import { appIcon } from '../constants/appIcon';
+import { getData } from '../utils/storageUtils';
 
 const Tab = createMaterialBottomTabNavigator();
 
 const HomeScreen: React.FC<NavProps> = ({ navigation,route } : any) =>  {
+
   const renderTabScreenOptions = (label: string, icon: IconProp) : any => ({
     tabBarIcon: ({ color, size, focused }: { color: string; size: number; focused: boolean }) => (
       <FontAwesomeIcon icon={icon} size={focused ? appIcon.big : appIcon.normal} color={color} />
@@ -26,17 +28,6 @@ const HomeScreen: React.FC<NavProps> = ({ navigation,route } : any) =>  {
     tabBarLabel: label,
     headerShown: false, // Ẩn tiêu đề header
   });
-
-  const ScreenWrapper = (Component: React.ComponentType<any>) => {
-    return ({ route }: any) => {
-      const { value } = route.params ?? {};
-      return (
-        <View style={{ flex: 1, paddingBottom: 0 }}>
-          <Component {...route.params} />
-        </View>
-      );
-    };
-  };
 
   return (
     <Tab.Navigator
@@ -63,6 +54,11 @@ const HomeScreen: React.FC<NavProps> = ({ navigation,route } : any) =>  {
         options={renderTabScreenOptions('Trang Chủ', faHome)}
       />
       <Tab.Screen 
+        name="KhuyenMaiScreen" 
+        component={KhuyenMaiScreen} 
+        options={renderTabScreenOptions('Ưu đãi', faGift)}
+      />
+      <Tab.Screen 
         name="GioHangScreen" 
         component={GioHangScreen} 
         options={renderTabScreenOptions('Giỏ Hàng', faShoppingCart)}
@@ -71,11 +67,6 @@ const HomeScreen: React.FC<NavProps> = ({ navigation,route } : any) =>  {
         name="HoaDonScreen" 
         component={HoaDonScreen} 
         options={renderTabScreenOptions('Hóa đơn', faReceipt)}
-      />
-      <Tab.Screen 
-        name="KhuyenMaiScreen" 
-        component={KhuyenMaiScreen} 
-        options={renderTabScreenOptions('Ưu đãi', faGift)}
       />
       <Tab.Screen 
         name="KhachHangDetailScreen" 

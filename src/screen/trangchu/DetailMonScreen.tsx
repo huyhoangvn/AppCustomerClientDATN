@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useRoute } from '@react-navigation/native';
+import { useIsFocused, useRoute } from '@react-navigation/native';
 import Header from './../../component/detail/Header';
 import { appColors } from '../../constants/appColors';
 import authenticationAPI from '../../apis/authApi';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { appFontSize } from '../../constants/appFontSizes';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faChevronRight, faStar, faStore  } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight, faStar, faStore, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { appIcon } from '../../constants/appIcon';
 import StarDanhGia from '../../component/detail/StarDanhGia';
 import { appImageSize } from '../../constants/appImageSize';
@@ -27,7 +27,7 @@ const chiTietMonResExample = {
     tenLM: "Giải khát",
     tenCH: "Five Star",
     giaTien: 20000,
-    hinhAnh: "http://10.0.2.2:3000/public/images/kudo.jpeg"
+    hinhAnh: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/10f13510774061.560eadfde5b61.png"
   },
   msg: ""
 }
@@ -52,7 +52,7 @@ const DanhSachDanhGiaResExample = {
       idDG: "2",
       tenKH: "Nguyễn Xuân Phúc",
       danhGia: 3,
-      hinhAnh: "http://10.0.2.2:3000/public/images/kudo.jpeg",
+      hinhAnh: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/10f13510774061.560eadfde5b61.png",
       thoiGianTao: "22:45 31-12-2021",
     }
   ],
@@ -86,6 +86,12 @@ const DanhSachDanhGiaResExampleLoadingMore = {
   msg: ""
 }
 
+const KiemTraGioHangResExample = {
+  success: true,
+  index: true,
+  msg: "Đã có trong giỏ hàng"
+}
+
 const DetailMonScreen = ({ navigation} : any) =>  {
   const route: any = useRoute();
 
@@ -105,6 +111,10 @@ const DetailMonScreen = ({ navigation} : any) =>  {
   const [trang, setTrang] = useState(1);
   const [msg, setMsg] = useState("");
   const [showMoreContent, setShowMoreContent] = useState(true);
+  const [idKH, setIdKH] = useState("");
+  const isFocused = useIsFocused();
+  const [inCart, setInCart] = useState(false);
+  const [cartColor, setCartColor] = useState(appColors.gray);
 
   useEffect(() => {
     const id = route.params?.idMon || "";
@@ -115,37 +125,92 @@ const DetailMonScreen = ({ navigation} : any) =>  {
     setIdMon(id);
   }, []);
 
-  const handleSaveReview = async () => {
+  useEffect(() => {
+    if(isFocused){
+      layIsInGioHang();
+    }
+  }, [isFocused])
+
+  //Để lấy xem món đã trong giỏ hàng chưa
+  const layIsInGioHang = async ()=> {
+    const idMon = route.params?.idMon || "";
+    const idKH = await getIdKH()
+    const status = await isInGioHang(idKH, idMon)
+    setInCart(status);
+  }
+
+  const isInGioHang = async(idKH :string, idMon: string)=>{
     try {
 
       //Lấy idKH
-      const storedData = await getData();
-      const idKH = storedData?.idKH;
-      if(!idKH){return;}
+      if(!idKH || !idMon){return false;}
+      // const res : any = await authenticationAPI.HandleAuthentication(
+      //   '/khachhang/gioHang' + '/' + idKH,
+      //    {idMon: idMon}
+      //   'get',
+      // );
 
+      const res : any = KiemTraGioHangResExample;
+
+      if (res.success === true) {
+        const { index } = res;
+        setInCart(res.index)
+        setCartColor(appColors.primary)
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.log(e);
+    }
+    return false;
+  }
+
+  const getIdKH = async ()=>{
+    const storedData = await getData();
+    return storedData?.idKH || "";
+  }
+
+  const handleCartClick = () => {
+    if (inCart) {
+      setCartColor(appColors.gray);
+      setInCart(false);
+      //Gọi api xóa giỏ hàng
+      showAlert('Xóa khỏi giỏ hàng', "Món " + tenMon);
+    } else {
+      setCartColor(appColors.primary);
+      setInCart(true);
+      //Gọi api thêm giỏ hàng
+      showAlert('Thêm vào giỏ hàng', "Món " + tenMon);
+    }
+  };
+
+  const showAlert = (title: string, message: string) => {
+    Alert.alert(
+      title,
+      message,
+      [
+        { text: 'OK', onPress: () => console.log(title) },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const handleSaveReview = async (id: string) => {
+    try {
+
+      //Lấy idKH
+      if(!id){return;}
       // const res : any = await authenticationAPI.HandleAuthentication(
       //   '/khachhang/danhgia',
       //    {danhGia: rating, idKH: idKh}
       //   'post',
       // );
+
       const res : any = TrungBinhDanhGiaResExample;
 
       if (res.success === true) {
         const { msg } = res;
-        Alert.alert(
-          'Success',
-          msg,
-          [
-            {
-              text: 'OK',
-              onPress: async () => {
-                console.log('Đã lưu đánh giá thành công')
-              },
-              style: 'default'
-            }
-          ],
-          { cancelable: false }
-        );
+        showAlert("Lưu đánh giá", "Đánh giá của bạn là " + rating + " sao");
         await layDanhSachDanhGia(idMon);
       }
     } catch (e) {
@@ -272,7 +337,12 @@ const DetailMonScreen = ({ navigation} : any) =>  {
 
         <View style={styles.main}>
           
-          <Text style={styles.title}>{tenMon}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+            <Text style={styles.title}>{tenMon}</Text>
+            <TouchableOpacity onPress={handleCartClick}>
+              <FontAwesomeIcon icon={faShoppingCart} color={cartColor} size={appIcon.big} />
+            </TouchableOpacity>
+          </View>
           <StarDanhGia trungBinhDanhGia={trungBinhDanhGia}/>
           <Text style={styles.normal}>{tenLM}</Text>
           <View style={{flexDirection: 'row'}}>
@@ -293,8 +363,11 @@ const DetailMonScreen = ({ navigation} : any) =>  {
           )}
 
           <DeliveryNote 
-            deliveryText="Giao hàng tiêu chuẩn"
-            deliveryTime={thoiGianGiaoHang}
+            title="Giao hàng tiêu chuẩn"
+            mainText={thoiGianGiaoHang}
+            textBefore="Dự kiến giao trong khoảng "
+            textAfter=" phút từ khi đặt hàng"
+            icon={<Delivery />}
           />
 
           <View style={styles.chonDanhGia}>
@@ -314,7 +387,7 @@ const DetailMonScreen = ({ navigation} : any) =>  {
                 <Picker.Item label="5" value={5} />
               </Picker>
             </View>
-            <TouchableOpacity onPress={handleSaveReview} style={styles.button}>
+            <TouchableOpacity onPress={()=>handleSaveReview(idKH)} style={styles.button}>
                 <Text style={styles.buttonText}>Lưu</Text>
             </TouchableOpacity>
           </View>

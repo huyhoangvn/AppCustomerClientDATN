@@ -1,26 +1,23 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import NavProps from '../../models/props/NavProps';
+import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
-const AddHoaDonScreen : React.FC<NavProps> = ({ navigation }) =>  {
+const AddHoaDonScreen = () => {
+  const route : any = useRoute();
+
+  // Truy cập các tham số từ đối tượng route
+  const { saveList } = route.params;
+
+  useEffect(()=>{
+    console.log(saveList)
+  })
+
+  // Bạn có thể sử dụng các tham số này trong màn hình của mình
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Trang Chủ</Text>
+    <View>
+      {/* Sử dụng saveList ở đây theo nhu cầu của bạn */}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff'
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-});
 
 export default AddHoaDonScreen;

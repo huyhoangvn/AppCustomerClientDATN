@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Image, FlatList } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Image, FlatList, Alert} from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Header from './../../component/detail/Header'; // Import the Header component
 import { appColors } from '../../constants/appColors';
@@ -7,6 +7,10 @@ import { appImageSize } from '../../constants/appImageSize';
 import { appFontSize } from '../../constants/appFontSizes';
 import { ScrollView } from 'react-native-gesture-handler';
 import DeliveryNote from '../../component/detail/DeliveryNote';
+import { appIcon } from '../../constants/appIcon';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { Delivery } from '../../assest/svgs';
 
 const chiTietCuaHangResExample = {
   success: true,
@@ -17,7 +21,7 @@ const chiTietCuaHangResExample = {
     thoiGianMo: "00:00",
     thoiGianDong: "23:59",
     tenCH: "Five Star",
-    hinhAnh: "http://10.0.2.2:3000/public/images/kudo.jpeg"
+    hinhAnh: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/10f13510774061.560eadfde5b61.png"
   },
   msg: ""
 }
@@ -30,7 +34,7 @@ const DanhSachMonResExample = {
       idLM: "1",
       tenLM: "Tráng miệng",
       tenMon: "Bánh Flan giòn tan",
-      hinhAnh: "http://10.0.2.2:3000/public/images/kudo.jpeg",
+      hinhAnh: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/10f13510774061.560eadfde5b61.png",
       giaTien: 20000,
     },
     {
@@ -56,7 +60,7 @@ const DanhSachMonResExampleLoadingMore = {
       idLM: "1",
       tenLM: "Tráng miệng",
       tenMon: "Bánh Donut",
-      hinhAnh: "http://10.0.2.2:3000/public/images/kudo.jpeg",
+      hinhAnh: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/10f13510774061.560eadfde5b61.png",
       giaTien: 20000,
     },
     {
@@ -64,7 +68,7 @@ const DanhSachMonResExampleLoadingMore = {
       idLM: "2",
       tenLM: "Bánh ngọt",
       tenMon: "Bánh Kem",
-      hinhAnh: "http://10.0.2.2:3000/public/images/kudo.jpeg",
+      hinhAnh: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/10f13510774061.560eadfde5b61.png",
       giaTien: 78000,
     }
   ],
@@ -165,6 +169,17 @@ const DetailMonScreen = ({ navigation } : any) =>  {
     } 
   }
 
+  const showAlert = (title: string, message: string) => {
+    Alert.alert(
+      title,
+      message,
+      [
+        { text: 'OK', onPress: () => console.log(title) },
+      ],
+      { cancelable: false }
+    );
+  };
+
   // Di chuyển qua màn hình chi tiết cửa hàng
   const openDetailMonScreen = (id: string) => {
     if(!id){return;}
@@ -177,6 +192,24 @@ const DetailMonScreen = ({ navigation } : any) =>  {
 
   //Item đánh giá của món trong flatlist
   const ItemMon = ({ item }: { item: any }) => {
+    const [inCart, setInCart] = useState(false);
+    const [cartColor, setCartColor] = useState(appColors.gray);
+
+    //Để hiện thêm vào giỏ hàng nhưng ko còn dùng nữa
+    const handleCartClick = () => {
+      if (inCart) {
+        setCartColor(appColors.gray);
+        setInCart(false);
+        //Chạy api xóa
+        showAlert('Xóa khỏi giỏ hàng', "Món " + item.tenMon);
+      } else {
+        setCartColor(appColors.primary);
+        setInCart(true);
+        //Chạy api thêm
+        showAlert('Thêm vào giỏ hàng', "Món " + item.tenMon);
+      }
+    };
+
     return (
       <TouchableOpacity onPress={()=>openDetailMonScreen(item.idMon)} style={styles.itemContainer}>
           <View style={styles.monInfoContainer}>
@@ -184,8 +217,13 @@ const DetailMonScreen = ({ navigation } : any) =>  {
               source={item.hinhAnh ? { uri: item.hinhAnh } : require('./../../assest/image/default-image.jpg')}
               style={styles.monImg}
             />
-            <View>
-              <Text style={styles.tenMon}>{item.tenMon}</Text>
+            <View style={{flex: 1}}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1}}>
+                  <Text style={styles.tenMon}>{item.tenMon}</Text>
+                  {/* <TouchableOpacity onPress={handleCartClick}>
+                    <FontAwesomeIcon icon={faShoppingCart} color={cartColor} size={appIcon.normal} />
+                  </TouchableOpacity>   */}
+              </View>
               <Text style={styles.normal}>{item.giaTien} <Text style={[styles.normal, {textDecorationLine: 'underline'}]}>đ</Text></Text>
             </View>
           </View>
@@ -209,8 +247,12 @@ const DetailMonScreen = ({ navigation } : any) =>  {
             </View>
 
             <DeliveryNote 
-              deliveryText="Giao hàng tiêu chuẩn"
-              deliveryTime={thoiGianGiaoHang}
+              title="Giao hàng tiêu chuẩn"
+              mainText={thoiGianGiaoHang}
+              textBefore="Dự kiến giao trong khoảng "
+              textAfter=" phút từ khi đặt hàng"
+              icon={<Delivery />}
+              iconColor={appColors.primary}
             />
 
             <View>
@@ -238,9 +280,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   main: {
+    flex: 1,
     padding: 10
   },
   itemContainer: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -254,13 +298,14 @@ const styles = StyleSheet.create({
     elevation: 3
   },  
   monInfoContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
   },
   monImg: {
     width: appImageSize.size50.width,
     height: appImageSize.size50.height,
-    borderRadius: appImageSize.size50.width,
+    borderRadius: 8,
     marginRight: 10,
   },
   tenMon: {
