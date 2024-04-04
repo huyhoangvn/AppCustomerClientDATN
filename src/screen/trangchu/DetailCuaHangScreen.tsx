@@ -13,6 +13,7 @@ import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { Delivery } from '../../assest/svgs';
 import { formatCurrency } from '../../utils/currencyFormatUtils';
 import { showAlert } from '../../utils/showAlert';
+import QuantityComponent from '../../component/text/QuantityComponent';
 
 const chiTietCuaHangResExample = {
   success: true,
@@ -246,9 +247,10 @@ const DetailMonScreen = ({ navigation } : any) =>  {
               iconColor={appColors.primary}
             />
 
-            <View>
-              <Text>Số món của cửa hàng {soLuongMon}</Text>
-            </View>
+            <QuantityComponent
+              label="Số món của cửa hàng"
+              soLuong={soLuongMon}/>
+              
             <FlatList
                 scrollEnabled={false}
                 data={danhSachMon}

@@ -10,10 +10,14 @@ import { appFontSize } from '../../constants/appFontSizes';
 import { formatCurrency } from '../../utils/currencyFormatUtils';
 import QuantitySelector from '../../component/giohang/QuantitySelector';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faDisease, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faDisease, faLocation, faLocationDot, faMapMarker, faPhone, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { appIcon } from '../../constants/appIcon';
 import { showAlert } from '../../utils/showAlert';
 import TextViewComponent from '../../component/text/TextViewComponent';
+import OptionPicker from '../../component/detail/OptionPicker';
+import KhuyenMaiPicker from '../../component/detail/KhuyenMaiPicker';
+import EditTextComponent from '../../component/EditTextComponent';
+import QuantityComponent from '../../component/text/QuantityComponent';
 
 const InfoKHResExample = {
   success: true,
@@ -33,6 +37,30 @@ const xoaGioHangResExample = {
   msg: "Xóa thành công"
 }
 
+const DanhSachKhuyenMaiResExample = {
+  success: true,
+  list: [
+    {
+      idKMCuaToi: "1",
+      idKH: "1",
+      idKM: "2",
+      tieuDe: "Giảm giá 30% đơn 100k",
+      phanTramKhuyenMai: 30,
+      donToiThieu: 1000000
+    },
+    {
+      idKMCuaToi: "1",
+      idKH: "1",
+      idKM: "3",
+      tieuDe: "Giảm giá 10% Đơn 0 đồng",
+      phanTramKhuyenMai: 10,
+      donToiThieu: 0
+    },
+  ],
+  count: 3,
+  msg: ""
+}
+
 const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   const route : any = useRoute();
   // Truy cập các tham số từ đối tượng route
@@ -48,6 +76,7 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   const [tongTien, setTongTien] = useState(0)
   const [thanhTien, setThanhTien] = useState(0)
   const [khuyenMai, setKhuyenMai] = useState(30)
+  const [idKM, setIdKM] = useState("")
   const [tenkhuyenMai, setTenKhuyenMai] = useState(0)
   const [danhSachKhuyenMai, setDanhSachKhuyenMai] = useState([])
 
@@ -58,11 +87,41 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
     setSoLuongMonDat(saveList.length)
     getInfoKhachHang(idKH);
     setIdKhachHang(idKH);
+    getDanhSachKhuyenMaiCuaToi(idKH)
   }, [])
 
   useEffect(()=>{
     hienThiTien()
-  }, [danhSachDatMon])
+  }, [danhSachDatMon, khuyenMai])
+
+  const getDanhSachKhuyenMaiCuaToi = (id: string)=>{
+    if(!id){return}
+
+    try {
+      // const res : any = await authenticationAPI.HandleAuthentication(
+      //   '/khachhang/khachhang' + "/" + id,
+      //   'get',
+      // );
+      const res : any = DanhSachKhuyenMaiResExample
+      const khongKhuyenMai = {
+        idKMCuaToi: "0",
+        idKH: "0",
+        idKM: "0",
+        tieuDe: "Không khuyến mãi",
+        phanTramKhuyenMai: 0,
+        donToiThieu: 0
+      };
+      if (res.success === true) {
+        const { list } = res;
+        const updatedList : any = [khongKhuyenMai, ...list];
+        setDanhSachKhuyenMai(updatedList);
+        setKhuyenMai(khongKhuyenMai.phanTramKhuyenMai)
+        setIdKM(khongKhuyenMai.idKM)
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   const getInfoKhachHang = (id: string) => {
     if(!id){return}
@@ -116,6 +175,7 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
             setSoLuongMonDat(soLuongMonDat-1)
             if(updatedDanhSachDatMon.length === 0){
               navigation.goBack()
+              return
             }
           }
           showAlert("Xóa món", res.msg, false)
@@ -146,6 +206,23 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
     return tongTien;
   }
 
+  const handleAddressChange = (text: string) => {
+    setDiaChi(text);
+  };
+
+  const handlePhoneChange = (text: string) => {
+    setSdt(text);
+  };
+
+  // Function to handle option change
+  const handleOptionChange = (option: any) => {
+    if(option.donToiThieu <= tongTien){
+      setIdKM(option.idKM)
+      setKhuyenMai(option.phanTramKhuyenMai)
+    } else {
+      showAlert("Không thỏa mãn đơn tối thiểu ", "Đơn tối thiểu để dùng khuyến mãi là " + formatCurrency(option.donToiThieu), false)
+    }
+  };
 
   const GioHangItem = ({ item , onSaveItem }: { item: any, onSaveItem: Function }) => {
 
@@ -186,7 +263,9 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   return (
     <View style={styles.contain}>
       <ScrollView>
-          <Text>Số lượng đặt món (<Text>{soLuongMonDat}</Text>)</Text>
+          <QuantityComponent
+              label="Số lượng đặt món"
+              soLuong={soLuongMonDat}/>          
           <FlatList
             scrollEnabled={false}
             data={danhSachDatMon}
@@ -194,16 +273,30 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
             keyExtractor={(item : any) => item.idGH}
             />
           <TextViewComponent
-            leftText="Địa chỉ giao"
-            rightText={diaChi}
-          />
-          <TextViewComponent
-            leftText="Số điện thoại"
-            rightText={sdt}
-          />
-          <TextViewComponent
             leftText="Tổng tiền"
             rightText={formatCurrency(tongTien)}
+          />
+          <EditTextComponent
+            label="Địa chỉ giao hàng"
+            placeholder="Nhập địa chỉ giao hàng"
+            value={diaChi}
+            onChangeText={handleAddressChange}
+            iconColor="gray"
+            icon={faLocationDot}
+          />
+          <EditTextComponent
+            label="Số điện thoại"
+            placeholder="Nhập số điện thoại liên hệ"
+            value={diaChi}
+            onChangeText={handlePhoneChange}
+            iconColor="gray"
+            icon={faPhone}
+          />
+          <KhuyenMaiPicker
+            option={idKM}
+            onOptionChange={handleOptionChange}
+            options={danhSachKhuyenMai}
+            optionTitle="Khuyến mãi "
           />
           <TextViewComponent
             leftText="Thành tiền"
