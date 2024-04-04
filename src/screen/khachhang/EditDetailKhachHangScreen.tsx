@@ -83,12 +83,13 @@ const dummyData = {
             (!item.hinhAnh || item.hinhAnh === "N/A") ?
               require('./../../assest/image/default-avatar.jpg') :
               { uri: item.hinhAnh }}
-            style={{ width: appImageSize.size100.width, height: appImageSize.size100.height }}
+            style={{ width: appImageSize.size100.width, height: appImageSize.size100.height, borderRadius: 50 }}
             defaultSource={require('./../../assest/image/default-avatar.jpg')}
           />  
         </View>
           <View style={styles.footer}>
-            <EditTextComponent
+            <View style={{paddingTop:10}}>
+             <EditTextComponent
               label="text"
               placeholder="Họ và tên"
               value={name}
@@ -96,7 +97,9 @@ const dummyData = {
               onChangeText={setName}
               icon={faShop}
             />
-
+            </View>
+           
+            <View style={{paddingTop:10}}>
             <EditTextComponent
               label="text"
               placeholder="Số điện thoại"
@@ -105,7 +108,8 @@ const dummyData = {
               onChangeText={setPhone}
               icon={faPhone}
             />
-
+           </View>
+           <View style={{paddingTop:10}}>
             <EditTextComponent
               label="text"
               placeholder="Địa chỉ"
@@ -114,12 +118,15 @@ const dummyData = {
               onChangeText={setAddress}
               icon={faLocationDot}
             />
+           </View>
+           <View style={{paddingTop:10}}>
             <ButtonComponent
               type="primary"
               text="Lưu"
-              textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold'}}
+              textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold', paddingTop: 10 }}
               // onPress={handelUpdate}
             />
+          </View>
           </View>
           <AlertComponent
             visible={showAlert}
@@ -139,17 +146,14 @@ const styles = StyleSheet.create({
     backgroundColor: appColors.white,
   },
   header: {
-    height: hp(20),
     justifyContent: 'center',
     alignItems: 'center',
   },
   main: {
-    height: hp(33),
     justifyContent: 'center',
     alignItems: 'center',
   },
   footer: {
-    height: hp(40),
     justifyContent: 'space-between',
   },
 });

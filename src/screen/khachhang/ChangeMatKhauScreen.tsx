@@ -56,6 +56,8 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.main}>
+      <View style={styles.editContainer}>
+
         <EditTextComponent
           label="text"
           placeholder="Email"
@@ -64,7 +66,8 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
           onChangeText={setUserName}
           icon={faUser}
         />
-
+      </View>
+      <View style={styles.editContainer}>
         <EditTextComponent
           label="text"
           placeholder="Mật khẩu cũ"
@@ -73,7 +76,8 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
           onChangeText={setOldPass}
           icon={faLock}
         />
-
+      </View>
+      <View style={styles.editContainer}>
         <EditTextComponent
           label="pass"
           placeholder="Nhập mật khẩu mới"
@@ -82,7 +86,8 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
           onChangeText={setNewPass}
           icon={faLock}
         />
-
+      </View>
+      <View style={styles.editContainer}>
         <EditTextComponent
           label="pass"
           placeholder="Nhập lại mật khẩu mới"
@@ -91,13 +96,17 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
           onChangeText={setReNewPass}
           icon={faLock}
         />
+      </View>
+      <View style={styles.editContainer}>
+
         <ButtonComponent
           type="primary"
           text="Lưu"
-          textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold'}}
+          textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold', paddingTop:10}}
           // onPress={handelSave}
         />
       </View>
+    </View>
       <AlertComponent
         visible={showAlert}
         message={msg}
@@ -110,14 +119,17 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: hp(50),
+   flex:1,
     backgroundColor: appColors.white,
   },
 
   main: {
-    height: hp(50),
     justifyContent: 'space-between',
   },
+  editContainer:{
+    paddingTop: 10,
+
+  }
 });
 
 export default ChangeMatKhauScreen;
