@@ -11,6 +11,8 @@ import { appIcon } from '../../constants/appIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { Delivery } from '../../assest/svgs';
+import { formatCurrency } from '../../utils/currencyFormatUtils';
+import { showAlert } from '../../utils/showAlert';
 
 const chiTietCuaHangResExample = {
   success: true,
@@ -169,17 +171,6 @@ const DetailMonScreen = ({ navigation } : any) =>  {
     } 
   }
 
-  const showAlert = (title: string, message: string) => {
-    Alert.alert(
-      title,
-      message,
-      [
-        { text: 'OK', onPress: () => console.log(title) },
-      ],
-      { cancelable: false }
-    );
-  };
-
   // Di chuyển qua màn hình chi tiết cửa hàng
   const openDetailMonScreen = (id: string) => {
     if(!id){return;}
@@ -224,7 +215,7 @@ const DetailMonScreen = ({ navigation } : any) =>  {
                     <FontAwesomeIcon icon={faShoppingCart} color={cartColor} size={appIcon.normal} />
                   </TouchableOpacity>   */}
               </View>
-              <Text style={styles.normal}>{item.giaTien} <Text style={[styles.normal, {textDecorationLine: 'underline'}]}>đ</Text></Text>
+              <Text style={styles.normal}>{formatCurrency(item.giaTien)}</Text>
             </View>
           </View>
       </TouchableOpacity>

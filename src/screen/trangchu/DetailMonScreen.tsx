@@ -16,6 +16,9 @@ import { Delivery } from '../../assest/svgs';
 import MoreDetail from '../../component/detail/MoreDetail';
 import DeliveryNote from '../../component/detail/DeliveryNote';
 import { getData } from '../../utils/storageUtils';
+import OptionPicker from '../../component/detail/OptionPicker';
+import { formatCurrency } from '../../utils/currencyFormatUtils';
+import { showAlert } from '../../utils/showAlert';
 
 const chiTietMonResExample = {
   success: true,
@@ -136,6 +139,7 @@ const DetailMonScreen = ({ navigation} : any) =>  {
     const idMon = route.params?.idMon || "";
     const idKH = await getIdKH()
     const status = await isInGioHang(idKH, idMon)
+    setIdKH(idKH)
     setInCart(status);
   }
 
@@ -182,17 +186,6 @@ const DetailMonScreen = ({ navigation} : any) =>  {
       //Gọi api thêm giỏ hàng
       showAlert('Thêm vào giỏ hàng', "Món " + tenMon);
     }
-  };
-
-  const showAlert = (title: string, message: string) => {
-    Alert.alert(
-      title,
-      message,
-      [
-        { text: 'OK', onPress: () => console.log(title) },
-      ],
-      { cancelable: false }
-    );
   };
 
   const handleSaveReview = async (id: string) => {
@@ -346,8 +339,7 @@ const DetailMonScreen = ({ navigation} : any) =>  {
           <StarDanhGia trungBinhDanhGia={trungBinhDanhGia}/>
           <Text style={styles.normal}>{tenLM}</Text>
           <View style={{flexDirection: 'row'}}>
-            <Text style={styles.normal}>{giaTien}</Text>
-            <Text style={[styles.normal, { textDecorationLine: 'underline', paddingLeft: 5 }]}>đ</Text>
+            <Text style={styles.normal}>{formatCurrency(giaTien)}</Text>
           </View>
 
           {showMoreContent && (
@@ -370,27 +362,14 @@ const DetailMonScreen = ({ navigation} : any) =>  {
             icon={<Delivery />}
           />
 
-          <View style={styles.chonDanhGia}>
-            <Text style={styles.label}>Đánh giá của bạn!</Text>
-            <View style={styles.row}>
-              <FontAwesomeIcon icon={faStar} color={appColors.yellow} size={appIcon.normal}/>
-              <Picker
-                selectedValue={rating}
-                style={styles.picker}
-                onValueChange={(itemValue, itemIndex) => setRating(itemValue)}
-                // mode="dropdown"
-                >
-                <Picker.Item label="1" value={1} />
-                <Picker.Item label="2" value={2} />
-                <Picker.Item label="3" value={3} />
-                <Picker.Item label="4" value={4} />
-                <Picker.Item label="5" value={5} />
-              </Picker>
-            </View>
-            <TouchableOpacity onPress={()=>handleSaveReview(idKH)} style={styles.button}>
-                <Text style={styles.buttonText}>Lưu</Text>
-            </TouchableOpacity>
-          </View>
+          <OptionPicker
+                option={rating}
+                onOptionChange={setRating}
+                options={[1, 2, 3, 4, 5]}
+                handleSave={()=>{handleSaveReview(idKH)}}
+                optionTitle="Đánh giá của bạn!" // Optional title
+                icon={faStar}
+          />
 
           <View>
             <Text>Số đánh giá {soLuongDanhGia}</Text>

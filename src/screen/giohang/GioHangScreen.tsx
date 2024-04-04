@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, ViewStyle, Alert  } fr
 import NavProps from '../../models/props/NavProps';
 import { appColors } from '../../constants/appColors';
 import FloatingButton from '../../component/giohang/FloatingButton';
-import { faShoppingCart, faReceipt, faPlus, faCheckCircle , faCircle } from '@fortawesome/free-solid-svg-icons'; // Import the icon
+import { faShoppingCart, faReceipt, faPlus, faCheckCircle , faCircle, faTimes } from '@fortawesome/free-solid-svg-icons'; // Import the icon
 import { getData } from '../../utils/storageUtils';
 import { useIsFocused, useRoute } from '@react-navigation/native';
 import { ScrollView, FlatList } from 'react-native-gesture-handler';
@@ -12,6 +12,9 @@ import { appImageSize } from '../../constants/appImageSize';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import DeliveryNote from '../../component/detail/DeliveryNote';
 import { BillCreateNote, Delivery } from '../../assest/svgs/index';
+import { formatCurrency } from '../../utils/currencyFormatUtils';
+import { showAlert } from '../../utils/showAlert';
+import { appIcon } from '../../constants/appIcon';
 
 const DanhSachGioHangResExample = {
   success: true,
@@ -51,6 +54,14 @@ const DanhSachGioHangResExample = {
   msg: ""
 }
 
+const xoaGioHangResExample = {
+  success: true,
+  index: {
+    idMon: "2"
+  },
+  msg: "Xóa thành công"
+}
+
 const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
   const route : any = useRoute();
   const [idKH, setIdKH] = useState("");
@@ -59,7 +70,6 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
   let saveList: any[] = [];
 
   const handleSaveItem = (item: any, isSelected: boolean) => {
-    console.log(isSelected)
     if (isSelected) {
       const index = saveList.findIndex((savedItem) => savedItem.idGH === item.idGH);
       if (index === -1) {
@@ -71,7 +81,6 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
         saveList.splice(index, 1);
       }
     }
-    console.log(saveList)
   };
   
 
@@ -111,18 +120,6 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
       console.log(e);
     }
   }
-
-
-  const showAlert = (title: string, message: string) => {
-    Alert.alert(
-      title,
-      message,
-      [
-        { text: 'OK', onPress: () => console.log(title) },
-      ],
-      { cancelable: false }
-    );
-  };
   
   const taoHoaDon = () => {
     if(saveList.length == 0){
@@ -131,9 +128,11 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
     }
     const firstStoreId = saveList[0].idCH;
     const isInSameStore = saveList.every(item => item.idCH === firstStoreId);
+    const list = saveList.map(item => ({ ...item, soLuong: 1 }));
     if (isInSameStore) {
       navigation.navigate('AddHoaDonScreen', {
-        saveList: saveList // Danh sách những món sẽ đặt
+        idKH: idKH,
+        saveList: list // Danh sách những món sẽ đặt
       });
     } else {
       showAlert("Không thể tạo đơn hàng!", "Quý khách hàng vui lòng chọn các món thuộc cùng một cửa hàng")
@@ -159,6 +158,37 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
       });
     };
 
+    const removeFromList = (id: string, ten: string) => {
+      showAlert("Bạn có muốn xóa ?", "Xóa món " + ten + " khỏi giỏ hàng của bạn.", true)
+        .then(result => {
+          if (result) {
+            try{
+            //Gọi api xóa
+            // const res : any = await authenticationAPI.HandleAuthentication(
+            //   '/khachhang/gioHang' + "/" + id,
+            //   {idMon: id}
+            //   'delete',
+            // );
+              const res : any = xoaGioHangResExample
+              if(res.success === true){
+                const updatedDanhSachDatMon = danhSachGioHang.filter(item => item.idMon !== id);  
+                setDanhSachGioHang(updatedDanhSachDatMon);
+                saveList = [];
+              }
+              showAlert("Xóa món", res.msg, false)
+            }
+            catch(e){
+              showAlert("Xóa món", "Xóa món thất bạn", false)
+            }
+          }
+        })
+        .catch(e => {
+          // Handle error if necessary
+          showAlert("Xóa món", "Xóa món thất bạn", false)
+        });
+    }
+    
+
     return (
       <TouchableOpacity style={styles.itemContainer} onPress={() => handleItemPress(isSelected)} onLongPress={()=> openSearchScreen(item.idMon)} activeOpacity={0.7}>
         <View style={styles.checkboxContainer}>
@@ -174,9 +204,14 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
           source={item.hinhAnh ? { uri: item.hinhAnh } : require('./../../assest/image/default-image.jpg')} 
         />
         <View style={styles.itemDetails}>
-          <Text style={styles.itemName}>{item.tenMon}</Text>
+        <View style={{flexDirection: 'row', flex: 1, justifyContent: 'space-between', alignItems: 'center'}}>
+            <Text style={styles.itemName}>{item.tenMon}</Text>
+            <TouchableOpacity onPress={()=>removeFromList(item.idMon, item.tenMon)}>
+              <FontAwesomeIcon icon={faTimes} size={appIcon.normal}/>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.normal}>{item.tenCH}</Text>
-          <Text style={styles.normal}>{item.giaTien}</Text>
+          <Text style={styles.normal}>{formatCurrency(item.giaTien)}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -213,7 +248,7 @@ const styles = StyleSheet.create({
   contain: {
     flex: 1,
     backgroundColor: '#ffffff',
-    padding: 10,
+    paddingHorizontal: 10,
   },
   //Item
   itemContainer: {
