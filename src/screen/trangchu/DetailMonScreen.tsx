@@ -19,6 +19,7 @@ import { getData } from '../../utils/storageUtils';
 import OptionPicker from '../../component/detail/OptionPicker';
 import { formatCurrency } from '../../utils/currencyFormatUtils';
 import { showAlert } from '../../utils/showAlert';
+import QuantityComponent from '../../component/text/QuantityComponent';
 
 const chiTietMonResExample = {
   success: true,
@@ -371,9 +372,9 @@ const DetailMonScreen = ({ navigation} : any) =>  {
                 icon={faStar}
           />
 
-          <View>
-            <Text>Số đánh giá {soLuongDanhGia}</Text>
-          </View>
+          <QuantityComponent
+            label="Số đánh giá"
+            soLuong={soLuongDanhGia}/>
           <FlatList
               scrollEnabled={false}
               data={danhSachDanhGia}

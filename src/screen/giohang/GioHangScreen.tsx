@@ -15,6 +15,7 @@ import { BillCreateNote, Delivery } from '../../assest/svgs/index';
 import { formatCurrency } from '../../utils/currencyFormatUtils';
 import { showAlert } from '../../utils/showAlert';
 import { appIcon } from '../../constants/appIcon';
+import QuantityComponent from '../../component/text/QuantityComponent';
 
 const DanhSachGioHangResExample = {
   success: true,
@@ -204,7 +205,7 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
           source={item.hinhAnh ? { uri: item.hinhAnh } : require('./../../assest/image/default-image.jpg')} 
         />
         <View style={styles.itemDetails}>
-        <View style={{flexDirection: 'row', flex: 1, justifyContent: 'space-between', alignItems: 'center'}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
             <Text style={styles.itemName}>{item.tenMon}</Text>
             <TouchableOpacity onPress={()=>removeFromList(item.idMon, item.tenMon)}>
               <FontAwesomeIcon icon={faTimes} size={appIcon.normal}/>
@@ -227,6 +228,9 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
             icon={<BillCreateNote />}
             backgroundColor={appColors.lighterOrange}
           />
+          <QuantityComponent
+            label="Số món giỏ hàng của bạn"
+            soLuong={danhSachGioHang.length}/>
           <FlatList
             scrollEnabled={false}
             data={danhSachGioHang}
@@ -287,10 +291,11 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: appFontSize.normal,
     fontWeight: 'bold',
+    color: appColors.text
   },
   normal: {
     fontSize: appFontSize.normal,
-    color: '#888',
+    color: appColors.text,
   }
   //<==Item==>
 });

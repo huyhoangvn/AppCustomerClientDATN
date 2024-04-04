@@ -34,7 +34,7 @@ const TextViewComponent: React.FC<Props> = ({
       backgroundColor: backgroundColor || 'transparent',
       borderBottomWidth: showBorderBottom ? 1 : 0,
       borderColor: appColors.boderColor,
-      margin: 5,
+      marginVertical: 5,
     },
     leftTextContainer: {
       flex: 0.5,
