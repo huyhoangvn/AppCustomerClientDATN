@@ -18,6 +18,12 @@ import OptionPicker from '../../component/detail/OptionPicker';
 import KhuyenMaiPicker from '../../component/detail/KhuyenMaiPicker';
 import EditTextComponent from '../../component/EditTextComponent';
 import QuantityComponent from '../../component/text/QuantityComponent';
+import EditText from '../../component/edittext/EditText';
+import Button from '../../component/button/MyButtonComponent';
+import MyButtonComponent from '../../component/button/MyButtonComponent';
+import DeliveryNote from '../../component/detail/DeliveryNote';
+import { BillCreateNote } from '../../assest/svgs';
+import authenticationAPI from '../../apis/authApi';
 
 const InfoKHResExample = {
   success: true,
@@ -78,7 +84,14 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   const [khuyenMai, setKhuyenMai] = useState(30)
   const [idKM, setIdKM] = useState("")
   const [tenkhuyenMai, setTenKhuyenMai] = useState(0)
-  const [danhSachKhuyenMai, setDanhSachKhuyenMai] = useState([])
+  const [danhSachKhuyenMai, setDanhSachKhuyenMai] = useState([{
+    idKMCuaToi: "0",
+    idKH: "0",
+    idKM: "0",
+    tieuDe: "Không khuyến mãi",
+    phanTramKhuyenMai: 0,
+    donToiThieu: 0
+  }])
 
   useEffect(()=>{
     setIdCH(saveList[0].idCH)
@@ -162,12 +175,12 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
     .then(result => {
       if (result) {
         try{
-        //Gọi api xóa
-        // const res : any = await authenticationAPI.HandleAuthentication(
-        //   '/khachhang/gioHang' + "/" + id,
-        //   {idMon: id}
-        //   'delete',
-        // );
+          //Gọi api xóa
+          // const res : any = await authenticationAPI.HandleAuthentication(
+          //   '/khachhang/gioHang' + "/" + id,
+          //   {idMon: id}
+          //   'delete',
+          // );
           const res : any = xoaGioHangResExample
           if(res.success === true){
             const updatedDanhSachDatMon = danhSachDatMon.filter(item => item.idMon !== id);    
@@ -224,6 +237,45 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
     }
   };
 
+  const handleTextDiaChiChange = (diaChi: string) => {
+    setDiaChi(diaChi)
+  }
+
+  const muaHang = async () => {
+    try {
+      const dataBody = {
+        idKH: idKH,
+        idCH: idCH,
+        idKM: idKM,
+        diaChiGiaoHang: diaChi,
+        list: danhSachDatMon.map(item => ({
+          idMon: item.idMon,
+          soLuong: item.soLuong
+        }))
+      }
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/datmon/',
+        dataBody,
+        'post',
+      );
+      if (res.success === true) {
+        const { index } = res;
+        const result = await showAlert("Thêm hóa đơn thành công", "Hiển thị chi tiết hóa đơn đã tạo", true)
+        .then(result => {
+          if (result) {
+            navigation.navigate('DetailHoaDonScreen', {
+              idHD: res.hoaDon.idHD,
+            });
+          }
+        })
+      } else {
+        showAlert("Thêm hóa đơn thất bại", res.msg)
+      }
+    } catch (e) {
+      showAlert("Thêm hóa đơn thất bại", "Lỗi hệ thống")
+    }
+  }
+
   const GioHangItem = ({ item , onSaveItem }: { item: any, onSaveItem: Function }) => {
 
     //openSearchScreen(item.idMon)
@@ -276,21 +328,15 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
             leftText="Tổng tiền"
             rightText={formatCurrency(tongTien)}
           />
-          <EditTextComponent
+          <EditText
             label="Địa chỉ giao hàng"
             placeholder="Nhập địa chỉ giao hàng"
             value={diaChi}
-            onChangeText={handleAddressChange}
-            iconColor="gray"
+            onChangeText={handleTextDiaChiChange}
+            inputType="default"
             icon={faLocationDot}
-          />
-          <EditTextComponent
-            label="Số điện thoại"
-            placeholder="Nhập số điện thoại liên hệ"
-            value={diaChi}
-            onChangeText={handlePhoneChange}
-            iconColor="gray"
-            icon={faPhone}
+            iconColor={appColors.gray}
+            borderColor={appColors.boderColor}
           />
           <KhuyenMaiPicker
             option={idKM}
@@ -305,6 +351,13 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
             backgroundColor={appColors.secondary}
             showBorderBottom={false}
           />
+          <DeliveryNote
+            title="Ấn vào nút bên dưới để đặt hàng"
+            mainText="Không bao gồm phí vận chuyển!"
+            icon={<BillCreateNote />}
+            backgroundColor={appColors.lighterOrange}
+          />
+          <MyButtonComponent text="Đặt hàng" onPress={muaHang} color={appColors.primary}/>
       </ScrollView>
     </View>
   );

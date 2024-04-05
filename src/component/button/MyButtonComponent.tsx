@@ -7,9 +7,9 @@ interface ButtonProps {
   onPress: (...args: any[]) => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ color = 'orange', text, onPress }) => {
+const MyButtonComponent: React.FC<ButtonProps> = ({ color = 'orange', text, onPress }) => {
   return (
-    <TouchableOpacity style={[styles.button, { backgroundColor: color }]} onPress={onPress}>
+    <TouchableOpacity style={[styles.button, { backgroundColor: color }]} onPress={onPress} activeOpacity={0.7}>
       <Text style={styles.buttonText}>{text}</Text>
     </TouchableOpacity>
   );
@@ -17,10 +17,11 @@ const Button: React.FC<ButtonProps> = ({ color = 'orange', text, onPress }) => {
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 5,
+    borderRadius: 26.5,
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginVertical: 5,
+    elevation: 2,
   },
   buttonText: {
     fontSize: 16,
@@ -30,4 +31,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Button;
+export default MyButtonComponent;
