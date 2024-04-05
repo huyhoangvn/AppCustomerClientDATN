@@ -26,6 +26,8 @@ interface Props {
   styleTag?: StyleProp<TextStyle>;
   styleTitle?: StyleProp<TextStyle>;
   styleSeeMore?: StyleProp<TextStyle>;
+  onItemClick?: (item: Mon) => void; // New prop for item click event
+
 }
 
 const FlatListHomeComponent: React.FC<Props> = ({
@@ -39,10 +41,16 @@ const FlatListHomeComponent: React.FC<Props> = ({
   styleTag,
   styleTitle,
   styleSeeMore,
+  onItemClick
 }) => {
   const renderItem = ({item}: {item: Mon}) => {
+    const handleItemClick = () => {
+      if (onItemClick) {
+        onItemClick(item); // Call onItemClick prop with the clicked item
+      }
+    };
     return (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleItemClick}>
         <View style={[stylesItem, styles.item]}>
           <Image
             source={

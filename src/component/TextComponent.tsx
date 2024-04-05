@@ -17,10 +17,12 @@ interface Props {
   textAlign?: 'left' | 'center' | 'right'; // Thêm textAlign vào Props
   fontFamily?: string; // Thêm fontFamily vào Props
   marginTop?: number;
+  flex?: number;
+
 }
 
 const TextComponent = (props: Props) => {
-  const { text, size, color, styles, numberOfLines, icon, iconColor, marginLeft,marginTop, textAlign, fontFamily } = props;
+  const { text, size, color, styles, numberOfLines, icon, iconColor, marginLeft,marginTop, textAlign, fontFamily,flex } = props;
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -40,7 +42,7 @@ const TextComponent = (props: Props) => {
             fontSize: size ?? 16,
             marginLeft: marginLeft ?? 0,
             marginTop: marginTop ?? 0,
-
+            flex: flex ?? 0,
             textAlign: textAlign ?? 'left', // Sử dụng textAlign nếu được cung cấp, nếu không, sử dụng giá trị mặc định là 'left'
             fontFamily: fontFamily ?? 'Inter', // Sử dụng fontFamily nếu được cung cấp, nếu không, sử dụng giá trị mặc định là 'Arial'
           },

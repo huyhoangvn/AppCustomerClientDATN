@@ -29,6 +29,7 @@ import AddHoaDonScreen from './src/screen/giohang/AddHoaDonScreen';
 import DetailHoaDonScreen from './src/screen/hoadon/DetailHoaDonScreen';
 import DetailDatMonScreen from './src/screen/hoadon/DetailDatMonScreen';
 import { text } from '@fortawesome/fontawesome-svg-core';
+import VerificationScreen from './src/screen/register/VerificationScreen';
 
 const CustomHeader: React.FC<{ title?: string }> = ({ title = 'Default Title' }) => (
   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -90,6 +91,12 @@ const App: React.FC<AppProps> = () => {
               <Stack.Screen
                 name="RegisterScreen"
                 component={RegisterScreen}
+                options={{headerShown: false}}
+                // options={{title: 'Đăng ký'}}
+              />
+              <Stack.Screen
+                name="VerificationScreen"
+                component={VerificationScreen}
                 options={{headerShown: false}}
                 // options={{title: 'Đăng ký'}}
               />
