@@ -79,12 +79,12 @@ const RegisterScreen: React.FC<NavProps> = ({navigation}) => {
   };
 
   const sendCode = async () => {
-    // const errorMessage = validateInputs();
-    // if (errorMessage) {
-    //   setMsg(errorMessage);
-    //   handleShowAlert();
-    //   return;
-    // }
+    const errorMessage = validateInputs();
+    if (errorMessage) {
+      setMsg(errorMessage);
+      handleShowAlert();
+      return;
+    }
 
     try {
       setIsLoading(true); // Bắt đầu hiển thị màn hình loading
