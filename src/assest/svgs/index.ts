@@ -7,6 +7,8 @@ import DefaultImage from './default-image.svg';
 import DefaultAvatar from './default-avatar.svg';
 import Delivery from './delivery-image.svg';
 import BillCreateNote from './bill-create-image.svg';
+import ArrowRight from './arrow-right.svg'
+
 
 export {
     BillCreateNote,
@@ -17,5 +19,6 @@ export {
     LogoNoText,
     DefaultImage,
     DefaultAvatar,
-    Delivery
+    Delivery,
+    ArrowRight
 };

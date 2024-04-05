@@ -45,6 +45,7 @@ const SearchMonScreen: React.FC<NavProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style = {styles.header}>
       <SearchHeader 
         goBackEvent={goBackEvent}
         setSearchValue={setSearchValue}
@@ -53,9 +54,16 @@ const SearchMonScreen: React.FC<NavProps> = ({ navigation }) => {
         searchOnTextChange={true}
         handleChangeText={(text: string)=>handleChangeText(text)}
       />
-      <TouchableOpacity onPress={() => openSearchScreen("idMon")}>
+      </View>
+
+    
+      {/* <TouchableOpacity onPress={() => openSearchScreen("idMon")}>
         <Text style={{ color: appColors.red }}>Chi tiết món</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+
+      <View style={styles.main}>
+        <Text>SearchMonScreen</Text>
+        </View>
     </View>
   );
 };
@@ -66,6 +74,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10
   },
+  header: {
+
+  },
+  main: {
+    
+  }
 });
 
 export default SearchMonScreen;
