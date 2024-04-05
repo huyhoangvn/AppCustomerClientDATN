@@ -227,7 +227,7 @@ const VerificationScreen: React.FC<NavProps> = ({navigation, route}: any) => {
           }
           onPress={handleChangeVerification}
         />
-        {limit < 0 ? (
+        {limit > 0 ? (
           <>
             <TextComponent
               text="Gửi lại code sau"
