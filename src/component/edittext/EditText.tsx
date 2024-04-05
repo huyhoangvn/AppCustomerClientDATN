@@ -2,6 +2,7 @@ import React from 'react';
 import { TextInput, View, StyleSheet, Text } from 'react-native';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { appColors } from '../../constants/appColors';
 
 interface EditTextProps {
   label?: string;
@@ -27,15 +28,17 @@ const EditText: React.FC<EditTextProps> = ({
   onChangeText,
 }) => {
   return (
-    <View style={[styles.container, { borderColor }]}>
+    <View style={[styles.container, { borderColor : borderColor }]}>
       {icon && <FontAwesomeIcon icon={icon} style={[styles.icon, { color: iconColor } as any]} />}
       <TextInput
         placeholder={placeholder}
-        placeholderTextColor="#808080"
+        placeholderTextColor={appColors.boderColor}
         style={[styles.input, { color: textColor }]}
         keyboardType={inputType}
         value={value}
         onChangeText={onChangeText}
+        multiline={true}
+        numberOfLines={2}
       />
     </View>
   );
@@ -46,10 +49,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 2,
-    borderRadius: 5,
-    marginHorizontal: 10,
-    marginVertical: 5,
+    borderWidth: 1,
+    borderRadius: 8,
+    marginVertical: 10,
     paddingVertical: 0,
     paddingHorizontal: 10
   },

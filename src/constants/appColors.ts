@@ -10,7 +10,7 @@ export const appColors = {
   gray5: '#d9d9d9',
   link: '#5669FF',
   red: '#EA4335',
-  boderColor: '#D2D2D2',
+  boderColor: '#919191',
   green: '#3BB647',
   editTextColor: '#EAEAEA',
   yellow: '#FFB800',

@@ -16,6 +16,7 @@ import { formatCurrency } from '../../utils/currencyFormatUtils';
 import { showAlert } from '../../utils/showAlert';
 import { appIcon } from '../../constants/appIcon';
 import QuantityComponent from '../../component/text/QuantityComponent';
+import authenticationAPI from '../../apis/authApi';
 
 const DanhSachGioHangResExample = {
   success: true,
@@ -25,8 +26,8 @@ const DanhSachGioHangResExample = {
       tenMon: "Banh Flan",
       tenLM: "Tráng Miệng",
       tenCH: "Five Star",
-      idMon: "1",
-      idCH: "2",
+      idMon: "65f02d1683c3fb2fccd58db8",
+      idCH: "65c0f2bb22ed9c4308ef8dc4",
       giaTien: 20000,
       hinhAnh: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/10f13510774061.560eadfde5b61.png",
     },
@@ -35,8 +36,8 @@ const DanhSachGioHangResExample = {
       tenMon: "Banh Flan",
       tenLM: "Tráng Miệng",
       tenCH: "Five Star",
-      idMon: "2",
-      idCH: "2",
+      idMon: "660ff1195b8f50c096c77ef5",
+      idCH: "65c0f2bb22ed9c4308ef8dc4",
       giaTien: 25000,
       hinhAnh: "http://10.0.2.2:3000/public/images/kudo.jpeg"
     },
@@ -108,7 +109,7 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
 
     try {
       // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/gioHang' + "/" + id,
+      //   '/khachhang/gioHang/get-gio-hang-by-id' + "/" + id,
       //   'get',
       // );
       const res : any = DanhSachGioHangResExample
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
     color: appColors.primary
   },
   circleIcon: {
-    color: appColors.boderColor, // Make the circle transparent
+    color: appColors.inactiveGray, // Make the circle transparent
   },
   itemImage: {
     width: appImageSize.size75.width,
