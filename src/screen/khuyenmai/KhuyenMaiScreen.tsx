@@ -6,7 +6,6 @@ import { faMoneyBillAlt, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { appColors } from '../../constants/appColors';
 import GoiYKhuyenMaiScreen from './KhuyenMaiGoiYScreen';
-import CuaBanKhuyenMaiScreen from './KhuyenMaiCuaBanScreen';
 import KhuyenMaiCuaBanScreen from './KhuyenMaiCuaBanScreen';
 import { appIcon } from '../../constants/appIcon';
 
@@ -32,13 +31,14 @@ const KhuyenMaiScreen = () => {
       }}
     >
       <Tab.Screen 
-        name="KhuyenMaiCuaBanScreen" 
-        component={KhuyenMaiCuaBanScreen} 
-        options={renderTabScreenOptions('Gợi ý')}
-      />
-      <Tab.Screen 
         name="GoiYKhuyenMaiScreen" 
         component={GoiYKhuyenMaiScreen} 
+        options={renderTabScreenOptions('Gợi ý')}
+        //GoiYKhuyenMaiScreen
+      />
+      <Tab.Screen 
+        name="KhuyenMaiCuaBanScreen" 
+        component={KhuyenMaiCuaBanScreen} 
         options={renderTabScreenOptions('Của bạn')}
       />
     </Tab.Navigator>
