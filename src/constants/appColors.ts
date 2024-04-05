@@ -24,6 +24,7 @@ export const appColors = {
   inactiveGray: "#D2D2D2",//Màu xám nút ko hoạt động
   textGray: "#8A8A8A",//Màu xám cho chữ trên nền trắng
   daThanhToan: "#5A9324",//Màu đã thanh toán
+  khuyenMai: "#d3d7f4"
 };
 
 // export const FONT_SIZE: number = 16;
