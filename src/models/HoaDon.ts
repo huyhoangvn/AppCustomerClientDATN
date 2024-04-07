@@ -7,7 +7,7 @@ export interface HoaDon{
     phanTramKhuyenMaiDat?: number
     diaChiGiaoHang?: string
     ghiChu?: string
-    thoiGianTao?: Date
+    thoiGianTao?: string
     tongTien?: string
     thoiGianGiaoHangDuKien?: Date
     trangThaiThanhToan?: number
