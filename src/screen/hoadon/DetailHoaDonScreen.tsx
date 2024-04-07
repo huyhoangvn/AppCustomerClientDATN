@@ -345,7 +345,6 @@ const styles = StyleSheet.create({
     fontSize: appFontSize.normal,
     fontWeight: 'bold',
     color: appColors.text
->>>>>>> dev
   },
   normal: {
     fontSize: appFontSize.normal,
