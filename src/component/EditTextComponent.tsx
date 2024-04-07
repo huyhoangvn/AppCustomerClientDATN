@@ -11,8 +11,10 @@ import {
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCalendarTimes, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker from @react-native-community/datetimepicker
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker'; // Chỉnh sửa dòng import
 import { appColors } from '../constants/appColors';
+
+// Sử dụng dữ liệu mẫu appColors cho mục đích demo
 
 interface Props {
   label?: string;
@@ -26,8 +28,10 @@ interface Props {
   iconRight?: IconProp;
   iconColor?: string;
   textStyles?: StyleProp<TextStyle>;
+  onDateSelected?: (selectedDate: Date | string) => void; // Cập nhật kiểu dữ liệu
   onChangeText?: (text: string) => void;
-  onUpdate?: (time: string) => void;}
+  onUpdate?: (time: string) => void;
+}
 
 const EditTextComponent = (props: Props) => {
   const {
@@ -43,46 +47,66 @@ const EditTextComponent = (props: Props) => {
     onChangeText,
     stylesEdit,
     stylesContainer,
+    onDateSelected,
     onUpdate,
   } = props;
   const [showPassword, setShowPassword] = useState(false);
   const [showDate, setShowDate] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date()); // Initialize selectedDate with current date and time
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(new Date());
 
   const toggleVisibility = () => {
     if (label === 'pass') {
       setShowPassword(!showPassword);
     } else if (label === 'date') {
       setShowDate(!showDate);
+    } else if (label === 'time') {
+      setShowDate(!showDate);
+    }
+  };
+  const handleDateChange = (event: DateTimePickerEvent, selectedDate: Date) => {
+    setShowDate(false);
+  
+    // Định dạng ngày thành chuỗi "dd/mm/yyyy"
+    const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}/${
+      (selectedDate.getMonth() + 1).toString().padStart(2, '0')}/${
+      selectedDate.getFullYear()}`;
+  
+    if (onDateSelected) {
+        onDateSelected(formattedDate); // Truyền ngày đã định dạng xuống trang con
     }
   };
 
-  // Trong hàm handleDateChange, gọi onUpdate để cập nhật giá trị thời gian
-  const handleDateChange = (event: any, selectedDate: Date) => {
-    setShowDate(false); // Close the DateTimePicker when a date is selected
-    
-    // Định dạng thời gian đã chọn thành chuỗi HH:mm
-    const formattedTime = selectedDate.getHours().toString().padStart(2, '0') + ':' +
-                          selectedDate.getMinutes().toString().padStart(2, '0');
   
-    // Gửi thời gian đã định dạng tới hàm onUpdate
-    if (props.onUpdate) {
-      props.onUpdate(formattedTime); // Cập nhật giá trị thời gian
+  const handleTimeChange = (event: DateTimePickerEvent, selectedTime?: Date) => {
+    setShowDate(false);
+
+    if (selectedTime) {
+      setSelectedTime(selectedTime);
+
+      // Format the selected time
+      const formattedTime = selectedTime.getHours().toString().padStart(2, '0') + ':' +
+                            selectedTime.getMinutes().toString().padStart(2, '0');
+
+      // Pass the formatted time to the parent component
+      if (onUpdate) {
+        onUpdate(formattedTime);
+      }
     }
   };
-  
+
   return (
-    <View style={[styles.container, { borderColor }, stylesContainer]}>
+    <View style={[styles.container, {borderColor}, stylesContainer]}>
       {icon && (
         <FontAwesomeIcon
           icon={icon}
-          style={[styles.icon, { color: iconColor } as ViewStyle]} // Cast the style object to ViewStyle
+          style={[styles.icon, {color: iconColor} as ViewStyle]} // Cast the style object to ViewStyle
         />
       )}
       <TextInput
         placeholder={placeholder}
         placeholderTextColor="#808080"
-        style={[textStyles, styles.input, { color: textColor }, stylesEdit]}
+        style={[textStyles, styles.input, {color: textColor}, stylesEdit]}
         secureTextEntry={label === 'pass' ? !showPassword : false}
         value={value}
         onChangeText={onChangeText}
@@ -92,11 +116,11 @@ const EditTextComponent = (props: Props) => {
         <TouchableOpacity onPress={toggleVisibility}>
           <FontAwesomeIcon
             icon={iconRight}
-            style={[styles.icon, { color: iconColor } as ViewStyle]} // Add 'as ViewStyle' to specify the 'color' property
+            style={[styles.icon, {color: iconColor} as ViewStyle]} // Cast the style object to ViewStyle
           />
         </TouchableOpacity>
       )}
-      {(label === 'pass' || label === 'date') && (
+      {(label === 'pass' || label === 'date' || label === 'time') && (
         <TouchableOpacity onPress={toggleVisibility}>
           <FontAwesomeIcon
             icon={
@@ -106,19 +130,31 @@ const EditTextComponent = (props: Props) => {
                   : faEye
                 : faCalendarTimes
             }
-            style={[styles.icon, { color: iconColor } as ViewStyle]} // Add 'as ViewStyle' to specify the 'color' property
+            style={[styles.icon, {color: iconColor} as ViewStyle]} // Add 'as ViewStyle' to fix the problem
           />
         </TouchableOpacity>
       )}
       {showDate && label === 'date' && (
         <DateTimePicker
           value={selectedDate}
+          mode="date"
+          display="spinner"
+          onChange={(event: any, selectedDate: Date | undefined) =>
+            handleDateChange(event, selectedDate as Date)
+          }
+        />
+      )}
+      {showDate && label === 'time' && (
+        <DateTimePicker
+          value={selectedDate}
           mode="time" 
           is24Hour={true} 
           display="spinner" // Use 'spinner' for Android
-          onChange={handleDateChange}
+          onChange={handleTimeChange}
         />
       )}
+
+      
     </View>
   );
 };
@@ -132,15 +168,15 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     paddingVertical: 0,
     paddingHorizontal: 10,
-    backgroundColor: appColors.editTextColor,
-    elevation: 8, // Adjust the elevation value as needed
+    backgroundColor: appColors.white,
+    elevation: 8,
   },
   input: {
     borderRadius: 20,
     flex: 1,
     fontSize: 16,
     paddingLeft: 10,
-    backgroundColor: appColors.editTextColor,
+    backgroundColor: appColors.white,
   },
   icon: {
     paddingHorizontal: 20,
