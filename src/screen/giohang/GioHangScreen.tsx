@@ -221,23 +221,25 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
 
 
   return (
-    <View style={styles.contain}>
+    <View style={styles.container}>
       <ScrollView>
-          <DeliveryNote
-            title="Ấn vào nút bên dưới để tạo hóa đơn "
-            mainText="Hãy chọn những đơn cùng cửa hàng!"
-            icon={<BillCreateNote />}
-            backgroundColor={appColors.lighterOrange}
-          />
-          <QuantityComponent
-            label="Số món giỏ hàng của bạn"
-            soLuong={danhSachGioHang.length}/>
-          <FlatList
-            scrollEnabled={false}
-            data={danhSachGioHang}
-            renderItem={({ item }: any) => <GioHangItem item={item} onSaveItem={handleSaveItem}/>}
-            keyExtractor={(item : any) => item.idGH}
-          />
+          <View style={styles.contain}>
+            <DeliveryNote
+              title="Ấn vào nút bên dưới để tạo hóa đơn "
+              mainText="Hãy chọn những đơn cùng cửa hàng!"
+              icon={<BillCreateNote />}
+              backgroundColor={appColors.lighterOrange}
+            />
+            <QuantityComponent
+              label="Số món giỏ hàng của bạn"
+              soLuong={danhSachGioHang.length}/>
+            <FlatList
+              scrollEnabled={false}
+              data={danhSachGioHang}
+              renderItem={({ item }: any) => <GioHangItem item={item} onSaveItem={handleSaveItem}/>}
+              keyExtractor={(item : any) => item.idGH}
+            />
+          </View>
       </ScrollView>
       <FloatingButton
         onPressItem={taoHoaDon}
@@ -250,9 +252,11 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  contain: {
+  container: {
     flex: 1,
     backgroundColor: '#ffffff',
+  },
+  contain: {
     paddingHorizontal: 10,
   },
   //Item
