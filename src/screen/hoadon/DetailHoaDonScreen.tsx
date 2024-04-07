@@ -313,6 +313,7 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+
     justifyContent: 'flex-start',
     paddingHorizontal: 10,
   },
@@ -344,6 +345,7 @@ const styles = StyleSheet.create({
     fontSize: appFontSize.normal,
     fontWeight: 'bold',
     color: appColors.text
+>>>>>>> dev
   },
   normal: {
     fontSize: appFontSize.normal,
