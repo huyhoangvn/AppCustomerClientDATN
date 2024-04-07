@@ -67,6 +67,12 @@ const DanhSachKhuyenMaiResExample = {
   msg: ""
 }
 
+const themHoaDonRes = {
+  success: true,
+  index: "1",
+  msg: "Xóa thành công"
+}
+
 const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   const route : any = useRoute();
   // Truy cập các tham số từ đối tượng route
@@ -92,6 +98,7 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
     phanTramKhuyenMai: 0,
     donToiThieu: 0
   }])
+  const [phiGiaoHang, setPhiGiaoHang] = useState(24000)
 
   useEffect(()=>{
     setIdCH(saveList[0].idCH)
@@ -207,7 +214,7 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   const hienThiTien = () => {
     const tongTien = tinhTongTien(danhSachDatMon)
     setTongTien(tongTien)
-    const thanhTien = tongTien - Math.ceil(tongTien*khuyenMai/100)
+    const thanhTien = tongTien - Math.ceil(tongTien*khuyenMai/100) + phiGiaoHang
     setThanhTien(thanhTien)
   }
 
@@ -253,18 +260,19 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
           soLuong: item.soLuong
         }))
       }
-      const res : any = await authenticationAPI.HandleAuthentication(
-        '/khachhang/datmon/',
-        dataBody,
-        'post',
-      );
+      // const res : any = await authenticationAPI.HandleAuthentication(
+      //   '/khachhang/datmon/',
+      //   dataBody,
+      //   'post',
+      // );
+      const res = themHoaDonRes
       if (res.success === true) {
         const { index } = res;
         const result = await showAlert("Thêm hóa đơn thành công", "Hiển thị chi tiết hóa đơn đã tạo", true)
         .then(result => {
           if (result) {
             navigation.navigate('DetailHoaDonScreen', {
-              idHD: res.hoaDon.idHD,
+              idHD: res.index,
             });
           }
         })
@@ -313,8 +321,8 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   };
 
   return (
+    <ScrollView>
     <View style={styles.contain}>
-      <ScrollView>
           <QuantityComponent
               label="Số lượng đặt món"
               soLuong={soLuongMonDat}/>          
@@ -338,6 +346,12 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
             iconColor={appColors.gray}
             borderColor={appColors.boderColor}
           />
+          <DeliveryNote
+            title="Ấn vào nút bên dưới để đặt hàng"
+            mainText="Phí vận chuyển 24.000 đ"
+            icon={<BillCreateNote />}
+            backgroundColor={appColors.lighterOrange}
+          />
           <KhuyenMaiPicker
             option={idKM}
             onOptionChange={handleOptionChange}
@@ -351,15 +365,9 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
             backgroundColor={appColors.secondary}
             showBorderBottom={false}
           />
-          <DeliveryNote
-            title="Ấn vào nút bên dưới để đặt hàng"
-            mainText="Không bao gồm phí vận chuyển!"
-            icon={<BillCreateNote />}
-            backgroundColor={appColors.lighterOrange}
-          />
           <MyButtonComponent text="Đặt hàng" onPress={muaHang} color={appColors.primary}/>
-      </ScrollView>
     </View>
+    </ScrollView>
   );
 };
 
