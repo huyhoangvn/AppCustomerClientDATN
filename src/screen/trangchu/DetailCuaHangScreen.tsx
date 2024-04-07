@@ -224,8 +224,8 @@ const DetailMonScreen = ({ navigation } : any) =>  {
   };
 
   return (
+    <ScrollView>
     <View style={styles.container}>
-      <ScrollView>
         <Header backgroundImageUrl={hinhAnh} color={appColors.white}/>
         <View style={styles.main}>
             <Text style={styles.title}>{tenCH}</Text>
@@ -261,8 +261,8 @@ const DetailMonScreen = ({ navigation } : any) =>  {
                 <Text style={{color: appColors.primary, fontSize: appFontSize.normal}}>Xem thêm</Text>
             </TouchableOpacity>
           </View>
-      </ScrollView>
     </View>
+    </ScrollView>
   );
 };
 
