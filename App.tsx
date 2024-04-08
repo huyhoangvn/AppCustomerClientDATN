@@ -30,6 +30,7 @@ import DetailHoaDonScreen from './src/screen/hoadon/DetailHoaDonScreen';
 import DetailDatMonScreen from './src/screen/hoadon/DetailDatMonScreen';
 import { text } from '@fortawesome/fontawesome-svg-core';
 import VerificationScreen from './src/screen/register/VerificationScreen';
+import ForGotPasswordScreen from './src/screen/ForGotPasswordScreen';
 
 const CustomHeader: React.FC<{ title?: string }> = ({ title = 'Default Title' }) => (
   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -98,6 +99,12 @@ const App: React.FC<AppProps> = () => {
                 name="VerificationScreen"
                 component={VerificationScreen}
                 options={{headerShown: false}}
+                // options={{title: 'Đăng ký'}}
+              />
+              <Stack.Screen
+                name="ForgotPasswordScreen"
+                component={ForGotPasswordScreen}
+                options={{headerShown: true, title: ''}}
                 // options={{title: 'Đăng ký'}}
               />
               {/* Trang chủ với nav bar */}
