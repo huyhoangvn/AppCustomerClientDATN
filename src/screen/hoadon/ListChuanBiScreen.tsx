@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TouchableHighlight,
 } from 'react-native';
 import NavProps from '../../models/props/NavProps';
 import EditTextComponent from '../../component/EditTextComponent';
@@ -153,7 +154,8 @@ const ListChuanBiScreen: React.FC<NavProps> = ({navigation}) => {
   const renderItem = ({item}: {item: HoaDon}) => {
     const {formattedDate, formattedTime} = formatDate(item.thoiGianTao);
     return (
-      <TouchableOpacity onPress={() => handelDetail(item)}>
+      <TouchableHighlight   underlayColor="#F2F2F2" // Màu sắc khi chạm vào
+      onPress={() => handelDetail(item)}>
         <View style={styles.item}>
           <View style={{paddingHorizontal: 10}}>
             <Text style={{fontWeight: 'bold', color: 'black'}}>
@@ -183,7 +185,7 @@ const ListChuanBiScreen: React.FC<NavProps> = ({navigation}) => {
             </Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </TouchableHighlight>
     );
   };
 
@@ -284,14 +286,16 @@ const styles = StyleSheet.create({
     flex: 2,
   },
 
+ 
   item: {
+    marginVertical: 5,
     marginHorizontal: 10,
     padding: 10,
-    borderColor: 'black',
-    borderWidth: 0.5,
-    marginTop: 15,
+    flexDirection: 'column',
     borderRadius: 10,
-    flexDirection: 'row',
+    backgroundColor: appColors.white,
+    paddingBottom: 20,
+    elevation: 10
   },
 });
 

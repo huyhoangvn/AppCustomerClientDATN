@@ -31,6 +31,7 @@ import LoadingComponent from '../../component/LoadingComponent';
 import {getData} from '../../utils/storageUtils';
 import EditText from '../../component/edittext/EditText';
 import {appFontSize} from '../../constants/appFontSizes';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [text, setText] = useState('Xem thêm');
@@ -46,7 +47,6 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
   const [date, setDate] = useState<any>();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [position, setPosition] = useState<any>();
-
   const statusPurchase = [
     {label: 'Tất cả', value: ''},
     {label: 'Chờ duyệt', value: 0},
@@ -93,6 +93,7 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
 
     // await getListInvoice(page,code,item.value,payment);
   };
+  
   const actionSearch = async (item: string) => {
     await getListInvoice(item, date, purchase, payment, page);
   };
@@ -182,6 +183,7 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
     return {formattedDate, formattedTime};
   };
 
+
   useEffect(() => {
     getListInvoice('', '', '', '', 1);
   }, []);
@@ -189,7 +191,8 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
   const renderItem = ({item}: {item: HoaDon}) => {
     const {formattedDate, formattedTime} = formatDate(item.thoiGianTao);
     return (
-      <TouchableOpacity onPress={() => handelDetail(item)}>
+      <TouchableHighlight   underlayColor="#F2F2F2" // Màu sắc khi chạm vào
+      onPress={() => handelDetail(item)}>
         <View style={styles.item}>
           <View style={{paddingHorizontal: 10}}>
             <Text style={{fontWeight: 'bold', color: 'black'}}>
@@ -219,7 +222,7 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
             </Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </TouchableHighlight>
     );
   };
 
@@ -360,6 +363,7 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between',
+    marginBottom: 10
   },
   viewDropDow: {
     paddingHorizontal: 10,
@@ -371,13 +375,14 @@ const styles = StyleSheet.create({
   },
 
   item: {
+    marginVertical: 5,
     marginHorizontal: 10,
     padding: 10,
-    borderColor: 'black',
-    borderWidth: 0.5,
-    marginTop: 15,
+    flexDirection: 'column',
     borderRadius: 10,
-    flexDirection: 'row',
+    backgroundColor: appColors.white,
+    paddingBottom: 20,
+    elevation: 10
   },
 });
 

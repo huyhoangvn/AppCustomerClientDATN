@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import NavProps from '../models/props/NavProps';
 
-import {faLock, faUser} from '@fortawesome/free-solid-svg-icons';
+import {faLock, faEnvelope} from '@fortawesome/free-solid-svg-icons';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -51,6 +51,18 @@ const LoginScreen: React.FC<NavProps> = ({navigation}) => {
   const [isRemember, setIsRemember] = useState(false);
 
   // console.log()
+
+   const validateInputs = () => {
+    
+    if (!userName.trim() || !/^\S+@\S+\.\S+$/.test(userName.trim())) {
+      return 'Vui lòng nhập địa chỉ email hợp lệ';
+    }
+
+    if (!password.trim()) {
+      return 'Vui lòng nhập mật khẩu';
+    }
+    return null;
+  };
 
   const handleShowAlert = () => {
     setShowAlert(true);
@@ -119,7 +131,14 @@ const LoginScreen: React.FC<NavProps> = ({navigation}) => {
   };
 
   const handleLogin = async () => {
+    const errorMessage = validateInputs();
+    if (errorMessage) {
+      setMsg(errorMessage);
+      handleShowAlert();
+      return;
+    }
     try {
+      
       setLoading(true); // Bắt đầu hiển thị loading
       const res : any = await authenticationAPI.HandleAuthentication(
         '/khachhang/auth',
@@ -175,7 +194,7 @@ const LoginScreen: React.FC<NavProps> = ({navigation}) => {
           value={userName}
           iconColor="gray"
           onChangeText={handleUserNameChange}
-          icon={faUser}
+          icon={faEnvelope}
         />
 
         <EditTextComponent
@@ -208,12 +227,12 @@ const LoginScreen: React.FC<NavProps> = ({navigation}) => {
               size={14}
             />
           </View>
-          {/* <ButtonComponent
+          <ButtonComponent
             type="link"
             text="Quên mật khẩu ?"
-            onPress={() => navigation.navigate('SignUpScreen')}
+            onPress={() => navigation.navigate('ForgotPasswordScreen')}
             textStyles={{fontWeight: 'bold'}} // Cập nhật style ở đây
-          /> */}
+          />
         </View>
         <ButtonComponent
           type="primary"
