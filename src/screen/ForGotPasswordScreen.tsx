@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Linking} from 'react-native';
 import React, { useState } from 'react';
 import TextComponent from '../component/TextComponent';
 import { appColors } from '../constants/appColors';
@@ -61,13 +61,14 @@ const ForGotPasswordScreen: React.FC<NavProps> = ({navigation}) => {
     }
 
     const handleContinue= () => {
-        const errorMessage = validateInputs();
-        if (errorMessage) {
-          setMsg(errorMessage);
-          handleShowAlert();
-          return;
-        }
-        finAccount()
+      Linking.openURL('momo://app?action=payWithApp&isScanQR=false&serviceType=app&sid=TU9NT3xNT01PMTcxMjY3MjA3NjY0OQ&v=3.0')
+        // const errorMessage = validateInputs();
+        // if (errorMessage) {
+        //   setMsg(errorMessage);
+        //   handleShowAlert();
+        //   return;
+        // }
+        // finAccount()
     }
   return (
     <View style={styles.container}>
