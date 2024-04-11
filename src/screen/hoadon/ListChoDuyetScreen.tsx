@@ -158,9 +158,15 @@ const ListChoDuyetScreen: React.FC<NavProps> = ({navigation}) => {
       onPress={() => handelDetail(item)}>
         <View style={styles.item}>
           <View style={{paddingHorizontal: 10}}>
-            <Text style={{fontWeight: 'bold', color: 'black'}}>
-              MHD:{item.maHD}
-            </Text>
+          <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text style={{fontWeight: 'bold', color: 'black'}}>
+                MHD:{item.maHD}
+              </Text>
+              <Text>
+                {formattedDate || ''} - {formattedTime || ''}
+              </Text>
+            </View>
             <Text style={{fontWeight: 'bold', color: 'black'}}>
               Tổng tiền:{' '}
               {parseInt(item.tongTien || '').toLocaleString('vi-VN', {
@@ -179,9 +185,6 @@ const ListChoDuyetScreen: React.FC<NavProps> = ({navigation}) => {
               ) : (
                 <Text style={{color: 'green'}}> Đã thanh toán</Text>
               )}
-            </Text>
-            <Text style={{color: 'black', fontWeight: 'bold'}}>
-              Ngày tạo: {formattedDate || ''} - {formattedTime || ''}
             </Text>
           </View>
         </View>
@@ -218,7 +221,7 @@ const ListChoDuyetScreen: React.FC<NavProps> = ({navigation}) => {
           {data.length === 0 ? (
             <View style={{height: hp(100)}}>
               <Text style={{textAlign: 'center', fontSize: 20}}>
-                không tìm thấy nhân viên
+                không tìm thấy hoá đơn
               </Text>
               <TouchableOpacity
                 onPress={async () => {
@@ -231,7 +234,6 @@ const ListChoDuyetScreen: React.FC<NavProps> = ({navigation}) => {
                     color: appColors.primary,
                     textDecorationLine: 'underline',
                   }}>
-                  Trở lại
                 </Text>
               </TouchableOpacity>
             </View>
@@ -290,11 +292,10 @@ const styles = StyleSheet.create({
   item: {
     marginVertical: 5,
     marginHorizontal: 10,
-    padding: 10,
+    padding: 15,
     flexDirection: 'column',
     borderRadius: 10,
     backgroundColor: appColors.white,
-    paddingBottom: 20,
     elevation: 10
   },
 });

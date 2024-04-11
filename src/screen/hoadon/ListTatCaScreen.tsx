@@ -31,7 +31,7 @@ import LoadingComponent from '../../component/LoadingComponent';
 import {getData} from '../../utils/storageUtils';
 import EditText from '../../component/edittext/EditText';
 import {appFontSize} from '../../constants/appFontSizes';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import {TouchableHighlight} from 'react-native-gesture-handler';
 const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [text, setText] = useState('Xem thêm');
@@ -93,7 +93,7 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
 
     // await getListInvoice(page,code,item.value,payment);
   };
-  
+
   const actionSearch = async (item: string) => {
     await getListInvoice(item, date, purchase, payment, page);
   };
@@ -183,7 +183,6 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
     return {formattedDate, formattedTime};
   };
 
-
   useEffect(() => {
     getListInvoice('', '', '', '', 1);
   }, []);
@@ -191,13 +190,20 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
   const renderItem = ({item}: {item: HoaDon}) => {
     const {formattedDate, formattedTime} = formatDate(item.thoiGianTao);
     return (
-      <TouchableHighlight   underlayColor="#F2F2F2" // Màu sắc khi chạm vào
-      onPress={() => handelDetail(item)}>
+      <TouchableHighlight
+        underlayColor="#F2F2F2" // Màu sắc khi chạm vào
+        onPress={() => handelDetail(item)}>
         <View style={styles.item}>
           <View style={{paddingHorizontal: 10}}>
-            <Text style={{fontWeight: 'bold', color: 'black'}}>
-              MHD:{item.maHD}
-            </Text>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text style={{fontWeight: 'bold', color: 'black'}}>
+                MHD:{item.maHD}
+              </Text>
+              <Text>
+                {formattedDate || ''} - {formattedTime || ''}
+              </Text>
+            </View>
             <Text style={{fontWeight: 'bold', color: 'black'}}>
               Tổng tiền:{' '}
               {parseInt(item.tongTien || '').toLocaleString('vi-VN', {
@@ -216,9 +222,6 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
               ) : (
                 <Text style={{color: 'green'}}> Đã thanh toán</Text>
               )}
-            </Text>
-            <Text style={{color: 'black', fontWeight: 'bold'}}>
-              Ngày tạo: {formattedDate || ''} - {formattedTime || ''}
             </Text>
           </View>
         </View>
@@ -305,7 +308,7 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
           {data.length === 0 ? (
             <View style={{height: hp(100)}}>
               <Text style={{textAlign: 'center', fontSize: 20}}>
-                không tìm thấy nhân viên
+                không tìm thấy hoá đơn
               </Text>
               <TouchableOpacity
                 onPress={async () => {
@@ -317,9 +320,7 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
                     marginTop: 20,
                     color: appColors.primary,
                     textDecorationLine: 'underline',
-                  }}>
-                  Trở lại
-                </Text>
+                  }}></Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between',
-    marginBottom: 10
+    marginBottom: 10,
   },
   viewDropDow: {
     paddingHorizontal: 10,
@@ -377,12 +378,11 @@ const styles = StyleSheet.create({
   item: {
     marginVertical: 5,
     marginHorizontal: 10,
-    padding: 10,
+    padding: 15,
     flexDirection: 'column',
     borderRadius: 10,
     backgroundColor: appColors.white,
-    paddingBottom: 20,
-    elevation: 10
+    elevation: 10,
   },
 });
 
