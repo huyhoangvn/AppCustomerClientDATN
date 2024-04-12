@@ -14,91 +14,92 @@ import {
 import { appImageSize } from '../../constants/appImageSize';
 import { formatCurrency } from '../../utils/currencyFormatUtils';
 import TextViewComponent from '../../component/text/TextViewComponent';
+import { KhachHang } from '../../models/KhachHang';
+import authenticationAPI from '../../apis/authApi';
+import {useFocusEffect} from '@react-navigation/native';
+import {DefaultAvatar} from '../../assest/svgs';
+import AlertComponent from '../../component/AlertComponent';
+import LoadingComponent from '../../component/LoadingComponent';
 
-
-
-const dummyData = {
-  success: true,
-  index: 
-    {
-      tenKH: "TRAN XUAN DUC",
-      gioiTinh: 2, // 2 for male, 1 for female
-      taiKhoan: "ductxph29059@gmail.com",
-      diaChi: "Vân canh, Hoài Đức, Nam Từ Liêm ",
-      sdt: "0123456789",
-      hinhAnh: "https://cdn-i.vtcnews.vn/files/ctv.giaoduc/2019/03/15/img-1329-1-0135095.jpg" // URL of the image
-    },
-   
-  count: 3,
-  msg: ""
-}
-
-const KhachHangDetailScreen: React.FC<NavProps> = ({ navigation }) =>  {
-
-  const [tenKH, setTenKH] = useState('');
-  const [gioiTinh, setGioiTinh] = useState('');
-  const [taiKhoan, setTaiKhoan] = useState('');
-  const [sdt, setSdt] = useState('');
-  const [diaChi, setDiaChi] = useState('');
-  const [item, setItem] = useState<any>(dummyData);
+const DetailKhachHangScreen: React.FC<NavProps> = ({ navigation, route }:any) =>  {
+  // const {idUser, position} = route.params;
+  const [item, setItem] = useState<any>();
   const [msg, setMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const [data , setData] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+  const handleShowAlert = () => {
+    setShowAlert(true);
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
   const openDoiMatKhauScreen = () => {
     navigation.navigate("ChangeMatKhauScreen");
   };
 
   const openEditDetailKhachHangScreen = () => {
-    navigation.navigate("EditDetailKhachHangScreen");
+    navigation.navigate("EditDetailKhachHangScreen", {item: item});
   };
   const getDetail = async () => {
+    const result = await getData();
+    const idKH = result?.idKH;
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/khachhang' + "/" + id,
-      //   'get',
-      // );
-      const res : any = dummyData
-      console.log(res);
-     
+      setLoading(true);
+      const res : any = await authenticationAPI.HandleAuthentication(
+        `/khachhang/${idKH}`,
+        'get',
+      );
       if (res.success === true) {
-        const { index } = res;
-        setTenKH(index.tenKH);
-        setGioiTinh(index.gioiTinh);
-        setTaiKhoan(index.taiKhoan); //
-        setSdt(index.sdt); //
-        setDiaChi(index.diaChi); //
-
-        console.log(index.tenKH)
+        setItem(res.index);
+        setMsg(res.msg);
+      }
+      else{
+        setMsg(res.msg);
+        handleShowAlert();
       }
     } catch (e) {
       console.log(e);
+      setMsg('Request timeout. Please try again later.');
+      handleCloseAlert();
     } finally {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     getDetail();
   }, []);
-
+  useFocusEffect(
+    React.useCallback(() => {
+      getDetail();    
+      return () => {
+        // Cleanup logic nếu cần (không bắt buộc)
+      };
+    }, []),
+  );
   return (
-    <ScrollView>
+     <ScrollView>
       <View style={styles.container}>
       <View style={styles.header}>
-        <Image
-            source={
-            (!item.hinhAnh || item.hinhAnh === "N/A") ?
-              require('./../../assest/image/default-avatar.jpg') :
-              { uri: item.hinhAnh }}
-            style={{ width: appImageSize.size100.width, height: appImageSize.size100.height, borderRadius: 50 }}
-            defaultSource={require('./../../assest/image/default-avatar.jpg')}
-          />  
-        </View>
+      {item && item.hinhAnh ? (
+      <Image
+       style={{
+         width: wp(40),
+         height: hp(20),
+         borderRadius: wp(20),
+       }}
+       source={{ uri: item.hinhAnh }}
+      />
+       ) : (
+       <DefaultAvatar />
+       )}
+     </View>
         <View style={styles.main}>
           <View style={styles.viewText}>
           <TextViewComponent
             leftText="Tên"
-            rightText={tenKH}
+            rightText={item?.tenKH}
             leftBold={true}
             showBorderBottom={false}
           />
@@ -114,7 +115,7 @@ const KhachHangDetailScreen: React.FC<NavProps> = ({ navigation }) =>  {
           <View style={styles.viewText}>
           <TextViewComponent
             leftText="Email"
-            rightText=  {taiKhoan}
+            rightText=  {item?.taiKhoan}
             leftBold={true}
             showBorderBottom={false}
           /> 
@@ -122,7 +123,7 @@ const KhachHangDetailScreen: React.FC<NavProps> = ({ navigation }) =>  {
           <View style={styles.viewText}>
           <TextViewComponent
             leftText="Địa chỉ"
-            rightText=  {diaChi}
+            rightText=  {item?.diaChi}
             leftBold={true}
             showBorderBottom={false}
           /> 
@@ -131,7 +132,7 @@ const KhachHangDetailScreen: React.FC<NavProps> = ({ navigation }) =>  {
           <View style={styles.viewText}>
           <TextViewComponent
             leftText="Số điện thoại"
-            rightText=  {sdt}
+            rightText=  {item?.sdt}
             leftBold={true}
             showBorderBottom={false}
           />       
@@ -161,6 +162,12 @@ const KhachHangDetailScreen: React.FC<NavProps> = ({ navigation }) =>  {
           boldTitle={false}
         /> 
       </View> 
+      <LoadingComponent visible={loading} />
+      <AlertComponent
+        visible={showAlert}
+        message={msg}
+        onClose={handleCloseAlert}
+      />
     </ScrollView>
   );
 };
@@ -173,7 +180,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   header: {
-    height: hp(15),
+    height: hp(20),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -191,4 +198,4 @@ const styles = StyleSheet.create({
  
 });
 
-export default KhachHangDetailScreen;
+export default DetailKhachHangScreen;

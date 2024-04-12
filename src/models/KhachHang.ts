@@ -1,6 +1,6 @@
 export interface KhachHang{
     _id?: string
-    TenKH?: string
+    tenKH?: string
     taiKhoan?: string
     matKhau?: string
     gioiTinh?: number

@@ -49,8 +49,51 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
 
     return null;
   };
+  const getUser = async () => {
+    const user = await getData();
+    setUserName(user?.taiKhoan || '');
+    setId(user?.idKH || '');
+  };
 
+  useEffect(() => {
+    getUser();
+  }, []);
 
+  const save = async () => {
+    setLoading(true);
+    try {
+      const user = await getData();
+      const id = user?.idKH;
+      const res:any = await authenticationAPI.HandleAuthentication(
+        `/khachhang/doi-mat-khau/${id}`,
+        {matKhauCu: oldPass, matKhauMoi: newPass},
+        'post',
+      );
+
+      if (res.success === true) {
+        setMsg(res.msg);
+        handleShowAlert();
+      } else {
+        setMsg(res.msg);
+        handleShowAlert();
+      }
+    } catch (err) {
+      console.log(err);
+      setMsg('Request timeout. Please try again later.'); // Set error message
+      handleShowAlert();
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handelSave = () => {
+    const errorMessage = validateInputs();
+    if (errorMessage) {
+      setMsg(errorMessage);
+      handleShowAlert();
+      return;
+    }
+    save();
+  };
  
  
   return (
@@ -103,7 +146,7 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
           type="primary"
           text="Lưu"
           textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold', paddingTop:10}}
-          // onPress={handelSave}
+          onPress={handelSave}
         />
       </View>
     </View>
