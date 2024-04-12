@@ -1,60 +1,65 @@
-import React,{ useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, StyleProp, ViewStyle, PermissionsAndroid, Image } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import React, { useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Image, StyleProp, ViewStyle, ImageStyle } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { appColors } from '../constants/appColors';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import * as ImagePicker from 'expo-image-picker';
 
 interface Props {
-    icon: IconProp; // Sử dụng IconProp từ font-awesome-svg-core
-    size: number;
-    stylesNew?: StyleProp<ViewStyle>;
-    onPress?: () => void // Hàm callback khi nút được nhấn, tùy chọn
+    onImageSelect: (imagePath: string) => void;
+    style?: StyleProp<ImageStyle>; // Props style
+    imageUri?: string; // Props uri ảnh
 }
 
-const ImagePickerComponent: React.FC<Props> = ({ icon, size, stylesNew,onPress }) => {
-    const [image, setImage] = useState<string | null>(null);
+
+const ImagePickerComponent: React.FC<Props> = ({ onImageSelect, imageUri, style}) => {
+    const [imagePath, setImagePath] = useState<string | null>(null);
 
     const pickImage = async () => {
         try {
-          const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
-          if(granted === PermissionsAndroid.RESULTS.GRANTED){
-            const result:any = await launchImageLibrary({mediaType: 'photo'});
-            console.log(result.assets[0].uri);
-            setImage(result.assets[0].uri);
-            const formData = new FormData();
-            formData.append("hinhAnh",{
-                uri: result.assets[0].uri,
-                name: result.assets[0].name,
-                type: result.assets[0].type
-            });
-            
-          } else {
-            console.log("từ chối");
-          }
-      
+            const result: any = await launchImageLibrary({ mediaType: 'photo' });
+            if (result.assets && result.assets.length > 0) {
+                setImagePath(result.assets[0].uri);
+                onImageSelect(result.assets[0].uri); // Gọi hàm callback để truyền đường dẫn hình ảnh
+            }
         } catch (error) {
-           console.log("error");
+            console.log("Error picking image:", error);
         }
-      };
+    };
 
     return (
-    <View style={styles.container}>
-        <TouchableOpacity onPress={pickImage}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.image} />
-        ) : (
-          <Image source={require('../assest/image/logo.jpg')} style={{ width: 200, height: 200, }} />
-        )}
-      </TouchableOpacity>
-      </View>
+        <View style={styles.container}>
+            <TouchableOpacity onPress={pickImage}>
+                {imagePath ? (
+                    <Image
+                        source={{ uri: imagePath }}
+                        style={[
+                            styles.image, // Sử dụng style mặc định
+                            style // Ghi đè style từ props
+                        ]}
+                    />
+                ) : imageUri ? (
+                    <Image
+                        source={{ uri: imageUri }}
+                        style={[
+                            styles.image, // Sử dụng style mặc định
+                            style // Ghi đè style từ props
+                        ]}
+                    />
+                ) : (
+                    <Image
+                        source={require('../assest/image/logo.jpg')}
+                        style={[
+                            styles.image, // Sử dụng style mặc định
+                            style // Ghi đè style từ props
+                        ]}
+                    />
+                )}
+            </TouchableOpacity>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -62,6 +67,10 @@ const styles = StyleSheet.create({
         width: 200,
         height: 200,
         borderRadius: 20,
+    },
+    placeholderImage: {
+        width: 200,
+        height: 200,
     },
 });
 

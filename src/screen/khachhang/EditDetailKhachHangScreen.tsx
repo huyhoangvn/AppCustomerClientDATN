@@ -29,28 +29,17 @@ import AlertComponent from '../../component/AlertComponent';
 import LoadingComponent from '../../component/LoadingComponent';
 import {getData} from '../../utils/storageUtils';
 import ImagePickerComponent from '../../component/ImagePickerComponent';
-import { appImageSize } from '../../constants/appImageSize';
 
 const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any) => {
   
-const dummyData = {
-  tenNV: "TRAN XUAN DUC",
-  gioiTinh: 2, // 2 for male, 1 for female
-  taiKhoan: "ductxph29059@gmail.com",
-  diaChi: "Vân canh, Hoài Đức, Nam Từ Liêm ",
-  sdt: "0123456789",
-  hinhAnh: "https://cdn-i.vtcnews.vn/files/ctv.giaoduc/2019/03/15/img-1329-1-0135095.jpg" // URL of the image
-};
-
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
+  const {item} =  route.params;
+  const [tenKH, setKH] = useState(item.tenKH);
+  const [sdt, setSdt] = useState(item.sdt);
+  const [diaChi, setAddress] = useState(item.diaChi);
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [msg, setMsg] = useState('');
   const [imagePath, setImagePath] = useState('');
-  const [status, setStatus] = useState<boolean>();
-  const [item, setItem] = useState<any>(dummyData);
 
   // Declare the setLoading function using the useState hook
   const handleShowAlert = () => {
@@ -60,7 +49,54 @@ const dummyData = {
   const handleCloseAlert = () => {
     setShowAlert(false);
   };
+  const handelUpdateKhachHang = async () => {
+    setLoading(true);
+    try {
+      const user = await getData();
+      const idKH = user?.idKH;
 
+      const formData = new FormData();
+      if (imagePath) {
+        formData.append('hinhAnh', {
+          uri: imagePath,
+          name: generateRandomImageName(), // Tên của hình ảnh
+          type: 'image/jpeg', // Loại của hình ảnh
+        });
+      }
+      formData.append('tenKH', tenKH);
+      formData.append('diaChi', diaChi);
+      formData.append('sdt', sdt);
+      console.log('zzzzzzzzzzzzz');
+
+      const res:any = await authenticationAPI.HandleAuthentication(
+        `/khachhang/${idKH}`,
+        formData,
+        'put',
+      );
+
+      if (res.success === true) {
+        setMsg(res.msg);
+        handleShowAlert();
+      } else {
+        setMsg(res.msg);
+        handleShowAlert();
+      }
+    } catch (err) {
+      console.log(err);
+      setMsg('Thất bại.'); // Set error message
+      handleShowAlert();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const generateRandomImageName = () => {
+    const prefix = 'IMG_6314_'; // Tiền tố cố định
+    const randomSuffix = Math.floor(Math.random() * 10000); // Số ngẫu nhiên từ 0 đến 9999
+    const extension = '.jpeg'; // Phần mở rộng của tệp
+    return `${prefix}${randomSuffix}${extension}`;
+  };
   const handleImageSelect = async (imagePath: string) => {
     try {
       setImagePath(imagePath);
@@ -71,89 +107,85 @@ const dummyData = {
  
   return (
     <KeyboardAvoidingView
-      style={{flex: 1}}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20} // Điều chỉnh vị trí của bàn phím
-    >
-      <ScrollView contentContainerStyle={{flexGrow: 1}}>
-        <View style={styles.container}>
-        <View style={styles.header}>
-        <Image
-            source={
-            (!item.hinhAnh || item.hinhAnh === "N/A") ?
-              require('./../../assest/image/default-avatar.jpg') :
-              { uri: item.hinhAnh }}
-            style={{ width: appImageSize.size100.width, height: appImageSize.size100.height, borderRadius: 50 }}
-            defaultSource={require('./../../assest/image/default-avatar.jpg')}
-          />  
-        </View>
-          <View style={styles.footer}>
-            <View style={{paddingTop:10}}>
-             <EditTextComponent
-              label="text"
-              placeholder="Họ và tên"
-              value={name}
-              iconColor="gray"
-              onChangeText={setName}
-              icon={faShop}
-            />
-            </View>
-           
-            <View style={{paddingTop:10}}>
-            <EditTextComponent
-              label="text"
-              placeholder="Số điện thoại"
-              value={phone}
-              iconColor="gray"
-              onChangeText={setPhone}
-              icon={faPhone}
-            />
-           </View>
-           <View style={{paddingTop:10}}>
-            <EditTextComponent
-              label="text"
-              placeholder="Địa chỉ"
-              value={address}
-              iconColor="gray"
-              onChangeText={setAddress}
-              icon={faLocationDot}
-            />
-           </View>
-           <View style={{paddingTop:10}}>
-            <ButtonComponent
-              type="primary"
-              text="Lưu"
-              textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold', paddingTop: 10 }}
-              // onPress={handelUpdate}
-            />
-          </View>
-          </View>
-          <AlertComponent
-            visible={showAlert}
-            message={msg}
-            onClose={handleCloseAlert}
+    style={{flex: 1}}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20} // Điều chỉnh vị trí của bàn phím
+  >
+    <ScrollView contentContainerStyle={{flexGrow: 1}}>
+      <View style={styles.container}>
+        <View style={styles.main}>
+          <ImagePickerComponent
+            onImageSelect={handleImageSelect}
+            imageUri={item.hinhAnh}
+            style={{borderRadius: wp(25), overflow: 'hidden'}}
           />
-          <LoadingComponent visible={loading ?? false} />
+
+          {/* <Image
+        style={{width: wp(40), height: hp(20), borderRadius: 5}}
+        source={{
+          uri: item.hinhAnh,
+        }}
+      /> */}
         </View>
-      </ScrollView>
+        <View style={styles.footer}>
+          <EditTextComponent
+            label="text"
+            placeholder="Họ và tên"
+            value={tenKH}
+            iconColor="gray"
+            onChangeText={setKH}
+            icon={faShop}
+          />
+
+          <EditTextComponent
+            label="text"
+            placeholder="Số điện thoại"
+            value={sdt}
+            iconColor="gray"
+            onChangeText={setSdt}
+            icon={faPhone}
+          />
+
+          <EditTextComponent
+            label="text"
+            placeholder="Địa chỉ"
+            value={diaChi}
+            iconColor="gray"
+            onChangeText={setAddress}
+            icon={faLocationDot}
+          />
+          <ButtonComponent
+            type="primary"
+            text="Lưu"
+            textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold'}}
+            onPress={handelUpdateKhachHang}
+          />
+        </View>
+        <AlertComponent
+          visible={showAlert}
+          message={msg}
+          onClose={handleCloseAlert}
+        />
+        <LoadingComponent visible={loading ?? false} />
+      </View>
+    </ScrollView>
     </KeyboardAvoidingView>
+
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-   flex:1,
+    flex: 1,
     backgroundColor: appColors.white,
   },
-  header: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   main: {
+    height: hp(33),
     justifyContent: 'center',
     alignItems: 'center',
   },
   footer: {
+    height: hp(40),
     justifyContent: 'space-between',
   },
 });

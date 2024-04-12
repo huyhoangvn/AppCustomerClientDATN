@@ -1,11 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import queryString from 'query-string';
-import {appInfo} from '../constants/appInfos';
+import { appInfo } from '../constants/appInfos';
 import { AxiosResponse } from '../constants/axiosResponse';
-import { useDispatch, useSelector } from 'react-redux';
-import { getData, saveData, saveToken } from '../utils/storageUtils';
+import { saveToken } from '../utils/storageUtils';
 import store from '../redux/store';
-import { setToken } from '../redux/reducers/authReducers';
 
 const axiosClient = axios.create({
   baseURL: appInfo.BASE_URL,
@@ -26,7 +24,7 @@ axiosClient.interceptors.request.use(async (config) => {
 });
 
 axiosClient.interceptors.response.use(
-  async (res: any) => {
+  async (res: AxiosResponse) => {
     try {
       // Kiểm tra nếu có token và phản hồi thành công (status === 200)
       if (res.headers.authorization && res.status === 200) {
@@ -50,9 +48,18 @@ axiosClient.interceptors.response.use(
   }
 );
 
-
-
-
-
+export const uploadImage = async (url: string, formData: FormData) => {
+  try {
+    const response = await axiosClient.post(url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw new Error('Error uploading image');
+  }
+};
 
 export default axiosClient;
