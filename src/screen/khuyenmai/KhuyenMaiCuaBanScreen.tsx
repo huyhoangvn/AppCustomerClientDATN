@@ -12,6 +12,7 @@ import {  faTimes } from '@fortawesome/free-solid-svg-icons';
 import { appIcon } from '../../constants/appIcon';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>  {
   const [saveList, setSaveList] = useState<any[]>([]);
@@ -58,10 +59,13 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
     );
    const getDanhSacHkhuyenMai = async()=>{
     try {
+      const reslut = await getData();
+      const idKH = reslut?.idKH;
       const res : any = await authenticationAPI.HandleAuthentication(
-        `/khachhang/khuyenmaicuatoi/danh-sach`,
+        `/khachhang/khuyenmaicuatoi/danh-sach/${idKH}`,
         'get',
       );
+      console.log(res);
       if (res.success === true) {
         setDanhSachKhuyenMai(res.list);
         setMsg(msg);
@@ -77,6 +81,7 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
   }
  
   const removeFromList = async (idKM: any) => {
+    console.log(idKM);
     if (!isItemAdded(idKM)) {
       showAlert("Bạn có muốn xóa ?", "Xóa vào khuyến mãi của bạn.", true)
         .then(async (result) => {
@@ -92,10 +97,8 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
                 'delete' 
               );
               if (res.success === true) {
-                const updatedItems = [...addedItems, idKM];
-                setAddedItems(updatedItems);
-                setKhuyenMai((prevState) => ({ ...prevState, [idKM]: true }));
-                saveAddedItems(updatedItems);
+                const updatedDanhSachDatMon = danhSachKhuyenMai.filter(item => item._id !== idKM);
+                setDanhSachKhuyenMai(updatedDanhSachDatMon);
                 showAlert("Xóa khuyến mãi", res.message, false);
               } else {
                 showAlert("Xóa khuyến mãi", "Xóa khuyến mãi thất bại", false);
@@ -120,7 +123,7 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
     // Hiển thị cảnh báo chi tiết dữ liệu
     Alert.alert(
       'Chi tiết',
-      `Tiêu đề: ${item.tieuDe}\nPhần trăm khuyến mãi: ${item.phanTramKhuyenMai}%\nNgày bắt đầu: ${item.ngayBatDau}\nNgày kết thúc: ${item.ngayHetHan}\nĐơn tối thiểu: ${item.donToiThieu}`,
+      `Tiêu đề: ${item.tieuDe}\nMã khuyến mãi: ${item.maKhuyenMai}\nPhần trăm khuyến mãi: ${item.phanTramKhuyenMai}%\nNgày bắt đầu: ${item.ngayBatDau}\nNgày kết thúc: ${item.ngayHetHan}\nĐơn tối thiểu: ${item.donToiThieu}`,
       [
         {
           text: 'Đóng',
@@ -160,7 +163,7 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
       <Text style={{fontSize:16, fontWeight:'bold', color:'black'}}>Phần trăm khuyến mãi: {item.phanTramKhuyenMai}%</Text>
       <View style={styles.dateContainer}>
         <View style={styles.date}>
-          <Text>{item.ngayBatDau}</Text>
+          <Text>{item.ngayBatDau}-</Text>
         </View>
         <View style={styles.dateHetHan}>
           <Text>{item.ngayHetHan}</Text>
@@ -170,7 +173,7 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
       <View style={styles.buttonContainer}>
          {/* Nút điều hướng đến KhuyenMaiCuaBanScreen */}
          <TouchableOpacity style={styles.buttonAdd} >
-          <Text style={styles.buttonThem}>Thêm</Text>
+          <Text style={styles.buttonThem}>Đã thêm</Text>
         </TouchableOpacity>
         {/* Nút hiển thị chi tiết */}
         <TouchableOpacity style={styles.buttonDetails} onPress={() => handleDetails(item)}>
@@ -203,7 +206,6 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
   },
   text: {
     fontSize: 24,
@@ -212,46 +214,49 @@ const styles = StyleSheet.create({
   itemContainer: {
     padding: 10,
     borderWidth: 1,
-    margin:5,
+    paddingHorizontal: 10,
+    margin: 5,
     borderRadius: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Thay đổi space-around thành space-between
+    justifyContent: 'space-between',
   },
   buttonDetails: {
-    backgroundColor:'#424ec4',
+    width: 100,
+    backgroundColor: '#424ec4',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     marginRight: 150,
+    alignItems: 'center',
+
   },
   buttonAdd: {
-    backgroundColor:appColors.primary,
+    width: 100,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    alignItems: 'center',
+    backgroundColor: appColors.gray2
 
   },
   buttonChiTiet: {
     color: 'white',
     fontSize: 16,
-    fontWeight: 'bold',
   },
-  buttonThem:{
+  buttonThem: {
     color: 'white',
     fontSize: 16,
-    fontWeight: 'bold',
   },
   dateContainer: {
     flexDirection: 'row',
-    justifyContent:'space-between'
   },
   date: {
-    justifyContent:'space-between'
+    justifyContent:'space-around',
   },
   dateHetHan:{
-    marginRight: 170,
+    justifyContent:'space-around',
   },
   itemHeal:{
     flexDirection: 'row',
