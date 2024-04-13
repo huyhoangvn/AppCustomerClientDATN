@@ -24,7 +24,7 @@ axiosClient.interceptors.request.use(async (config) => {
 });
 
 axiosClient.interceptors.response.use(
-  async (res: AxiosResponse) => {
+  async (res: any) => {
     try {
       // Kiểm tra nếu có token và phản hồi thành công (status === 200)
       if (res.headers.authorization && res.status === 200) {
@@ -32,17 +32,17 @@ axiosClient.interceptors.response.use(
         await saveToken(token); // Lưu token vào AsyncStorage
       }
       return res.data;
-    } catch (error) {
-      console.log('Error api:', error);
+    } catch (error: any) {
+      console.log('Error api:', error.message);
       throw new Error('Error');
     }
   },
   (error: any) => {
     if (error.response) {
       const errorData = error.response.data;
-      throw new Error(JSON.stringify({ error: errorData, message: 'Đã xảy ra lỗi' }));
+      throw new Error(JSON.stringify({ message: 'Đã xảy ra lỗi' }));
     } else {
-      console.log('Error api:', JSON.stringify(error));
+      console.log('Error api:', error.message);
       throw new Error('Error');
     }
   }
@@ -56,8 +56,8 @@ export const uploadImage = async (url: string, formData: FormData) => {
       }
     });
     return response.data;
-  } catch (error) {
-    console.error('Error uploading image:', error);
+  } catch (error: any) {
+    console.error('Error uploading image:', error.message);
     throw new Error('Error uploading image');
   }
 };

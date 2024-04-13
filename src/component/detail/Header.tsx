@@ -16,8 +16,7 @@ const Header = ({ backgroundImageUrl, color = "#000000"}: any) => {
     };
 
     return (
-        <>
-            {/* Use the converted imageUrl variable */}
+        <View>
             <Image source={imageUrl ? { uri: imageUrl } : require('./../../assest/image/default-image.jpg')} style={styles.headerBackground} />
             <View style={styles.header}>
                 <TouchableOpacity onPress={goBackEvent}>
@@ -25,7 +24,7 @@ const Header = ({ backgroundImageUrl, color = "#000000"}: any) => {
                 </TouchableOpacity>
                 <HeaderRightComponent navigation={navigation} backToHomeEnabled={true} color={color}/>
             </View>
-        </>
+        </View>
     );
 };
 

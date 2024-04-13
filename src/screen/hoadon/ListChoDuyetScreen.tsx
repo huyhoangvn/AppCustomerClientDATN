@@ -78,7 +78,7 @@ const ListChoDuyetScreen: React.FC<NavProps> = ({navigation}) => {
 
   const handelDetail = (item: any) => {
     navigation.navigate('DetailHoaDonScreen', {
-      id: item._id,
+      idHD: item._id,
     });
   };
 

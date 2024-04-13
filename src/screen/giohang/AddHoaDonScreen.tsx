@@ -91,9 +91,8 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   const [idKM, setIdKM] = useState("")
   const [tenkhuyenMai, setTenKhuyenMai] = useState(0)
   const [danhSachKhuyenMai, setDanhSachKhuyenMai] = useState([{
-    idKMCuaToi: "0",
-    idKH: "0",
-    idKM: "0",
+    _id: "0",
+    idKM: "000000000000000000000000",
     tieuDe: "Không khuyến mãi",
     phanTramKhuyenMai: 0,
     donToiThieu: 0
@@ -114,19 +113,18 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
     hienThiTien()
   }, [danhSachDatMon, khuyenMai])
 
-  const getDanhSachKhuyenMaiCuaToi = (id: string)=>{
+  const getDanhSachKhuyenMaiCuaToi = async (id: string)=>{
     if(!id){return}
 
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/khachhang' + "/" + id,
-      //   'get',
-      // );
-      const res : any = DanhSachKhuyenMaiResExample
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/khuyenmaicuatoi/danh-sach' + "/" + id,
+        'get',
+      );
+      // const res : any = DanhSachKhuyenMaiResExample
       const khongKhuyenMai = {
-        idKMCuaToi: "0",
-        idKH: "0",
-        idKM: "0",
+        _id: "0",
+        idKM: "000000000000000000000000",
         tieuDe: "Không khuyến mãi",
         phanTramKhuyenMai: 0,
         donToiThieu: 0
@@ -143,15 +141,15 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
     }
   }
 
-  const getInfoKhachHang = (id: string) => {
+  const getInfoKhachHang = async (id: string) => {
     if(!id){return}
 
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/khachhang' + "/" + id,
-      //   'get',
-      // );
-      const res : any = InfoKHResExample
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang' + "/" + id,
+        'get',
+      );
+      // const res : any = InfoKHResExample
       if (res.success === true) {
         const { index } = res;
         setDiaChi(index.diaChi);
@@ -178,11 +176,11 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   };
 
   const removeFromList = (id: string, ten: string) => {
-    showAlert("Bạn có muốn xóa ?", "Xóa món " + ten + " khỏi giỏ hàng của bạn.", true)
+    showAlert("Bạn có muốn xóa ?", "Xóa món " + ten + " khỏi chọn món của bạn.", true)
     .then(result => {
       if (result) {
         try{
-          //Gọi api xóa
+          //Gọi api xóa khỏi giỏ hàng
           // const res : any = await authenticationAPI.HandleAuthentication(
           //   '/khachhang/gioHang' + "/" + id,
           //   {idMon: id}
@@ -260,15 +258,15 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
           soLuong: item.soLuong
         }))
       }
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/datmon/',
-      //   dataBody,
-      //   'post',
-      // );
-      const res = themHoaDonRes
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/datmon/them',
+        dataBody,
+        'post',
+      );
+      // const res = themHoaDonRes
       if (res.success === true) {
         const { index } = res;
-        const result = await showAlert("Thêm hóa đơn thành công", "Hiển thị chi tiết hóa đơn đã tạo", true)
+        await showAlert("Thêm hóa đơn thành công", "Hiển thị chi tiết hóa đơn đã tạo", true)
         .then(result => {
           if (result) {
             navigation.navigate('DetailHoaDonScreen', {
@@ -330,7 +328,7 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
             scrollEnabled={false}
             data={danhSachDatMon}
             renderItem={({ item }: any) => <GioHangItem item={item} onSaveItem={handleSaveItem}/>}
-            keyExtractor={(item : any) => item.idGH}
+            keyExtractor={(item : any) => item._id}
             />
           <TextViewComponent
             leftText="Tổng tiền"

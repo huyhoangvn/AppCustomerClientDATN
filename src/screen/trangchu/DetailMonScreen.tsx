@@ -105,7 +105,7 @@ const DetailMonScreen = ({ navigation} : any) =>  {
   const [tenLM, setTenLM] = useState("Tên Loại Món");
   const [tenMon, setTenMon] = useState("Tên Món");
   const [tenCH, setTenCH] = useState("Tên Cửa Hàng");
-  const [giaTien, setGiaTien] = useState(20000);
+  const [giaTien, setGiaTien] = useState(0);
   const [trungBinhDanhGia, setTrungBinhDanhGia] = useState(0);
   const [thoiGianGiaoHang, setThoiGianGiaoHang] = useState(30);//30 phút
   const [soLuongDanhGia, setSoLuongDanhGia] = useState(0);
@@ -139,9 +139,8 @@ const DetailMonScreen = ({ navigation} : any) =>  {
   const layIsInGioHang = async ()=> {
     const idMon = route.params?.idMon || "";
     const idKH = await getIdKH()
-    const status = await isInGioHang(idKH, idMon)
+    await isInGioHang(idKH, idMon)
     setIdKH(idKH)
-    setInCart(status);
   }
 
   const isInGioHang = async(idKH :string, idMon: string)=>{
@@ -149,14 +148,13 @@ const DetailMonScreen = ({ navigation} : any) =>  {
 
       //Lấy idKH
       if(!idKH || !idMon){return false;}
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/gioHang' + '/' + idKH,
-      //    {idMon: idMon}
-      //   'get',
-      // );
-
-      const res : any = KiemTraGioHangResExample;
-
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/giohang/isMonExist' + '/' + idKH,
+         {idMon: idMon},
+        'post',
+      );
+      // const res : any = KiemTraGioHangResExample;
+      
       if (res.success === true) {
         const { index } = res;
         setInCart(res.index)
@@ -175,17 +173,33 @@ const DetailMonScreen = ({ navigation} : any) =>  {
     return storedData?.idKH || "";
   }
 
-  const handleCartClick = () => {
+  const handleCartClick = async () => {
+    if(!idKH || !idMon){return;}
     if (inCart) {
-      setCartColor(appColors.gray);
-      setInCart(false);
-      //Gọi api xóa giỏ hàng
-      showAlert('Xóa khỏi giỏ hàng', "Món " + tenMon);
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/giohang/delete' + "/" + idKH,
+        {  idMon: idMon },
+        'delete',
+      );
+      // const res = {success: true}
+      if(res.success === true){
+        showAlert('Xóa khỏi giỏ hàng', "Món " + tenMon);
+        setCartColor(appColors.gray);
+        setInCart(false);
+      }
     } else {
-      setCartColor(appColors.primary);
-      setInCart(true);
-      //Gọi api thêm giỏ hàng
-      showAlert('Thêm vào giỏ hàng', "Món " + tenMon);
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/gioHang/them' + "/" + idKH,
+        { idMon: idMon },
+        'post',
+      );
+      // const res = {success: true}
+      if(res.success === true){
+        setCartColor(appColors.primary);
+        setInCart(true);
+        //Gọi api thêm giỏ hàng
+        showAlert('Thêm vào giỏ hàng', "Món " + tenMon);
+      }
     }
   };
 
@@ -194,13 +208,13 @@ const DetailMonScreen = ({ navigation} : any) =>  {
 
       //Lấy idKH
       if(!id){return;}
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/danhgia',
-      //    {danhGia: rating, idKH: idKh}
-      //   'post',
-      // );
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/danhgia/them' + "/" + idKH + "/" + idMon,
+         {danhGia: rating},
+        'post',
+      );
 
-      const res : any = TrungBinhDanhGiaResExample;
+      // const res : any = TrungBinhDanhGiaResExample;
 
       if (res.success === true) {
         const { msg } = res;
@@ -216,11 +230,11 @@ const DetailMonScreen = ({ navigation} : any) =>  {
   const layChiTietMon = async (id: string) => {
     if(!id){return;}
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/mon' + "/" + id,
-      //   'get',
-      // );
-      const res : any = chiTietMonResExample;
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/mon' + "/" + id,
+        'get',
+      );
+      // const res : any = chiTietMonResExample;
 
       if (res.success === true) {
         const { index } = res;
@@ -228,9 +242,12 @@ const DetailMonScreen = ({ navigation} : any) =>  {
         setIdCH(index.idCH);
         setIdLM(index.idLM);
         setTenMon(index.tenMon);
+        setGiaTien(index.giaTien);
         setTenLM(index.tenLM);
         setTenCH(index.tenCH);
         setHinhAnh(index.hinhAnh); // Update image path
+        setTrungBinhDanhGia(index.trungBinhDanhGia);
+      
       }
     } catch (e) {
       console.log(e);
@@ -241,11 +258,11 @@ const DetailMonScreen = ({ navigation} : any) =>  {
   const layTrungBinhDanhGiaMon = async (id: string) => {
     if(!id){return;}
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/mon' + "/" + id,
-      //   'get',
-      // );
-      const res : any = TrungBinhDanhGiaResExample
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/danhgia/get-trung-binh' + "/" + id,
+        'get',
+      );
+      // const res : any = TrungBinhDanhGiaResExample
 
       if (res.success === true) {
         setTrungBinhDanhGia(res.index);
@@ -259,12 +276,11 @@ const DetailMonScreen = ({ navigation} : any) =>  {
   const layDanhSachDanhGia = async (id: string) => {
     if(!id){return;}
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/danhGia' + "/" + id,
-      //   'get',
-      // );
-      const res : any = DanhSachDanhGiaResExample
-
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/danhgia/get-danh-sach-theo-mon-filter' + "/" + id,
+        'get',
+      );
+      // const res : any = DanhSachDanhGiaResExample
       if (res.success === true) {
         const { list, count, currentPage, totalPage } = res;
         setSoLuongDanhGia(count);
@@ -279,15 +295,15 @@ const DetailMonScreen = ({ navigation} : any) =>  {
   const xemThem = async () => {
     if(!idMon){return;}
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/danhGia' + "/" + id + "?trang=" + (trang+1),
-      //   'get',
-      // );
-      const res : any = DanhSachDanhGiaResExampleLoadingMore
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/danhgia/get-danh-sach-theo-mon-filter' + "/" + idMon + "?trang=" + (trang+1),
+        'get',
+      );
+      // const res : any = DanhSachDanhGiaResExampleLoadingMore
 
       if (res.success === true) {
         const { list, count, currentPage, totalPage } = res;
-        setSoLuongDanhGia(count);
+        setSoLuongDanhGia(soLuongDanhGia + list.length);
         setDanhSachDanhGia(prevList => [...prevList, ...list]);
         setTrang(trang+1);
       }
@@ -310,8 +326,9 @@ const DetailMonScreen = ({ navigation} : any) =>  {
       <View style={styles.itemContainer}>
         <View style={styles.userInfoContainer}>
           <Image
-            source={item.hinhAnh ? { uri: item.hinhAnh } : require('./../../assest/image/default-image.jpg')}
+            source={(item.hinhAnh && item.hinhAnh !== "") ? { uri: item.hinhAnh } : require('./../../assest/image/default-image.jpg')}
             style={styles.userAvatar}
+            defaultSource={require('./../../assest/image/default-image.jpg')}
           />
           <View>
             <Text style={styles.userName}>{item.tenKH}</Text>
