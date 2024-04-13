@@ -32,6 +32,7 @@ import LoadingComponent from '../../component/LoadingComponent';
 import {getData} from '../../utils/storageUtils';
 import EditText from '../../component/edittext/EditText';
 import {appFontSize} from '../../constants/appFontSizes';
+import { useIsFocused } from '@react-navigation/native';
 const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [text, setText] = useState('Xem thêm');
@@ -147,9 +148,14 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
     return {formattedDate, formattedTime};
   };
 
+
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    getListInvoice('', 0, page);
-  }, []);
+    if(isFocused){
+      getListInvoice('', 0, page);
+    }
+  }, [isFocused]);
 
   const renderItem = ({item}: {item: HoaDon}) => {
     const {formattedDate, formattedTime} = formatDate(item.thoiGianTao);
