@@ -32,6 +32,7 @@ import {getData} from '../../utils/storageUtils';
 import EditText from '../../component/edittext/EditText';
 import {appFontSize} from '../../constants/appFontSizes';
 import {TouchableHighlight} from 'react-native-gesture-handler';
+import { useIsFocused } from '@react-navigation/native';
 const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [text, setText] = useState('Xem thêm');
@@ -183,9 +184,13 @@ const ListTatCaScreen: React.FC<NavProps> = ({navigation}) => {
     return {formattedDate, formattedTime};
   };
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    getListInvoice('', '', '', '', 1);
-  }, []);
+    if(isFocused){
+      getListInvoice('', '', '', '', 1);
+    }
+  }, [isFocused]);
 
   const renderItem = ({item}: {item: HoaDon}) => {
     const {formattedDate, formattedTime} = formatDate(item.thoiGianTao);
