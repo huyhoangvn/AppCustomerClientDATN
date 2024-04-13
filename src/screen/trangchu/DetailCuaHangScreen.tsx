@@ -14,6 +14,7 @@ import { Delivery } from '../../assest/svgs';
 import { formatCurrency } from '../../utils/currencyFormatUtils';
 import { showAlert } from '../../utils/showAlert';
 import QuantityComponent from '../../component/text/QuantityComponent';
+import authenticationAPI from '../../apis/authApi';
 
 const chiTietCuaHangResExample = {
   success: true,
@@ -98,6 +99,7 @@ const DetailMonScreen = ({ navigation } : any) =>  {
   const [danhSachMon, setDanhSachMon] = useState<any[]>([]);
   const [trang, setTrang] = useState(1);
   const [msg, setMsg] = useState("");
+  const [textThem, setTextThem] = useState("Xem thêm")
 
   useEffect(() => {
     const id = route.params?.idCH || "";// Lấy thông tin tìm kiếm từ bên trang chủ
@@ -110,21 +112,20 @@ const DetailMonScreen = ({ navigation } : any) =>  {
   const layChiTietCuaHang = async (id: string) => {
     if(!id){return;}
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/cuahang' + "/" + id,
-      //   'get',
-      // );
-      const res : any = chiTietCuaHangResExample;
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/cuahang/chi-tiet' + "/" + id,
+        'get',
+      );
+      // const res : any = chiTietCuaHangResExample;
 
       if (res.success === true) {
-        const { index } = res;
-        setIdCH(index.idCH);
-        setTenCH(index.tenCH);
-        setHinhAnh(index.hinhAnh); // Update image path
-        setdiaChi(index.diaChi)
-        setThoiGianMo(index.thoiGianMo)
-        setThoiGianDong(index.thoiGianDong)
-        setSdt(index.sdt)
+        const { data } = res;
+        setTenCH(data.tenCH);
+        setHinhAnh(data.hinhAnh); // Update image path
+        setdiaChi(data.diaChi)
+        setThoiGianMo(data.thoiGianMo)
+        setThoiGianDong(data.thoiGianDong)
+        setSdt(data.sdt)
       }
     } catch (e) {
       console.log(e);
@@ -135,17 +136,18 @@ const DetailMonScreen = ({ navigation } : any) =>  {
   const layDanhSachMon = async (id: string) => {
     if(!id){return;}
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/cuahang' + "/danhsach/mon/" + id,
-      //   'get',
-      // );
-      const res : any = DanhSachMonResExample
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/mon' + "/theo-cua-hang/" + id,
+        'get',
+      );
+      // const res : any = DanhSachMonResExample
 
       if (res.success === true) {
         const { list, count, currentPage, totalPage } = res;
         setSoLuongMon(count);
         setDanhSachMon(list);
         setTrang(1);
+        setTextThem("Xem Thêm")
       }
     } catch (e) {
       console.log(e);
@@ -155,17 +157,21 @@ const DetailMonScreen = ({ navigation } : any) =>  {
   const xemThem = async () => {
     if(!idCH){return;}
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/cuahang' + "/danhsach/mon/" + id + "?trang=" + (trang+1),
-      //   'get',
-      // );
-      const res : any = DanhSachMonResExampleLoadingMore
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/mon' + "/theo-cua-hang/" + idCH + "?trang=" + (trang+1),
+        'get',
+      );
+
+      // const res : any = DanhSachMonResExampleLoadingMore
 
       if (res.success === true) {
         const { list, count, currentPage, totalPage } = res;
-        setSoLuongMon(count);
+        setSoLuongMon(soLuongMon + count);
         setDanhSachMon(prevList => [...prevList, ...list]);
         setTrang(trang+1);
+        if(list.length === 0){
+          setTextThem("Hết")
+        }
       }
     } catch (e) {
       console.log(e);
@@ -203,7 +209,7 @@ const DetailMonScreen = ({ navigation } : any) =>  {
     };
 
     return (
-      <TouchableOpacity onPress={()=>openDetailMonScreen(item.idMon)} style={styles.itemContainer}>
+      <TouchableOpacity onPress={()=>openDetailMonScreen(item._id)} style={styles.itemContainer}>
           <View style={styles.monInfoContainer}>
             <Image
               source={item.hinhAnh ? { uri: item.hinhAnh } : require('./../../assest/image/default-image.jpg')}
@@ -255,10 +261,10 @@ const DetailMonScreen = ({ navigation } : any) =>  {
                 scrollEnabled={false}
                 data={danhSachMon}
                 renderItem={({ item }) => <ItemMon item={item} />}
-                keyExtractor={(item : any) => item.idMon}
+                keyExtractor={(item : any) => item._id}
             />
             <TouchableOpacity onPress={() => xemThem()} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={{color: appColors.primary, fontSize: appFontSize.normal}}>Xem thêm</Text>
+                <Text style={{color: appColors.primary, fontSize: appFontSize.normal}}>{textThem}</Text>
             </TouchableOpacity>
           </View>
     </View>

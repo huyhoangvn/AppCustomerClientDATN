@@ -90,7 +90,7 @@ const DeleteResExample = {
 const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   const route : any = useRoute();
   // Truy cập các tham số từ đối tượng route
-  const { idHD } = route.params;
+  const idHD = route.params.idHD;
   // let danhSachSoLuong: number[] = new Array(saveList.length).fill(1);
   const [idKH, setIdKH] = useState("");
   const [maHD, setMaHD] = useState("")
@@ -112,15 +112,15 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   const [isActiveHuy, setIsActiveHuy] = useState(false);
   const [phiVanChuyen, setPhiVanChuyen] = useState("")
 
-  const getThongTinHD = (id: string)=>{
+  const getThongTinHD = async (id: string)=>{
     if(!id){return}
 
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/hoadon' + "/" + idHD,
-      //   'get',
-      // );
-      const res : any = HoaDonResExample
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/hoadon/detail' + "/" + id,
+        'get',
+      );
+      // const res : any = HoaDonResExample
       if (res.success === true) {
         const { list, index } = res;
         setIdKH(index.idKH);
@@ -164,16 +164,15 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   const huyHoaDon = () => {
     if(isActiveHuy){
       showAlert("Bạn có muốn hủy ?", "Hủy hóa đơn " + maHD, true)
-      .then(result => {
+      .then(async (result) => {
         if (result) {
           try{
-            //Gọi api xóa
-            // const res : any = await authenticationAPI.HandleAuthentication(
-            //   '/khachhang/gioHang' + "/" + id,
-            //   {idMon: id}
-            //   'delete',
-            // );
-            const res : any = DeleteResExample
+            const res : any = await authenticationAPI.HandleAuthentication(
+              '/khachhang/hoadon/delete' + "/" + idHD,
+              {},
+              'delete',
+            );
+            // const res : any = DeleteResExample
             if(res.success === true){
               showAlert("Hủy hóa đơn", "Hủy hóa đơn thành công", false)
               navigation.goBack()

@@ -22,7 +22,7 @@ const DanhSachGioHangResExample = {
   success: true,
   list: [
     {
-      idGH: "1",
+      _id: "1",
       tenMon: "Banh Flan",
       tenLM: "Tráng Miệng",
       tenCH: "Five Star",
@@ -32,7 +32,7 @@ const DanhSachGioHangResExample = {
       hinhAnh: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/10f13510774061.560eadfde5b61.png",
     },
     {
-      idGH: "2",
+      _id: "2",
       tenMon: "Banh Flan",
       tenLM: "Tráng Miệng",
       tenCH: "Five Star",
@@ -42,7 +42,7 @@ const DanhSachGioHangResExample = {
       hinhAnh: "http://10.0.2.2:3000/public/images/kudo.jpeg"
     },
     {
-      idGH: "3",
+      _id: "3",
       tenMon: "Banh Flan",
       tenLM: "Tráng Miệng",
       tenCH: "Five Star",
@@ -108,12 +108,11 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
     if(!id){return}
 
     try {
-      // const res : any = await authenticationAPI.HandleAuthentication(
-      //   '/khachhang/gioHang/get-gio-hang-by-id' + "/" + id,
-      //   'get',
-      // );
-      const res : any = DanhSachGioHangResExample
-
+      const res : any = await authenticationAPI.HandleAuthentication(
+        '/khachhang/giohang/danh-sach' + "/" + id,
+        'get',
+      );
+      // const res : any = DanhSachGioHangResExample
       if (res.success === true) {
         const { list, count, currentPage, totalPage } = res;
         setDanhSachGioHang(list);
@@ -160,18 +159,17 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
       });
     };
 
-    const removeFromList = (id: string, ten: string) => {
+    const removeFromList = async (id: string, ten: string) => {
       showAlert("Bạn có muốn xóa ?", "Xóa món " + ten + " khỏi giỏ hàng của bạn.", true)
-        .then(result => {
+        .then(async (result) => {
           if (result) {
             try{
-            //Gọi api xóa
-            // const res : any = await authenticationAPI.HandleAuthentication(
-            //   '/khachhang/gioHang' + "/" + id,
-            //   {idMon: id}
-            //   'delete',
-            // );
-              const res : any = xoaGioHangResExample
+              const res : any = await authenticationAPI.HandleAuthentication(
+                '/khachhang/giohang/delete' + "/" + idKH,
+                {  idMon: id },
+                'delete',
+              );
+              // const res : any = xoaGioHangResExample
               if(res.success === true){
                 const updatedDanhSachDatMon = danhSachGioHang.filter(item => item.idMon !== id);  
                 setDanhSachGioHang(updatedDanhSachDatMon);
@@ -237,7 +235,7 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
               scrollEnabled={false}
               data={danhSachGioHang}
               renderItem={({ item }: any) => <GioHangItem item={item} onSaveItem={handleSaveItem}/>}
-              keyExtractor={(item : any) => item.idGH}
+              keyExtractor={(item : any) => item._id}
             />
           </View>
       </ScrollView>
