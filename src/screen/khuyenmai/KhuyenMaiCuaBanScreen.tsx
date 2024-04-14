@@ -13,6 +13,7 @@ import { appIcon } from '../../constants/appIcon';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { useIsFocused, useRoute } from '@react-navigation/native';
 
 const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>  {
   const [saveList, setSaveList] = useState<any[]>([]);
@@ -21,42 +22,16 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
   const [addedItems, setAddedItems] = useState<any[]>([]); 
   const [msg, setMsg] = useState('');
   const [khuyenMai, setKhuyenMai] = useState<{[key: string]: boolean}>({});
+  const isFocused = useIsFocused();
 
   // Dữ liệu khuyến mãi
-  const loadDataFromStorage = async () => {
-    try {
-      const savedItems = await AsyncStorage.getItem('addedItems');
-      if (savedItems) {
-        setAddedItems(JSON.parse(savedItems));
-        const initialKhuyenMaiState: { [key: string]: boolean } = {};
-        JSON.parse(savedItems).forEach((item: string) => {
-          initialKhuyenMaiState[item] = true;
-        });
-        setKhuyenMai(initialKhuyenMaiState);
-      }
-    } catch (error) {
-      console.error('Error loading added items:', error);
-    }
-  };
-  const saveAddedItems = async (items: string[]) => {
-    try {
-      await AsyncStorage.setItem('addedItems', JSON.stringify(items));
-    } catch (error) {
-      console.error('Error saving added items:', error);
-    }
-  };
+
   useEffect(() => {
-    loadDataFromStorage();
-    getDanhSacHkhuyenMai();
-    },[]);
-    useFocusEffect(
-      React.useCallback(() => {
-        getDanhSacHkhuyenMai();  
-        return () => {
-          // Cleanup logic nếu cần (không bắt buộc)
-        };
-      }, []),
-    );
+    if(isFocused){
+      getDanhSacHkhuyenMai();
+    }
+    },[isFocused]);
+   
    const getDanhSacHkhuyenMai = async()=>{
     try {
       const reslut = await getData();
@@ -172,9 +147,7 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
       {/* <Text>Đơn tối thiểu: {item.donToiThieu}</Text> */}
       <View style={styles.buttonContainer}>
          {/* Nút điều hướng đến KhuyenMaiCuaBanScreen */}
-         <TouchableOpacity style={styles.buttonAdd} >
-          <Text style={styles.buttonThem}>Đã thêm</Text>
-        </TouchableOpacity>
+         
         {/* Nút hiển thị chi tiết */}
         <TouchableOpacity style={styles.buttonDetails} onPress={() => handleDetails(item)}>
           <Text style={styles.buttonChiTiet}>Chi tiết</Text>
@@ -206,6 +179,7 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 10,
   },
   text: {
     fontSize: 24,

@@ -7,50 +7,39 @@ import { BillCreateNote, Delivery } from '../../assest/svgs/index';
 import { getData } from '../../utils/storageUtils';
 import { showAlert } from '../../utils/showAlert';
 import authenticationAPI from '../../apis/authApi';
-import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useFocusEffect} from '@react-navigation/native';
-
+import { useIsFocused, useRoute } from '@react-navigation/native';
 const KhuyenMaiGoiYScreen: React.FC<NavProps> = ({ navigation, route }:any) => {
   // Truy cập các tham số từ đối tượng route
 
   const [danhSachKhuyenMai, setDanhSachKhuyenMai] = useState<any[]>([]);
   const [addedItems, setAddedItems] = useState<any[]>([]); 
   const [msg, setMsg] = useState('');
-  
+  const isFocused = useIsFocused();
+  const [cartColor, setCartColor] = useState(appColors.gray);
+
   const [khuyenMai, setKhuyenMai] = useState<{[key: string]: boolean}>({});
   // Dữ liệu khuyến mãi
  
 
  
 
-  const loadDataFromStorage = async () => {
-    try {
-      const savedItems = await AsyncStorage.getItem('addedItems');
-      if (savedItems) {
-        setAddedItems(JSON.parse(savedItems));
-        const initialKhuyenMaiState: { [key: string]: boolean } = {};
-        JSON.parse(savedItems).forEach((item: string) => {
-          initialKhuyenMaiState[item] = true;
-        });
-        setKhuyenMai(initialKhuyenMaiState);
-      }
-    } catch (error) {
-      console.error('Error loading added items:', error);
-    }
-  };
+ 
   useEffect(() => {
-    loadDataFromStorage();
-    getDanhSacHkhuyenMai();
-  }, []);
-  useFocusEffect(
-    React.useCallback(() => {
-      getDanhSacHkhuyenMai();    
-      return () => {
-        // Cleanup logic nếu cần (không bắt buộc)
-      };
-    }, []),
-  );
+    if(isFocused){
+      getDanhSacHkhuyenMai();
+     //  loadDataFromStorage();
+    }
+  }, [isFocused]);
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     getDanhSacHkhuyenMai();    
+  //     return () => {
+  //       // Cleanup logic nếu cần (không bắt buộc)
+  //     };
+  //   }, []),
+  // );
   const saveAddedItems = async (items: string[]) => {
     try {
       await AsyncStorage.setItem('addedItems', JSON.stringify(items));
@@ -65,80 +54,91 @@ const KhuyenMaiGoiYScreen: React.FC<NavProps> = ({ navigation, route }:any) => {
         '/nhanvien/khuyenmai/khuyen-mai' ,
         'get',
       );
+      console.log(res);
       // const res: any = DanhSachkhuyenMaiData;
       if (res.success === true) {
         const { list } = res;
         setDanhSachKhuyenMai(list);
+        
       }
     } catch (e) {
       console.log(e);
     }
   };
 
-  const isItemAdded = (itemId: any) => {
-    return addedItems.includes(itemId);
-  };
 
- const handleAddItem = async (idKM: string) => {
-    if (!isItemAdded(idKM)) {
-      showAlert("Bạn có muốn thêm ?", "Thêm vào khuyến mãi của bạn.", true)
-        .then(async (result) => {
-          if (result) {
-            try {
-              const reslut = await getData();
-              const idKH = reslut?.idKH;
-              const res: any = await authenticationAPI.HandleAuthentication(
-                `/khachhang/khuyenmaicuatoi/${idKM}`,
-                {
-                  idKH: idKH,
-                },
-                'post' 
-              );
-              if (res.success === true) {
-                const updatedItems = [...addedItems, idKM];
-                setAddedItems(updatedItems);
-                setKhuyenMai((prevState) => ({ ...prevState, [idKM]: true }));
-                saveAddedItems(updatedItems);
-                showAlert("Thêm khuyến mãi", res.msg, false);
-              } else {
-                showAlert("Thêm khuyến mãi", "Thêm khuyến mãi thất bại", false);
-              }
-            } catch (e) {
-              showAlert("Thêm khuyến mãi", "Thêm khuyến mãi thất bại", false);
-            }
-          }
-        })
-        .catch((e) => {
-          showAlert("Thêm khuyến mãi", "Thêm khuyến mãi thất bại", false);
-        });
-    } else {
-      showAlert("Thông báo", "Khuyến mãi đã được thêm trước đó", false);
-    }
-  };
-  const addKMCuaToi = async (idKM:any) => {
-    try {  
-      const reslut = await getData();
-      const idKH = reslut?.idKH;
+//  const handleAddItem = async (idKM: string) => {
+//     if (!isItemAdded(idKM)) {
+//       showAlert("Bạn có muốn thêm ?", "Thêm vào khuyến mãi của bạn.", true)
+//         .then(async (result) => {
+//           if (result) {
+//             try {
+//               const reslut = await getData();
+//               const idKH = reslut?.idKH;
+//               const res: any = await authenticationAPI.HandleAuthentication(
+//                 `/khachhang/khuyenmaicuatoi/${idKM}`,
+//                 {
+//                   idKH: idKH,
+//                 },
+//                 'post' 
+//               );
+//               if (res.success === true) {
+//                 const updatedItems = [...addedItems, idKM];
+//                 setAddedItems(updatedItems);
+//                 setKhuyenMai((prevState) => ({ ...prevState, [idKM]: true }));
+//                 saveAddedItems(updatedItems);
+//                 showAlert("Thêm khuyến mãi", res.msg, false);
+//               } else {
+//                 showAlert("Thêm khuyến mãi", "Thêm khuyến mãi thất bại", false);
+//               }
+//             } catch (e) {
+//               showAlert("Thêm khuyến mãi", "Thêm khuyến mãi thất bại", false);
+//             }
+//           }
+//         })
+//         .catch((e) => {
+//           showAlert("Thêm khuyến mãi", "Thêm khuyến mãi thất bại", false);
+//         });
+//     } else {
+//       showAlert("Thông báo", "Khuyến mãi đã được thêm trước đó", false);
+//     }
+//   };
+const addKMCuaToi = async (idKM:any) => {
+  try {  
+    const reslut = await getData();
+    const idKH = reslut?.idKH;
+    if (!addedItems.includes(idKM)) { // Kiểm tra xem đã thêm hay chưa
       // Gọi API hoặc thực hiện xử lý logic để thêm khuyến mãi
-        const res: any = await authenticationAPI.HandleAuthentication(
+      const res: any = await authenticationAPI.HandleAuthentication(
         `/khachhang/khuyenmaicuatoi/${idKM}`,
         {
           idKH: idKH,
         },
         'post' 
-        
       );
       if(res.success === true) {
         setMsg(res.msg);
+        showAlert('Thêm vào khuyến mãi của bạn', "Khuyến mãi được lấy về " );
         console.log(res.msg);
-      }else{
+        // Sau khi thêm thành công, cập nhật danh sách các khuyến mãi đã thêm
+        const updatedItems = [...addedItems, idKM];
+        setAddedItems(updatedItems);
+        setKhuyenMai((prevState) => ({ ...prevState, [idKM]: true }));
+        saveAddedItems(updatedItems);
+        getDanhSacHkhuyenMai();
+
+      } else {
         setMsg(res.msg);
       }
-    } catch (error) {
-      console.error(error);
-   
+    } else {
+      showAlert('Thông báo', 'Khuyến mãi đã được thêm trước đó', false);
     }
-  };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
   const handleDetails = (item: any) => {
     Alert.alert(
       'Chi tiết',
@@ -169,8 +169,14 @@ const KhuyenMaiGoiYScreen: React.FC<NavProps> = ({ navigation, route }:any) => {
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={[styles.buttonAdd, { backgroundColor: isItemAdded(item._id) ? 'gray' : appColors.primary }]} onPress={() => handleAddItem(item._id)}>
-            <Text style={styles.buttonThem}>{isItemAdded(item._id) ? 'Đã thêm' : 'Thêm'}</Text>
+        <TouchableOpacity
+            style={[styles.buttonAdd, item.trangThaiKM ? styles.buttonAdded : null]}
+            onPress={() => addKMCuaToi(item._id)}
+            disabled={item.trangThaiKM} // Không cho phép thêm nếu đã thêm
+          >
+            <Text style={styles.buttonThem}>
+              {item.trangThaiKM ? 'Đã thêm' : 'Thêm'}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttonDetails} onPress={() => handleDetails(item)}>
             <Text style={styles.buttonChiTiet}>Chi tiết</Text>
@@ -202,6 +208,7 @@ const KhuyenMaiGoiYScreen: React.FC<NavProps> = ({ navigation, route }:any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 10,
   },
   text: {
     fontSize: 24,
@@ -224,12 +231,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginRight: 150,
+    marginRight: 120,
     alignItems: 'center',
 
   },
   buttonAdd: {
     width: 100,
+    backgroundColor:appColors.primary,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -252,6 +260,9 @@ const styles = StyleSheet.create({
     justifyContent:'space-around',
   },
   dateHetHan:{
+  },
+  buttonAdded:{
+    backgroundColor: appColors.gray,
   }
 });
 
