@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   TextStyle,
+  TouchableHighlight,
   TouchableOpacity,
   View,
   ViewProps,
@@ -50,7 +51,10 @@ const FlatListHomeComponent: React.FC<Props> = ({
       }
     };
     return (
-      <TouchableOpacity onPress={handleItemClick}>
+      <TouchableHighlight
+        underlayColor="#F2F2F2" 
+        style = {{borderRadius: 20}}// Màu sắc khi chạm vào
+        onPress={handleItemClick}>
         <View style={[stylesItem, styles.item]}>
           <Image
             source={
@@ -87,7 +91,7 @@ const FlatListHomeComponent: React.FC<Props> = ({
             </Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </TouchableHighlight>
     );
   };
 
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 5,
     backgroundColor: appColors.white,
-    elevation: 4,
+    elevation: 5,
     paddingBottom: 20,
   },
   viewTitle: {

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -20,11 +20,18 @@ import {appColors} from '../../constants/appColors';
 import {Mon} from '../../models/Mon';
 import Swiper from 'react-native-swiper';
 import FlatListHomeComponent from '../../component/FlatListHomeComponent';
+import authenticationAPI from '../../apis/authApi';
 
 const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const [searchValue, setSearchValue] = useState('');
   const swiperRef = useRef<any>(null);
   const [autoplay, setAutoplay] = useState(true); // State để điều khiển autoplay
+  const [typeDish1, setTypeDish1] = useState<Mon[]>([]);
+  const [typeDish2, setTypeDish2] = useState<Mon[]>([]);
+  const [dishTop, setDishTop] = useState<Mon[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [nameTypeDish1,setNametypeDish1] = useState<string>();
+  const [nameTypeDish2,setNametypeDish2] = useState<string>();
 
   const openScreen = (screen: string) => {
     navigation.navigate(screen, {searchValue});
@@ -52,54 +59,109 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
         'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
     },
   ];
-  const dish: Mon[] = [
-    {
-      _id: '1',
-      tenMon: 'Pizza hải sản',
-      hinhAnh:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-      giaTien: 100000,
-      soLuong: 2,
-    },
-    {
-      _id: '2',
-      tenMon: 'Pizza gà',
-      hinhAnh:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-      giaTien: 300000,
-    },
-    {
-      _id: '3',
-      tenMon: 'Pizza bò',
-      hinhAnh:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-      giaTien: 200000,
-    },
+  // const dish: Mon[] = [
+  //   {
+  //     _id: '1',
+  //     tenMon: 'Pizza hải sản',
+  //     hinhAnh:
+  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+  //     giaTien: 100000,
+  //     soLuong: 2,
+  //   },
+  //   {
+  //     _id: '2',
+  //     tenMon: 'Pizza gà',
+  //     hinhAnh:
+  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+  //     giaTien: 300000,
+  //   },
+  //   {
+  //     _id: '3',
+  //     tenMon: 'Pizza bò',
+  //     hinhAnh:
+  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+  //     giaTien: 200000,
+  //   },
 
-    {
-      _id: '4',
-      tenMon: 'Pizza cua',
-      hinhAnh:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-      giaTien: 500000,
-    },
+  //   {
+  //     _id: '4',
+  //     tenMon: 'Pizza cua',
+  //     hinhAnh:
+  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+  //     giaTien: 500000,
+  //   },
 
-    {
-      _id: '5',
-      tenMon: 'Pizza rau cải',
-      hinhAnh:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-      giaTien: 600000,
-    },
-  ];
+  //   {
+  //     _id: '5',
+  //     tenMon: 'Pizza rau cải',
+  //     hinhAnh:
+  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+  //     giaTien: 600000,
+  //   },
+  // ];
+  const getTypeDish = async (index: any) => {
+    try {
+      setLoading(true);
+      if(index == 0 ){
+        const res: any = await authenticationAPI.HandleAuthentication(
+          `/khachhang/mon/theo-loai-mon?indexLM=${index}`,
+          {},
+          'put',
+        );
+        if (res.success === true) {
+          setTypeDish1(res.list);
+          setNametypeDish1(res.tenLM)
+        }
+      }else{
+        const res: any = await authenticationAPI.HandleAuthentication(
+          `/khachhang/mon/theo-loai-mon?indexLM=${index}`,
+          {},
+          'put',
+        );
+        if (res.success === true) {
+          setTypeDish2(res.list);
+          setNametypeDish2(res.tenLM)
+
+        }
+      } // Set loading to true before making the API call
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+  const getTopDish = async () => {
+    try {
+      setLoading(true); // Set loading to true before making the API call
+    
+      const res: any = await authenticationAPI.HandleAuthentication(
+        `/nhanvien/thongke/nam-tenLM`,
+        'get',
+      );
+      if (res.success === true) {
+        setDishTop(res.list);
+      }
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const handlePress = (item: any) => {
-    console.log('item', item);
+    console.log('item11111', item);
   };
 
   const onScrollBeginDrag = () => {
     setAutoplay(false); // Tắt autoplay
   };
+
+  useEffect(() => {
+    getTopDish();
+    getTypeDish(0);
+    getTypeDish(1);
+  }, []);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -139,7 +201,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
       <View style={styles.main}>
         <View style={{backgroundColor: appColors.white}}>
           <FlatListHomeComponent
-            data={dish}
+            data={dishTop}
             showIndicator={false}
             textTitle="Món bán chạy"
             textSeeMore='Xem thêm >'
@@ -148,18 +210,42 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
             styleTitle={{
               color: appColors.warmOrange,
             }}
+            onItemClick={(item: Mon) => {
+              navigation.navigate('DetailMonScreen', {idMon: item?._id});
+            }}
           />
         </View>
 
         <View style={{backgroundColor: appColors.white}}>
           <FlatListHomeComponent
-            data={dish}
+            data={typeDish1}
             showIndicator={false}
-            textTitle="Giải nhiệu mùa hè"
+            textTitle={nameTypeDish1}
             textTag='Giải khát'
             textSeeMore='Xem thêm gì đó >'
             styleTitle={{
               color: appColors.coolPurple,
+            }}
+            onItemClick={(item: Mon) => {
+              navigation.navigate('DetailMonScreen', {idMon: item?._id});
+            }}
+         
+            styleTag = {{color: appColors.coolPurple,borderColor: appColors.coolPurple,}}
+          />
+        </View>
+
+        <View style={{backgroundColor: appColors.white}}>
+          <FlatListHomeComponent
+            data={typeDish2}
+            showIndicator={false}
+            textTitle={nameTypeDish2}
+            textTag='Giải khát'
+            textSeeMore='Xem thêm gì đó >'
+            styleTitle={{
+              color: appColors.coolPurple,
+            }}
+            onItemClick={(item: Mon) => {
+              navigation.navigate('DetailMonScreen', {idMon: item?._id});
             }}
          
             styleTag = {{color: appColors.coolPurple,borderColor: appColors.coolPurple,}}
