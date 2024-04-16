@@ -1,8 +1,8 @@
-export function formatTrangThai(trangThai: number): string {
+export function formatTrangThai(trangThai: boolean): string {
     switch (trangThai) {
-        case 0:
+        case false:
             return "Đã hủy";
-        case 1:
+        case true:
             return "Đang hoạt động";
         default:
             return "---";

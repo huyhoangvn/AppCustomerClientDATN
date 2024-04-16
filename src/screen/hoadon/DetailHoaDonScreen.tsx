@@ -1,28 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { getData } from '../../utils/storageUtils';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { appColors } from '../../constants/appColors';
 import NavProps from '../../models/props/NavProps';
 import { appImageSize } from '../../constants/appImageSize';
 import { appFontSize } from '../../constants/appFontSizes';
 import { formatCurrency } from '../../utils/currencyFormatUtils';
-import QuantitySelector from '../../component/giohang/QuantitySelector';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faAddressBook, faDisease, faLocation, faLocationDot, faMapMarker, faPhone, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { appIcon } from '../../constants/appIcon';
 import { showAlert } from '../../utils/showAlert';
 import TextViewComponent from '../../component/text/TextViewComponent';
-import OptionPicker from '../../component/detail/OptionPicker';
-import KhuyenMaiPicker from '../../component/detail/KhuyenMaiPicker';
-import EditTextComponent from '../../component/EditTextComponent';
-import QuantityComponent from '../../component/text/QuantityComponent';
-import EditText from '../../component/edittext/EditText';
-import Button from '../../component/button/MyButtonComponent';
 import MyButtonComponent from '../../component/button/MyButtonComponent';
-import DeliveryNote from '../../component/detail/DeliveryNote';
-import { BillCreateNote } from '../../assest/svgs';
 import authenticationAPI from '../../apis/authApi';
 import { formatTrangThai, formatTrangThaiGiaoHang, formatTrangThaiThanhToan } from '../../utils/trangThaiFormat';
 import { formatTrangThaiColor, formatTrangThaiGiaoHangColor, formatTrangThaiThanhToanColor } from '../../utils/trangThaiColor';
@@ -103,7 +90,7 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   const [diaChi, setDiaChi] = useState("");
   const [phanTramKhuyenMai, setPhanTramKhuyenMai] = useState(0);
   const [trangThaiMua, setTrangThaiMua] = useState(0)
-  const [trangThai, setTrangThai] = useState(0)
+  const [trangThai, setTrangThai] = useState(false)
   const [trangThaiThanhToan, setTrangThaiThanhToan] = useState(0)
   const [ghiChu, setGhiChu] = useState("")
   const [thanhTien, setThanhTien] = useState(0)
@@ -137,8 +124,8 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
         setTrangThai(index.trangThai)
         setTrangThaiMua(index.trangThaiMua)
         setTrangThaiThanhToan(index.trangThaiThanhToan)
-        setIsActiveThanhToan(index.trangThaiThanhToan?true:false)
-        setIsActiveHuy((trangThaiMua === 0 || trangThai === 0)?true:false)
+        setIsActiveThanhToan(index.trangThaiMua===3)
+        setIsActiveHuy(((index.trangThaiMua === 0 && index.trangThai === true) || index.trangThai === false)?true:false)
         setPhiVanChuyen(formatCurrency(index.phiGiaoHang))
         setDanhSachMonDat(list)
       }
@@ -152,9 +139,10 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   }, [])
 
   const thanhToan = () => {
+    console.log(isActiveThanhToan)
     if(isActiveThanhToan){
       //Chuyển đến màn hình thanh toán
-
+      showAlert("Chuyển đến màn hình thanh toán", "Giao dịch...")
 
     } else {
       showAlert("Chưa thể thanh toán", "Quý khách vui lòng đợi đơn hàng được giao thành công để thực hiện giao dịch")
