@@ -28,6 +28,7 @@ interface Props {
   styleTitle?: StyleProp<TextStyle>;
   styleSeeMore?: StyleProp<TextStyle>;
   onItemClick?: (item: Mon) => void; // New prop for item click event
+  onSeeMoreClick?: () => void; // New prop for item click event
 
 }
 
@@ -42,7 +43,8 @@ const FlatListHomeComponent: React.FC<Props> = ({
   styleTag,
   styleTitle,
   styleSeeMore,
-  onItemClick
+  onItemClick,
+  onSeeMoreClick
 }) => {
   const renderItem = ({item}: {item: Mon}) => {
     const handleItemClick = () => {
@@ -109,6 +111,7 @@ const FlatListHomeComponent: React.FC<Props> = ({
           ]}>
           {textTitle}
         </Text>
+        <TouchableOpacity onPress={onSeeMoreClick}>
         <Text
           style={[
             styleSeeMore,
@@ -116,6 +119,8 @@ const FlatListHomeComponent: React.FC<Props> = ({
           ]}>
           {textSeeMore}
         </Text>
+        </TouchableOpacity>
+     
       </View>
 
       <FlatList

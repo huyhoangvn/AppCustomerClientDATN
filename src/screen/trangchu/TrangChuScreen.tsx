@@ -30,8 +30,8 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const [typeDish2, setTypeDish2] = useState<Mon[]>([]);
   const [dishTop, setDishTop] = useState<Mon[]>([]);
   const [loading, setLoading] = useState(false);
-  const [nameTypeDish1,setNametypeDish1] = useState<string>();
-  const [nameTypeDish2,setNametypeDish2] = useState<string>();
+  const [nameTypeDish1, setNametypeDish1] = useState<string>();
+  const [nameTypeDish2, setNametypeDish2] = useState<string>();
 
   const openScreen = (screen: string) => {
     navigation.navigate(screen, {searchValue});
@@ -102,7 +102,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const getTypeDish = async (index: any) => {
     try {
       setLoading(true);
-      if(index == 0 ){
+      if (index == 0) {
         const res: any = await authenticationAPI.HandleAuthentication(
           `/khachhang/mon/theo-loai-mon?indexLM=${index}`,
           {},
@@ -110,9 +110,9 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
         );
         if (res.success === true) {
           setTypeDish1(res.list);
-          setNametypeDish1(res.tenLM)
+          setNametypeDish1(res.tenLM);
         }
-      }else{
+      } else {
         const res: any = await authenticationAPI.HandleAuthentication(
           `/khachhang/mon/theo-loai-mon?indexLM=${index}`,
           {},
@@ -120,8 +120,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
         );
         if (res.success === true) {
           setTypeDish2(res.list);
-          setNametypeDish2(res.tenLM)
-
+          setNametypeDish2(res.tenLM);
         }
       } // Set loading to true before making the API call
     } catch (error) {
@@ -129,11 +128,11 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
     } finally {
       setLoading(false);
     }
-  }
+  };
   const getTopDish = async () => {
     try {
       setLoading(true); // Set loading to true before making the API call
-    
+
       const res: any = await authenticationAPI.HandleAuthentication(
         `/nhanvien/thongke/nam-tenLM`,
         'get',
@@ -141,13 +140,12 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
       if (res.success === true) {
         setDishTop(res.list);
       }
-
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const handlePress = (item: any) => {
     console.log('item11111', item);
@@ -199,58 +197,81 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
         </View>
       </View>
       <View style={styles.main}>
-        <View style={{backgroundColor: appColors.white}}>
-          <FlatListHomeComponent
-            data={dishTop}
-            showIndicator={false}
-            textTitle="Món bán chạy"
-            textSeeMore='Xem thêm >'
-            textTag="Món ngon"
-            styleTag={{color: appColors.warmOrange,borderColor: appColors.warmOrange,}}
-            styleTitle={{
-              color: appColors.warmOrange,
-            }}
-            onItemClick={(item: Mon) => {
-              navigation.navigate('DetailMonScreen', {idMon: item?._id});
-            }}
-          />
-        </View>
+        {dishTop &&
+          dishTop.length > 0 && ( // Kiểm tra nếu dishTop tồn tại và có phần tử
+            <View style={{backgroundColor: appColors.white}}>
+              <FlatListHomeComponent
+                data={dishTop}
+                showIndicator={false}
+                textTitle="Món bán chạy"
+                textSeeMore="Xem thêm >"
+                textTag="Món ngon"
+                styleTag={{
+                  color: appColors.warmOrange,
+                  borderColor: appColors.warmOrange,
+                }}
+                styleTitle={{
+                  color: appColors.warmOrange,
+                }}
+                onItemClick={(item: Mon) => {
+                  navigation.navigate('DetailMonScreen', {idMon: item?._id});
+                }}
+                onSeeMoreClick={() => {
 
-        <View style={{backgroundColor: appColors.white}}>
-          <FlatListHomeComponent
-            data={typeDish1}
-            showIndicator={false}
-            textTitle={nameTypeDish1}
-            textTag='Giải khát'
-            textSeeMore='Xem thêm gì đó >'
-            styleTitle={{
-              color: appColors.coolPurple,
-            }}
-            onItemClick={(item: Mon) => {
-              navigation.navigate('DetailMonScreen', {idMon: item?._id});
-            }}
-         
-            styleTag = {{color: appColors.coolPurple,borderColor: appColors.coolPurple,}}
-          />
-        </View>
+                }}
+              />
+            </View>
+          )}
 
-        <View style={{backgroundColor: appColors.white}}>
-          <FlatListHomeComponent
-            data={typeDish2}
-            showIndicator={false}
-            textTitle={nameTypeDish2}
-            textTag='Giải khát'
-            textSeeMore='Xem thêm gì đó >'
-            styleTitle={{
-              color: appColors.coolPurple,
-            }}
-            onItemClick={(item: Mon) => {
-              navigation.navigate('DetailMonScreen', {idMon: item?._id});
-            }}
-         
-            styleTag = {{color: appColors.coolPurple,borderColor: appColors.coolPurple,}}
-          />
-        </View>
+        {typeDish1 && typeDish1.length > 0 && (
+          <View style={{backgroundColor: appColors.white}}>
+            <FlatListHomeComponent
+              data={typeDish1}
+              showIndicator={false}
+              textTitle={nameTypeDish1}
+              textTag="Giải khát"
+              textSeeMore="Xem thêm >"
+              styleTitle={{
+                color: appColors.coolPurple,
+              }}
+              onItemClick={(item: Mon) => {
+                navigation.navigate('DetailMonScreen', {idMon: item?._id});
+              }}
+              onSeeMoreClick={() => {
+                navigation.navigate('SearchMonScreen')
+              }}
+              styleTag={{
+                color: appColors.coolPurple,
+                borderColor: appColors.coolPurple,
+              }}
+            />
+          </View>
+        )}
+
+        {typeDish2 && typeDish2.length > 0 && (
+          <View style={{backgroundColor: appColors.white}}>
+            <FlatListHomeComponent
+              data={typeDish2}
+              showIndicator={false}
+              textTitle={nameTypeDish2}
+              textTag="Giải khát"
+              textSeeMore="Xem thêm >"
+              styleTitle={{
+                color: appColors.coolPurple,
+              }}
+              onItemClick={(item: Mon) => {
+                navigation.navigate('DetailMonScreen', {idMon: item?._id});
+              }}
+              onSeeMoreClick={() => {
+
+              }}
+              styleTag={{
+                color: appColors.coolPurple,
+                borderColor: appColors.coolPurple,
+              }}
+            />
+          </View>
+        )}
       </View>
     </ScrollView>
   );
