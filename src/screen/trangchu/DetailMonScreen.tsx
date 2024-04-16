@@ -119,6 +119,7 @@ const DetailMonScreen = ({ navigation} : any) =>  {
   const isFocused = useIsFocused();
   const [inCart, setInCart] = useState(false);
   const [cartColor, setCartColor] = useState(appColors.gray);
+  const [textThem, setTextThem] = useState("Xem thêm")
 
   useEffect(() => {
     const id = route.params?.idMon || "";
@@ -286,6 +287,7 @@ const DetailMonScreen = ({ navigation} : any) =>  {
         setSoLuongDanhGia(count);
         setDanhSachDanhGia(list);
         setTrang(1);
+        setTextThem("Xem Thêm")
       }
     } catch (e) {
       console.log(e);
@@ -306,6 +308,9 @@ const DetailMonScreen = ({ navigation} : any) =>  {
         setSoLuongDanhGia(soLuongDanhGia + list.length);
         setDanhSachDanhGia(prevList => [...prevList, ...list]);
         setTrang(trang+1);
+        if(list.length === 0){
+          setTextThem("Hết")
+        }
       }
     } catch (e) {
       console.log(e);
@@ -399,7 +404,7 @@ const DetailMonScreen = ({ navigation} : any) =>  {
               keyExtractor={(item : any) => item.idDG}
           />
           <TouchableOpacity onPress={() => xemThem()} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{color: appColors.primary, fontSize: appFontSize.normal}}>Xem thêm</Text>
+              <Text style={{color: appColors.primary, fontSize: appFontSize.normal}}>{textThem}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
