@@ -47,6 +47,7 @@ const RegisterScreen: React.FC<NavProps> = ({navigation}) => {
 
   const handleCloseAlert = () => {
     setShowAlert(false);
+    navigation.navigate('LoginScreen');
   };
 
   const validateInputs = () => {
@@ -88,7 +89,7 @@ const RegisterScreen: React.FC<NavProps> = ({navigation}) => {
 
     try {
       setIsLoading(true); // Bắt đầu hiển thị màn hình loading
-      const res = await authenticationAPI.HandleAuthentication(
+      const res:any = await authenticationAPI.HandleAuthentication(
         '/khachhang/verification',
         {
           email: userName,
@@ -105,6 +106,7 @@ const RegisterScreen: React.FC<NavProps> = ({navigation}) => {
           email: userName,
           pass: pass,
           code: res.data.code,
+          status: 'register',
         });
       } else {
         setIsLoading(false);

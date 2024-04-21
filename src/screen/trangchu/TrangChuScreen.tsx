@@ -22,7 +22,7 @@ import Swiper from 'react-native-swiper';
 import FlatListHomeComponent from '../../component/FlatListHomeComponent';
 import authenticationAPI from '../../apis/authApi';
 
-const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
+const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
   const [searchValue, setSearchValue] = useState('');
   const swiperRef = useRef<any>(null);
   const [autoplay, setAutoplay] = useState(true); // State để điều khiển autoplay
