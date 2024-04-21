@@ -12,7 +12,7 @@ import authenticationAPI from '../../apis/authApi';
 import AlertComponent from '../../component/AlertComponent';
 import LoadingComponent from '../../component/LoadingComponent';
 const VerificationScreen: React.FC<NavProps> = ({navigation, route}: any) => {
-  const {name, phone, email, pass, code} = route.params;
+  const {name, phone, email, pass, code, status, id} = route?.params || {};
   const [currentCode, setCurrentCode] = useState<string>(code);
   const [codeValues, setCodeValues] = useState<string[]>([]);
   const [newCode, setNewCode] = useState('');
@@ -60,7 +60,7 @@ const VerificationScreen: React.FC<NavProps> = ({navigation, route}: any) => {
   const hanDelBackToScreen = () => {
     setShowAlert(false);
     navigation.navigate('LoginScreen');
-  }
+  };
 
   const handleChangeCode = (val: string, index: number) => {
     const data = [...codeValues];
@@ -71,7 +71,7 @@ const VerificationScreen: React.FC<NavProps> = ({navigation, route}: any) => {
   const saveUser = async () => {
     setIsLoading(true);
     try {
-      const res = await authenticationAPI.HandleAuthentication(
+      const res: any = await authenticationAPI.HandleAuthentication(
         '/khachhang/dang-ky',
         {
           taiKhoan: email,
@@ -84,11 +84,11 @@ const VerificationScreen: React.FC<NavProps> = ({navigation, route}: any) => {
 
       if (res.success === true) {
         setMsg(res.msg);
-        setLabel('backScreen')
+        setLabel('backScreen');
         handleShowAlert();
       } else {
         setMsg(res.msg);
-        setLabel('backScreen')
+        setLabel('backScreen');
         handleShowAlert();
       }
     } catch (err) {
@@ -98,16 +98,45 @@ const VerificationScreen: React.FC<NavProps> = ({navigation, route}: any) => {
     }
   };
 
+  const forGotPass = () => {
+    navigation.navigate('NewPassScreen',{id: id});
+  };
+
   const handleChangeVerification = () => {
-    
-    if (parseInt(newCode) === parseInt(code) || parseInt(newCode) ===  parseInt(currentCode)) 
-    {
-      saveUser();
-    } else {
-      setLabel('')
-      setMsg('mã không đúng hoặc k hợp lệ');
-      handleShowAlert();
+    switch (status) {
+      case 'register':
+        if (
+          parseInt(newCode) === parseInt(code) ||
+          parseInt(newCode) === parseInt(currentCode)
+        ) {
+          saveUser();
+        } else {
+          setLabel('');
+          setMsg('mã không đúng hoặc k hợp lệ');
+          handleShowAlert();
+        }
+        break;
+      case 'forgot':
+        if (
+          parseInt(newCode) === parseInt(code) ||
+          parseInt(newCode) === parseInt(currentCode)
+        ) {
+          forGotPass();
+        } else {
+          setLabel('');
+          setMsg('mã không đúng hoặc k hợp lệ');
+          handleShowAlert();
+        }
+        break;
     }
+    // if (parseInt(newCode) === parseInt(code) || parseInt(newCode) ===  parseInt(currentCode))
+    // {
+    //   saveUser();
+    // } else {
+    //   setLabel('')
+    //   setMsg('mã không đúng hoặc k hợp lệ');
+    //   handleShowAlert();
+    // }
   };
   const handleResendVerification = async () => {
     setCodeValues(['', '', '', '']);
@@ -253,8 +282,8 @@ const VerificationScreen: React.FC<NavProps> = ({navigation, route}: any) => {
       </View>
       <LoadingComponent visible={isLoading} />
       <AlertComponent
-        label= {label}
-        text='Login'
+        label={label}
+        text="Login"
         visible={showAlert}
         message={msg}
         onClose={handleCloseAlert}

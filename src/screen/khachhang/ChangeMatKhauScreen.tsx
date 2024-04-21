@@ -141,7 +141,6 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
         />
       </View>
       <View style={styles.editContainer}>
-
         <ButtonComponent
           type="primary"
           text="Lưu"

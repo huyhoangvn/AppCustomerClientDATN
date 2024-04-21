@@ -48,7 +48,7 @@ const DetailKhachHangScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
     try {
       setLoading(true);
       const res : any = await authenticationAPI.HandleAuthentication(
-        `/khachhang/${idKH}`,
+        `/khachhang/thong-tin/${idKH}`,
         'get',
       );
       if (res.success === true) {
