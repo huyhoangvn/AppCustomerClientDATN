@@ -1,16 +1,16 @@
 import {View, Text, StyleSheet, Linking} from 'react-native';
 import React, { useState } from 'react';
-import TextComponent from '../component/TextComponent';
-import { appColors } from '../constants/appColors';
-import { appFontSize } from '../constants/appFontSizes';
-import EditTextComponent from '../component/EditTextComponent';
+import TextComponent from '../../component/TextComponent';
+import { appColors } from '../../constants/appColors';
+import { appFontSize } from '../../constants/appFontSizes';
+import EditTextComponent from '../../component/EditTextComponent';
 import {faLock, faEnvelope} from '@fortawesome/free-solid-svg-icons';
-import Button from '../component/Button';
-import ButtonComponent from '../component/ButtonComponent';
-import authenticationAPI from '../apis/authApi';
-import AlertComponent from '../component/AlertComponent';
-import LoadingComponent from '../component/LoadingComponent';
-import NavProps from '../models/props/NavProps';
+import Button from '../../component/Button';
+import ButtonComponent from '../../component/ButtonComponent';
+import authenticationAPI from '../../apis/authApi';
+import AlertComponent from '../../component/AlertComponent';
+import LoadingComponent from '../../component/LoadingComponent';
+import NavProps from '../../models/props/NavProps';
 
 const ForGotPasswordScreen: React.FC<NavProps> = ({navigation}) => {
     const [showAlert, setShowAlert] = useState(false);
@@ -46,13 +46,22 @@ const ForGotPasswordScreen: React.FC<NavProps> = ({navigation}) => {
         );
   
         if (res.success === true) {
-            navigation.navigate('ResetPasswordScreen', {idUser: res.id});
+            const resultVerification:any = await authenticationAPI.HandleAuthentication(
+              '/khachhang/verification',
+              {
+                email: email,
+              },
+              'post',
+            );
+            if(resultVerification.success === true){
+            navigation.navigate('VerificationScreen',{status: 'forgot', id: res.id, email: email,code: resultVerification.data.code});
+          }
         } else {
           setMsg(res.msg);
           handleShowAlert();
         }
       } catch (err) {
-        console.log(err);
+        // console.error(err);
         setMsg('Request timeout. Please try again later.'); // Set error message
         handleShowAlert(); // Show alert
       } finally {
@@ -61,14 +70,13 @@ const ForGotPasswordScreen: React.FC<NavProps> = ({navigation}) => {
     }
 
     const handleContinue= () => {
-      Linking.openURL('momo://app?action=payWithApp&isScanQR=false&serviceType=app&sid=TU9NT3xNT01PMTcxMjY3MjA3NjY0OQ&v=3.0')
-        // const errorMessage = validateInputs();
-        // if (errorMessage) {
-        //   setMsg(errorMessage);
-        //   handleShowAlert();
-        //   return;
-        // }
-        // finAccount()
+       const errorMessage = validateInputs();
+        if (errorMessage) {
+          setMsg(errorMessage);
+          handleShowAlert();
+          return;
+        }
+        finAccount()
     }
   return (
     <View style={styles.container}>

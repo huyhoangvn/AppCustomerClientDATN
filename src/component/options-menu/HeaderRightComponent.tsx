@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import { appColors } from '../../constants/appColors';
-import { deleteToken } from './../../utils/storageUtils';
+import { clearAllData, deleteToken } from './../../utils/storageUtils';
 
 interface HeaderProps extends NavProps {
     tenKH?: string;
@@ -29,7 +29,7 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, tenKH, backTo
     const logout = async () => {
         setShowOptionsMenu(false);
         try {
-            await deleteToken();
+            await clearAllData();
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'LoginScreen' }],

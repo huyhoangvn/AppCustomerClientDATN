@@ -13,6 +13,7 @@ import MyButtonComponent from '../../component/button/MyButtonComponent';
 import authenticationAPI from '../../apis/authApi';
 import { formatTrangThai, formatTrangThaiGiaoHang, formatTrangThaiThanhToan } from '../../utils/trangThaiFormat';
 import { formatTrangThaiColor, formatTrangThaiGiaoHangColor, formatTrangThaiThanhToanColor } from '../../utils/trangThaiColor';
+import { Linking } from 'react-native';
 
 const HoaDonResExample = {
   index: {
@@ -142,8 +143,23 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
     console.log(isActiveThanhToan)
     if(isActiveThanhToan){
       //Chuyển đến màn hình thanh toán
-      showAlert("Chuyển đến màn hình thanh toán", "Giao dịch...")
-
+      showAlert("Bạn có muốn thanh toán ?", "Thanh toán hóa đơn " + maHD, true)
+      .then(async (result) => {
+        if (result) {      
+          const res : any = await authenticationAPI.HandleAuthentication(
+          '/khachhang/thanhtoan/payZalo' + "/" + idHD,
+          {},
+          'post')
+          console.log(res)
+          if(res.success === true){
+            const orderUrl = res.index.order_url;
+            Linking.openURL(orderUrl).catch((err) => {
+              console.error('Failed to open URL:', err);
+              // Handle error if unable to open URL
+              showAlert("Không thể mở ZaloPay", "Đã xảy ra lỗi khi mở ZaloPay");
+            });          }
+        }
+      })
     } else {
       showAlert("Chưa thể thanh toán", "Quý khách vui lòng đợi đơn hàng được giao thành công để thực hiện giao dịch")
     }

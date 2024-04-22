@@ -4,17 +4,34 @@ import Svg, { Image } from 'react-native-svg'; // Import SVG components from rea
 import NavProps from '../models/props/NavProps';
 import { appColors } from '../constants/appColors';
 import { SplashScreenBg, LogoNoText } from "../assest/svgs/index";
+import { getData, getToken } from '../utils/storageUtils';
+import { useDispatch } from 'react-redux';
+import { setToken } from '../redux/reducers/authReducers';
 
 const SplashScreen: React.FC<NavProps> = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+const loadScreen = async () => {
+  const token  = await getToken();
+  if(token){
+    const token = await getToken();
+    dispatch(setToken(token));
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'HomeScreen' }],
+    });
+  }else {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'LoginScreen' }],
+    });
+  }
+}
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'LoginScreen' }],
-      });
+      loadScreen()
     }, 3000);
 
     // Clear timeout on unmount to avoid memory leaks
