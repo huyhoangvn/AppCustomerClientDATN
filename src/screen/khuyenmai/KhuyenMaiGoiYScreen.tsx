@@ -198,7 +198,7 @@ const addKMCuaToi = async (idKM:any) => {
           scrollEnabled={false}
           data={danhSachKhuyenMai}
           renderItem={renderItem}
-          keyExtractor={(item: any) => item.idKM}
+          keyExtractor={(item: any) => item._id}
         />
       </ScrollView>
     </View>
