@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   header: {
-    height: hp(20),
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -189,8 +189,6 @@ const styles = StyleSheet.create({
   viewText: {
     flexDirection: 'row',
     borderBottomWidth: 0.5,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
     justifyContent: 'space-between',
   },
  
