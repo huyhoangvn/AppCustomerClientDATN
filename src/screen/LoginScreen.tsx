@@ -190,7 +190,7 @@ const LoginScreen: React.FC<NavProps> = ({navigation}) => {
       <View style={styles.main}>
         <EditTextComponent
           label="text"
-          placeholder="Nhập tài khoản"
+          placeholder="Nhập tài khoản email"
           value={userName}
           iconColor="gray"
           onChangeText={handleUserNameChange}
@@ -304,6 +304,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    
   },
   signOut: {
     flexDirection: 'row',

@@ -10,11 +10,10 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import NavProps from '../../models/props/NavProps';
 import {
-  faShop,
   faPhone,
-  faLocationDot,
   faUser,
   faLock,
+  faEnvelope
 } from '@fortawesome/free-solid-svg-icons';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import AlertComponent from '../../component/AlertComponent';
@@ -122,12 +121,15 @@ const RegisterScreen: React.FC<NavProps> = ({navigation}) => {
   return (
     <KeyboardAvoidingView 
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -20} // Điều chỉnh khoảng cách giữa phần tử và bàn phím
+    // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -150} // Điều chỉnh khoảng cách giữa phần tử và bàn phím
+
+    keyboardVerticalOffset={Platform.select({ ios: 0, android: -20 })}
     style={styles.container}
     >
    <ScrollView 
-        contentContainerStyle={{ flexGrow: 1 }} // Ensure that the ScrollView fills the available space
-        keyboardShouldPersistTaps="handled">
+        contentContainerStyle={{ flexGrow: 1 }} 
+        // keyboardShouldPersistTaps="handled"
+       >
               <View style={styles.header}>
         <TextComponent
           text="Đăng Ký"
@@ -148,7 +150,7 @@ const RegisterScreen: React.FC<NavProps> = ({navigation}) => {
             value={name}
             iconColor="gray"
             onChangeText={setName}
-            icon={faShop}
+            icon={faUser}
           />
 
           <EditTextComponent
@@ -165,7 +167,7 @@ const RegisterScreen: React.FC<NavProps> = ({navigation}) => {
             value={userName}
             iconColor="gray"
             onChangeText={setUserName}
-            icon={faUser}
+            icon={faEnvelope}
           />
 
           <EditTextComponent
@@ -221,6 +223,7 @@ const RegisterScreen: React.FC<NavProps> = ({navigation}) => {
                 fontSize: 14,
                 textDecorationLine: 'underline',
               }}
+              onPress={() =>{navigation.navigate('TermsServiceScreen')}}
             />
           </View>
 
@@ -276,12 +279,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   header: {
-    flex: 2,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    
   },
   main: {
-    flex: 2,
+    flex: 3,
     justifyContent: 'space-between',
         // backgroundColor: 'black'
 
@@ -296,7 +300,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'black',
   },
   footer: {
-    flex: 1,
+    flex: 2,
     // backgroundColor: 'black'
   },
   signOut: {

@@ -40,37 +40,37 @@ const ListHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
       <Tab.Screen 
         name="ListTatCaScreen" 
         component={ListTatCaScreen} 
-        options={renderTabScreenOptions('Tất cả'  )}
+        options={renderTabScreenOptions('Tất cả hoá đơn'  )}
       />
       <Tab.Screen 
         name="ListChoDuyetScreen" 
         component={ListChoDuyetScreen} 
-        options={renderTabScreenOptions('Chờ duyệt')}
+        options={renderTabScreenOptions('Đang Chờ duyệt')}
       />
       <Tab.Screen 
         name="ListChuanBiScreen" 
         component={ListChuanBiScreen} 
-        options={renderTabScreenOptions('Chuẩn bị')}
+        options={renderTabScreenOptions('Đang Chuẩn bị')}
       />
       <Tab.Screen 
         name="ListDangGiaoScreen" 
         component={ListDangGiaoScreen} 
-        options={renderTabScreenOptions('Đang giao')}
+        options={renderTabScreenOptions('Đang giao hàng')}
       />
       <Tab.Screen 
         name="ListThanhCongScreen" 
         component={ListThanhCongScreen} 
-        options={renderTabScreenOptions('Thành công')}
+        options={renderTabScreenOptions('Giao thành công')}
       />
       <Tab.Screen 
         name="ListThatBaiScreen" 
         component={ListThatBaiScreen} 
-        options={renderTabScreenOptions('Thất bại')}
+        options={renderTabScreenOptions('Giao thất bại')}
       />
       <Tab.Screen 
         name="ListHuyScreen" 
         component={ListHuyScreen} 
-        options={renderTabScreenOptions('Huỷ')}
+        options={renderTabScreenOptions('Đơn hàng đã huỷ')}
       />
     </Tab.Navigator>
   );
