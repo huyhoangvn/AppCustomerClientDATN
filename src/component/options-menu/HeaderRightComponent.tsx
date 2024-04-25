@@ -1,21 +1,21 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import NavProps from '../../models/props/NavProps';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisH,faLock, faEnvelope, faShop, faCartShopping, faRightFromBracket, faHome, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import { appColors } from '../../constants/appColors';
-import { clearAllData, deleteToken } from './../../utils/storageUtils';
+import { clearAllData, deleteToken, getData } from './../../utils/storageUtils';
 
 interface HeaderProps extends NavProps {
-    tenKH?: string;
     backToHomeEnabled?: boolean;
     color?: string;
 }
 
-const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, tenKH, backToHomeEnabled = false, color = "#000000" }: any) => {
+const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, backToHomeEnabled = false, color = "#000000" }: any) => {
 
     const [showOptionsMenu, setShowOptionsMenu] = React.useState(false);
+    const [name, setName] = React.useState<string>('');
 
     const handleGearClick = () => {
         setShowOptionsMenu(true);
@@ -25,6 +25,16 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, tenKH, backTo
         setShowOptionsMenu(false);
         navigation.navigate(screenName);
     };
+
+    useEffect(() => {
+        const getName = async () => {
+            const result = await getData();
+            setName(result?.tenKH || 'Tên khách hàng');
+        };
+        getName();
+    }, []);
+    
+
 
     const logout = async () => {
         setShowOptionsMenu(false);
@@ -55,15 +65,36 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, tenKH, backTo
                 style={styles.touchableOpacity}
                 onPress={handleGearClick}
             >
-                <FontAwesomeIcon icon={faEllipsisH} size={24} color={color}/>
+                <FontAwesomeIcon icon={faEllipsisH} size={24} color={appColors.primary}/>
             </TouchableOpacity>
 
             <Menu opened={showOptionsMenu} onBackdropPress={() => setShowOptionsMenu(false)}>
                 <MenuTrigger />
                 <MenuOptions customStyles={menuOptionsStyles}>
-                    {tenKH && <Text style={styles.menuText}>{tenKH}</Text>}
-                    {backToHomeEnabled && <MenuOption onSelect={() => backToHome()} customStyles={menuOptionStyles}><Text>Về trang chủ</Text></MenuOption>}
-                    <MenuOption onSelect={() => logout()} customStyles={menuOptionStyles}><Text>Đăng xuất</Text></MenuOption>
+                    {name && <MenuOption onSelect={() => {}} customStyles={menuOptionStyles}>
+                        <View style={styles.viewOption}>
+                            <FontAwesomeIcon icon={faUser} size={20} color={appColors.primary} />
+                            <Text style={styles.textOption}>{name}</Text>
+                        </View>
+                    </MenuOption>}
+                    {backToHomeEnabled && <MenuOption onSelect={() => backToHome()} customStyles={menuOptionStyles}>
+                        <View style={styles.viewOption}>
+                            <FontAwesomeIcon icon={faHome} size={20} color={appColors.primary} />
+                            <Text style={styles.textOption}>Về trang chủ</Text>
+                        </View>
+                    </MenuOption>}
+                    <MenuOption onSelect={() => {}} customStyles={menuOptionStyles}>
+                        <View style={styles.viewOption}>
+                            <FontAwesomeIcon icon={faCartShopping} size={20} color={appColors.primary} />
+                            <Text style={styles.textOption}>Giỏ hàng</Text>
+                        </View>
+                    </MenuOption>
+                    <MenuOption onSelect={() => logout()} customStyles={menuOptionStyles}>
+                        <View style={styles.viewOption}>
+                            <FontAwesomeIcon icon={faRightFromBracket} size={20} color={appColors.primary} />
+                            <Text style={styles.textOption}>Đăng xuất</Text>
+                        </View>
+                    </MenuOption>
                 </MenuOptions>
             </Menu>
         </View>
@@ -87,19 +118,22 @@ const menuOptionStyles = {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'flex-end',
-    },
-    touchableOpacity: {
-        marginLeft: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
         marginRight: 10,
     },
-    menuText: {
+    touchableOpacity: {
+        marginRight: 10,
+    },
+    viewOption: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 8,
+    },
+    textOption: {
+        marginLeft: 10,
+        color: appColors.text,
         fontSize: 16,
-        fontWeight: 'bold',
-        color: appColors.primary,
-        padding: 5
     },
 });
 
