@@ -176,7 +176,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: appColors.white,
-    justifyContent: 'space-between',
     paddingHorizontal: 10,
   },
   header: {

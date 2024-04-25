@@ -40,7 +40,6 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
         `/khachhang/khuyenmaicuatoi/danh-sach/${idKH}`,
         'get',
       );
-      console.log(res);
       if (res.success === true) {
         setDanhSachKhuyenMai(res.list);
         setMsg(msg);
@@ -127,23 +126,15 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
     return(
       <View style={styles.itemContainer}>
       <View style={styles.itemHeal}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'black' }}>
-        Tiêu đề: {item.tieuDe}
+      <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'black' }}>{item.tieuDe}
       </Text>
       <TouchableOpacity onPress={() => removeFromList(item._id)}>
         <FontAwesomeIcon icon={faTimes} size={appIcon.normal} />
       </TouchableOpacity>
      </View>
       
-      <Text style={{fontSize:16, fontWeight:'bold', color:'black'}}>Phần trăm khuyến mãi: {item.phanTramKhuyenMai}%</Text>
-      <View style={styles.dateContainer}>
-        <View style={styles.date}>
-          <Text>{item.ngayBatDau}-</Text>
-        </View>
-        <View style={styles.dateHetHan}>
-          <Text>{item.ngayHetHan}</Text>
-        </View>
-      </View>
+      <Text style={{fontSize:16, color:'black'}}>Giảm {item.phanTramKhuyenMai}% hóa đơn</Text>
+     
       {/* <Text>Đơn tối thiểu: {item.donToiThieu}</Text> */}
       <View style={styles.buttonContainer}>
          {/* Nút điều hướng đến KhuyenMaiCuaBanScreen */}
@@ -179,42 +170,26 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    paddingHorizontal: 8,
   },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
+  
   itemContainer: {
-    padding: 10,
+    padding: 8,
     borderWidth: 1,
     paddingHorizontal: 10,
     margin: 5,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   buttonDetails: {
-    width: 100,
     backgroundColor: '#424ec4',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginRight: 150,
-    alignItems: 'center',
-
   },
-  buttonAdd: {
-    width: 100,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    alignItems: 'center',
-    backgroundColor: appColors.gray2
 
-  },
   buttonChiTiet: {
     color: 'white',
     fontSize: 16,
@@ -223,15 +198,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
-  dateContainer: {
-    flexDirection: 'row',
-  },
-  date: {
-    justifyContent:'space-around',
-  },
-  dateHetHan:{
-    justifyContent:'space-around',
-  },
+  
   itemHeal:{
     flexDirection: 'row',
     justifyContent: 'space-between',
