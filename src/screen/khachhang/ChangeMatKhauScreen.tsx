@@ -8,6 +8,7 @@ import {
   faEnvelope,
   faLock,
   faUser,
+  faEnvelopeCircleCheck
 } from '@fortawesome/free-solid-svg-icons';
 import {
   widthPercentageToDP as wp,
@@ -107,7 +108,7 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
           value={userName}
           iconColor="gray"
           onChangeText={setUserName}
-          icon={faUser}
+          icon={faEnvelopeCircleCheck}
         />
       </View>
       <View style={styles.editContainer}>
@@ -144,7 +145,7 @@ const ChangeMatKhauScreen: React.FC<NavProps> = ({navigation}) => {
         <ButtonComponent
           type="primary"
           text="Lưu"
-          textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold', paddingTop:10}}
+          textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold'}}
           onPress={handelSave}
         />
       </View>

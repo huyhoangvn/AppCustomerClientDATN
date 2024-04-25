@@ -16,6 +16,7 @@ import {
   faEnvelope,
   faLock,
   faUser,
+  faEdit
 } from '@fortawesome/free-solid-svg-icons';
 import {
   widthPercentageToDP as wp,
@@ -29,6 +30,7 @@ import AlertComponent from '../../component/AlertComponent';
 import LoadingComponent from '../../component/LoadingComponent';
 import {getData} from '../../utils/storageUtils';
 import ImagePickerComponent from '../../component/ImagePickerComponent';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any) => {
   
@@ -117,15 +119,14 @@ const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any)
           <ImagePickerComponent
             onImageSelect={handleImageSelect}
             imageUri={item.hinhAnh}
-            style={{borderRadius: wp(25), overflow: 'hidden'}}
+            style={{
+              width: wp(40),
+              height: hp(20),
+              borderRadius: wp(20),
+            }}
           />
-
-          {/* <Image
-        style={{width: wp(40), height: hp(20), borderRadius: 5}}
-        source={{
-          uri: item.hinhAnh,
-        }}
-      /> */}
+        
+        
         </View>
         <View style={styles.footer}>
           <EditTextComponent
@@ -134,7 +135,7 @@ const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any)
             value={tenKH}
             iconColor="gray"
             onChangeText={setKH}
-            icon={faShop}
+            icon={faUser}
           />
 
           <EditTextComponent
@@ -154,12 +155,14 @@ const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any)
             onChangeText={setAddress}
             icon={faLocationDot}
           />
-          <ButtonComponent
+          <View style={styles.buttonLuu}>
+           <ButtonComponent
             type="primary"
             text="Lưu"
-            textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold'}}
             onPress={handelUpdateKhachHang}
-          />
+            />
+          </View>
+         
         </View>
         <AlertComponent
           visible={showAlert}
@@ -180,14 +183,16 @@ const styles = StyleSheet.create({
     backgroundColor: appColors.white,
   },
   main: {
-    height: hp(33),
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    
   },
   footer: {
-    height: hp(40),
     justifyContent: 'space-between',
+    marginTop: 10,
   },
+  buttonLuu:{
+    marginTop: 10,
+  }
 });
 
 export default EditDetailKhachHangScreen;
