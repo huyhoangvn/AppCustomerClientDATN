@@ -137,7 +137,7 @@ const DetailMonScreen = ({ navigation } : any) =>  {
     if(!id){return;}
     try {
       const res : any = await authenticationAPI.HandleAuthentication(
-        '/khachhang/mon' + "/theo-cua-hang/" + id,
+        '/khachhang/mon' + "/theo-cua-hang/" + id + "?trangThai=1",
         'get',
       );
       // const res : any = DanhSachMonResExample
@@ -158,10 +158,9 @@ const DetailMonScreen = ({ navigation } : any) =>  {
     if(!idCH){return;}
     try {
       const res : any = await authenticationAPI.HandleAuthentication(
-        '/khachhang/mon' + "/theo-cua-hang/" + idCH + "?trang=" + (trang+1),
+        '/khachhang/mon' + "/theo-cua-hang/" + idCH + "?trang=" + (trang+1) + "&trangThai=1",
         'get',
       );
-
       // const res : any = DanhSachMonResExampleLoadingMore
 
       if (res.success === true) {
@@ -184,7 +183,6 @@ const DetailMonScreen = ({ navigation } : any) =>  {
     navigation.navigate('DetailMonScreenFromCuaHang', {
       idMon: id,
       showMoreContent: false, 
-      uniqueId: Math.random() 
     });
   };
 
