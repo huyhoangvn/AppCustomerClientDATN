@@ -123,7 +123,7 @@ const DetailMonScreen = ({ navigation} : any) =>  {
 
   useEffect(() => {
     const id = route.params?.idMon || "";
-    setShowMoreContent(route.params?.showMoreContent);
+    setShowMoreContent(route.params && route.params.showMoreContent !== undefined ? route.params.showMoreContent : true);
     layChiTietMon(id);
     layTrungBinhDanhGiaMon(id);
     layDanhSachDanhGia(id);
@@ -177,17 +177,24 @@ const DetailMonScreen = ({ navigation} : any) =>  {
   const handleCartClick = async () => {
     if(!idKH || !idMon){return;}
     if (inCart) {
-      const res : any = await authenticationAPI.HandleAuthentication(
-        '/khachhang/giohang/delete' + "/" + idKH,
-        {  idMon: idMon },
-        'delete',
-      );
-      // const res = {success: true}
-      if(res.success === true){
-        showAlert('Xóa khỏi giỏ hàng', "Món " + tenMon);
-        setCartColor(appColors.gray);
-        setInCart(false);
-      }
+      showAlert("Món đã trong giỏ hàng", "Bạn có muốn đến giỏ hàng ?", true)
+      .then((result)=>{
+          if(result){
+            navigation.navigate('GioHangScreen');
+          }
+      })
+      // const res : any = await authenticationAPI.HandleAuthentication(
+      //   '/khachhang/giohang/delete' + "/" + idKH,
+      //   {  idMon: idMon },
+      //   'delete',
+      // );
+
+      // // const res = {success: true}
+      // if(res.success === true){
+      //   showAlert('Xóa khỏi giỏ hàng', "Món " + tenMon);
+      //   setCartColor(appColors.gray);
+      //   setInCart(false);
+      // }
     } else {
       const res : any = await authenticationAPI.HandleAuthentication(
         '/khachhang/gioHang/them' + "/" + idKH,
@@ -214,13 +221,13 @@ const DetailMonScreen = ({ navigation} : any) =>  {
          {danhGia: rating},
         'post',
       );
-
       // const res : any = TrungBinhDanhGiaResExample;
-
       if (res.success === true) {
         const { msg } = res;
         showAlert("Lưu đánh giá", "Đánh giá của bạn là " + rating + " sao");
         await layDanhSachDanhGia(idMon);
+      } else {
+        showAlert("Lưu đánh giá", res.msg);
       }
     } catch (e) {
       console.log(e);
@@ -278,7 +285,7 @@ const DetailMonScreen = ({ navigation} : any) =>  {
     if(!id){return;}
     try {
       const res : any = await authenticationAPI.HandleAuthentication(
-        '/khachhang/danhgia/get-danh-sach-theo-mon-filter' + "/" + id,
+        '/khachhang/danhgia/get-danh-sach-theo-mon-filter' + "/" + id + "?trangThai=1",
         'get',
       );
       // const res : any = DanhSachDanhGiaResExample

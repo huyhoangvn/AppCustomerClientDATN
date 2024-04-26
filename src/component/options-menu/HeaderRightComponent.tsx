@@ -6,16 +6,18 @@ import { faEllipsisH,faLock, faEnvelope, faShop, faCartShopping, faRightFromBrac
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import { appColors } from '../../constants/appColors';
 import { clearAllData, deleteToken, getData } from './../../utils/storageUtils';
+import { showAlert } from '../../utils/showAlert';
 
 interface HeaderProps extends NavProps {
     backToHomeEnabled?: boolean;
     color?: string;
 }
 
-const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, backToHomeEnabled = false, color = "#000000" }: any) => {
+const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, backToHomeEnabled = false, color = appColors.primary }: any) => {
 
     const [showOptionsMenu, setShowOptionsMenu] = React.useState(false);
     const [name, setName] = React.useState<string>('');
+    let idKH = ""
 
     const handleGearClick = () => {
         setShowOptionsMenu(true);
@@ -29,6 +31,7 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, backToHomeEna
     useEffect(() => {
         const getName = async () => {
             const result = await getData();
+            idKH = result?.idKH || 'Tên khách hàng'
             setName(result?.tenKH || 'Tên khách hàng');
         };
         getName();
@@ -39,7 +42,6 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, backToHomeEna
     const logout = async () => {
         setShowOptionsMenu(false);
         try {
-            await clearAllData();
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'LoginScreen' }],
@@ -59,13 +61,20 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, backToHomeEna
         }
     };
 
+    const quaGioHang = async () => {
+        setShowOptionsMenu(false);
+        if (backToHomeEnabled) {
+            navigation.navigate('GioHangScreen');
+        }
+    }
+
     return (
         <View style={styles.container}>
             <TouchableOpacity
                 style={styles.touchableOpacity}
                 onPress={handleGearClick}
             >
-                <FontAwesomeIcon icon={faEllipsisH} size={24} color={appColors.primary}/>
+                <FontAwesomeIcon icon={faEllipsisH} size={24} color={color}/>
             </TouchableOpacity>
 
             <Menu opened={showOptionsMenu} onBackdropPress={() => setShowOptionsMenu(false)}>
@@ -83,7 +92,7 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({ navigation, backToHomeEna
                             <Text style={styles.textOption}>Về trang chủ</Text>
                         </View>
                     </MenuOption>}
-                    <MenuOption onSelect={() => {}} customStyles={menuOptionStyles}>
+                    <MenuOption onSelect={() => quaGioHang()} customStyles={menuOptionStyles}>
                         <View style={styles.viewOption}>
                             <FontAwesomeIcon icon={faCartShopping} size={20} color={appColors.primary} />
                             <Text style={styles.textOption}>Giỏ hàng</Text>
