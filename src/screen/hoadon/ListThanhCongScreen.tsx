@@ -3,36 +3,25 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
-  Image,
   KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableHighlight,
 } from 'react-native';
 import NavProps from '../../models/props/NavProps';
 import EditTextComponent from '../../component/EditTextComponent';
 import {
-  faCalendarDays,
   faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons';
 import {appColors} from '../../constants/appColors';
-import DropDownComponent from '../../component/DropDownComponent';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {text} from '@fortawesome/fontawesome-svg-core';
 import {HoaDon} from '../../models/HoaDon';
 import authenticationAPI from '../../apis/authApi';
 import AlertComponent from '../../component/AlertComponent';
 import LoadingComponent from '../../component/LoadingComponent';
 import {getData} from '../../utils/storageUtils';
-import EditText from '../../component/edittext/EditText';
-import {appFontSize} from '../../constants/appFontSizes';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
+import ListHoaDonComponent from '../../component/ListHoaDonComponent';
 const ListThanhCongScreen: React.FC<NavProps> = ({navigation}) => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [text, setText] = useState('Xem thêm');
@@ -151,51 +140,10 @@ const ListThanhCongScreen: React.FC<NavProps> = ({navigation}) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    if(isFocused){
+    if (isFocused) {
       getListInvoice('', 3, page);
     }
   }, [isFocused]);
-
-  const renderItem = ({item}: {item: HoaDon}) => {
-    const {formattedDate, formattedTime} = formatDate(item.thoiGianTao);
-    return (
-      <TouchableHighlight   underlayColor="#F2F2F2" // Màu sắc khi chạm vào
-      onPress={() => handelDetail(item)}>
-        <View style={styles.item}>
-          <View style={{paddingHorizontal: 10}}>
-          <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text style={{fontWeight: 'bold', color: 'black'}}>
-                MHD:{item.maHD}
-              </Text>
-              <Text>
-                {formattedDate || ''} - {formattedTime || ''}
-              </Text>
-            </View>
-            <Text style={{fontWeight: 'bold', color: 'black'}}>
-              Tổng tiền:{' '}
-              {parseInt(item.tongTien || '').toLocaleString('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-              })}
-            </Text>
-            <Text style={{color: 'black', fontWeight: 'bold'}}>
-              {/* {item.trangThaiMua === 1 ? "ok" : "Chưa mua"} */}
-              Trạng thái mua: {getStatusText(item.trangThaiMua ?? 0)}
-            </Text>
-            <Text style={{fontWeight: 'bold', color: 'black'}}>
-              Thanh toán:
-              {item.trangThaiThanhToan === 0 ? (
-                <Text style={{color: 'red'}}> Chưa thanh toán</Text>
-              ) : (
-                <Text style={{color: 'green'}}> Đã thanh toán</Text>
-              )}
-            </Text>
-          </View>
-        </View>
-      </TouchableHighlight>
-    );
-  };
 
   return (
     <KeyboardAvoidingView
@@ -238,27 +186,15 @@ const ListThanhCongScreen: React.FC<NavProps> = ({navigation}) => {
                     marginTop: 20,
                     color: appColors.primary,
                     textDecorationLine: 'underline',
-                  }}>
-                </Text>
+                  }}></Text>
               </TouchableOpacity>
             </View>
           ) : (
-            <FlatList
+            <ListHoaDonComponent
               data={data}
-              renderItem={renderItem}
-              keyExtractor={item => item._id || ''}
-              scrollEnabled={true}
-              style={{height: hp(80)}}
-              // onScroll={() => { setScroll(true), setLastList(false) }} // Khi cuộn, đánh dấu là đã cuộn
-              // onEndReached={() => { setLastList(true), setScroll(false) }} // Kích hoạt khi đạt đến cuối danh sách
-              // onEndReachedThreshold={.1}
-              ListFooterComponent={() => (
-                <View style={{alignItems: 'center', paddingVertical: 10}}>
-                  <TouchableOpacity onPress={handleGetAll}>
-                    <Text style={{fontSize: appFontSize.normal}}>{text}</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+              handleDetail={handelDetail}
+              handleGetAll={handleGetAll}
+              text={text}
             />
           )}
         </View>
@@ -293,7 +229,6 @@ const styles = StyleSheet.create({
     flex: 2,
   },
 
- 
   item: {
     marginVertical: 5,
     marginHorizontal: 10,
@@ -301,7 +236,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     borderRadius: 10,
     backgroundColor: appColors.white,
-    elevation: 10
+    elevation: 10,
   },
 });
 
