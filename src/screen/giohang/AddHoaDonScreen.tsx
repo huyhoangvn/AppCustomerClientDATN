@@ -78,7 +78,6 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   // Truy cập các tham số từ đối tượng route
   const { saveList, idKH } = route.params;
   // let danhSachSoLuong: number[] = new Array(saveList.length).fill(1);
-  const [idKhachHang, setIdKhachHang] = useState("");
   const [idCH, setIdCH] = useState("");
   const [tenCH, setTenCH] = useState("");
   const [diaChi, setDiaChi] = useState("");
@@ -105,7 +104,6 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
     setDanhSachDatMon(saveList)
     setSoLuongMonDat(saveList.length)
     getInfoKhachHang(idKH);
-    setIdKhachHang(idKH);
     getDanhSachKhuyenMaiCuaToi(idKH)
   }, [])
 
@@ -146,7 +144,7 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
 
     try {
       const res : any = await authenticationAPI.HandleAuthentication(
-        '/khachhang' + "/" + id,
+        '/khachhang' + "/thong-tin/" + id,
         'get',
       );
       // const res : any = InfoKHResExample
@@ -210,9 +208,9 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   }
 
   const hienThiTien = () => {
-    const tongTien = tinhTongTien(danhSachDatMon)
-    setTongTien(tongTien)
-    const thanhTien = tongTien - Math.ceil(tongTien*khuyenMai/100) + phiGiaoHang
+    const tongTienTemp = tinhTongTien(danhSachDatMon)
+    setTongTien(tongTienTemp)
+    const thanhTien = tongTienTemp - Math.ceil(tongTien*khuyenMai/100) + phiGiaoHang
     setThanhTien(thanhTien)
   }
 
