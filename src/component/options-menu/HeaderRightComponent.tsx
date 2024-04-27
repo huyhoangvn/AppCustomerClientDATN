@@ -29,7 +29,7 @@ interface HeaderProps extends NavProps {
 const HeaderRightComponent: React.FC<HeaderProps> = ({
   navigation,
   backToHomeEnabled = false,
-  color = '#000000',
+  color = appColors.primary,
 }: any) => {
   const [showOptionsMenu, setShowOptionsMenu] = React.useState(false);
   const [name, setName] = React.useState<string>('');
@@ -74,6 +74,13 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({
     }
   };
 
+  const toGioHang = async () => {
+    setShowOptionsMenu(false);
+    if (backToHomeEnabled) {
+        navigation.navigate('GioHangScreen');
+    }
+}
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -82,7 +89,7 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({
         <FontAwesomeIcon
           icon={faEllipsisH}
           size={24}
-          color={appColors.primary}
+          color={color}
         />
       </TouchableOpacity>
 
@@ -91,17 +98,12 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({
         onBackdropPress={() => setShowOptionsMenu(false)}>
         <MenuTrigger />
         <MenuOptions customStyles={menuOptionsStyles}>
+
           {name && (
-            <MenuOption onSelect={() => {}} customStyles={menuOptionStyles}>
-              <View style={styles.viewOption}>
-                <FontAwesomeIcon
-                  icon={faUser}
-                  size={20}
-                  color={appColors.primary}
-                />
-                <Text style={styles.textOption}>{name}</Text>
-              </View>
-            </MenuOption>
+            <View style={[styles.viewOption, { paddingLeft: 5, paddingBottom: 10 }]}>
+                <FontAwesomeIcon icon={faUser} size={20} color={appColors.primary} />
+                <Text style={[styles.textOption, { color: appColors.primary, fontWeight:'bold' }]}>{name}</Text>
+            </View>
           )}
           {backToHomeEnabled && (
             <MenuOption
@@ -117,16 +119,18 @@ const HeaderRightComponent: React.FC<HeaderProps> = ({
               </View>
             </MenuOption>
           )}
-          <MenuOption onSelect={() => {}} customStyles={menuOptionStyles}>
-            <View style={styles.viewOption}>
-              <FontAwesomeIcon
-                icon={faCartShopping}
-                size={20}
-                color={appColors.primary}
-              />
-              <Text style={styles.textOption}>Giỏ hàng</Text>
-            </View>
-          </MenuOption>
+            {backToHomeEnabled && (
+                <MenuOption onSelect={() => toGioHang()} customStyles={menuOptionStyles}>
+                <View style={styles.viewOption}>
+                    <FontAwesomeIcon
+                    icon={faCartShopping}
+                    size={20}
+                    color={appColors.primary}
+                    />
+                    <Text style={styles.textOption}>Giỏ hàng</Text>
+                </View>
+                </MenuOption>
+            )}
           <MenuOption onSelect={() => logout()} customStyles={menuOptionStyles}>
             <View style={styles.viewOption}>
               <FontAwesomeIcon
@@ -155,6 +159,7 @@ const menuOptionStyles = {
   optionText: {
     color: appColors.primary,
     fontSize: 16,
+    margin: 5
   },
 };
 
@@ -165,7 +170,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   touchableOpacity: {
-    marginRight: 10,
   },
   viewOption: {
     flexDirection: 'row',
