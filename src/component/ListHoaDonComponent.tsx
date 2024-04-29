@@ -117,22 +117,6 @@ const ListHoaDonComponent: React.FC<Props>  = ({
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    header: {
-      justifyContent: 'space-between',
-      marginBottom: 10,
-    },
-    viewDropDow: {
-      paddingHorizontal: 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    },
-    main: {
-      flex: 2,
-    },
-  
     item: {
       marginVertical: 5,
       marginHorizontal: 10,

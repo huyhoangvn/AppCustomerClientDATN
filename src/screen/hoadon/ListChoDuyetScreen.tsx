@@ -117,26 +117,7 @@ const ListChoDuyetScreen: React.FC<NavProps> = ({navigation}) => {
     }
   };
 
-  const formatDate = (dateTimeString: any) => {
-    const dateTime = new Date(dateTimeString);
-
-    const day = dateTime.getDate();
-    const month = dateTime.getMonth() + 1; // JavaScript month is zero-based
-    const year = dateTime.getFullYear();
-
-    const formattedDate = `${day < 10 ? '0' : ''}${day}/${
-      month < 10 ? '0' : ''
-    }${month}/${year}`;
-
-    const hours = dateTime.getHours();
-    const minutes = dateTime.getMinutes();
-    const formattedTime = `${hours < 10 ? '0' : ''}${hours}:${
-      minutes < 10 ? '0' : ''
-    }${minutes}`;
-
-    return {formattedDate, formattedTime};
-  };
-
+ 
   const isFocused = useIsFocused();
 
   useEffect(() => {
