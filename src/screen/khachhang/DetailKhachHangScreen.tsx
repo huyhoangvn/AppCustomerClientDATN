@@ -85,14 +85,18 @@ const DetailKhachHangScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
       {item && item.hinhAnh ? (
       <Image
        style={{
-         width: wp(40),
-         height: hp(20),
-         borderRadius: wp(20),
+        width: wp(40),
+        height: hp(20),
+        borderRadius: wp(20),
+        overflow: 'hidden',
+        backgroundColor: 'white',
+        borderColor: appColors.primary,
+        borderWidth: 1,
        }}
        source={{ uri: item.hinhAnh }}
       />
        ) : (
-       <DefaultAvatar />
+       <DefaultAvatar/>
        )}
      </View>
         <View style={styles.main}>

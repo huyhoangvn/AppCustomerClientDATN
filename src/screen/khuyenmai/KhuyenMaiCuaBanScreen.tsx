@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
   buttonDetails: {
     backgroundColor: '#424ec4',

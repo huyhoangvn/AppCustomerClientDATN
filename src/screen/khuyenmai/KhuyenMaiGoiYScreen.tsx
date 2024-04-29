@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     
   },
   buttonDetails: {
@@ -222,7 +222,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginRight: 140,
   },
   buttonAdd: {
     backgroundColor:appColors.primary,
