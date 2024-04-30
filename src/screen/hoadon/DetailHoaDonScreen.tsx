@@ -16,6 +16,7 @@ import { formatTrangThaiColor, formatTrangThaiGiaoHangColor, formatTrangThaiThan
 import { Linking } from 'react-native';
 import OptionPicker from '../../component/detail/OptionPicker';
 import ListOptionPicker from '../../component/drowpdown/ListOptionPicker';
+import ImageVerificationOption from '../../component/detail/ImageVerificationOption';
 
 const HoaDonResExample = {
   index: {
@@ -79,8 +80,8 @@ const DeleteResExample = {
 
 const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   const optionsLyDoThanhToan = [
-    { key: 'Thanh toán tiền mặt', value: 1 },
-    { key: 'Thanh toán chuyển khoản', value: 0},
+    { key: 'Thanh toán tiền mặt', value: 0 },
+    { key: 'Thanh toán chuyển khoản', value: 1},
   ];
   const route : any = useRoute();
   // Truy cập các tham số từ đối tượng route
@@ -107,6 +108,8 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   const [phiVanChuyen, setPhiVanChuyen] = useState("")
   const [sdt, setSdt] = useState("")
   const [modalThanhToanVisible, setModalThanhToanVisible] = useState(false);
+  const [modalImageVisible, setModalImageVisible] = useState(false);
+  const [uri, setUri] = useState("https://img.vietqr.io/image/BIDV-2223131322-print.png?amount=100000&addInfo=Thanh%20to%C3%A1n%20h%C3%B3a%20%C4%91%C6%A1n%20m%C3%A385654170&accountName=NGUYEN%20HUY%20HOANG")
 
   const getThongTinHD = async (id: string)=>{
     if(!id){return}
@@ -178,35 +181,27 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   }
 
   const handleThanhToanSelect = (selected: any) => {
-    showAlert("Bạn có muốn thanh toán ?", "Thanh toán hóa đơn " + maHD, true)
-    .then(async (result) => {
-      if (result) {
-        try{
-          const ghiChu = selected.option1
-          // const res : any = await authenticationAPI.HandleAuthentication(
-          //   '/nhanvien/hoadon/delete' + "/" + idHD,
-          //   {ghiChu: ghiChu},
-          //   'post',
-          // );
-          const res : any = DeleteResExample
-          if(res.success === true){
-            showAlert("Thanh toán hóa đơn", "Vui lòng chờ bên cửa hàng xác nhận thanh toán thành công", false)
-            getThongTinHD(idHD)
-            return;
-          }
-          showAlert("Thanh toán hóa đơn", res.msg, false)
-          return;
-        }
-        catch(e){
-          showAlert("Thanh toán hóa đơn", "Thanh toán hóa đơn thất bại do đường truyền", false)
-        }
-      }
-    })
-    .catch(e => {
-      // Handle error if necessary
-      showAlert("Hủy hóa đơn", "Hủy hóa đơn thất bại do hệ thống", false)
-    });
-    return
+    const ghiChuOption = selected.option1
+    const uri = selected.uri
+    console.log(ghiChuOption)
+    console.log(uri)
+    if(ghiChuOption === 1 && uri === ""){
+      showAlert("Thanh toán hóa đơn", "Mời bạn chọn ảnh xác nhận", false)
+      return;
+    }
+    // const res : any = await authenticationAPI.HandleAuthentication(
+    //   '/nhanvien/hoadon/delete' + "/" + idHD,
+    //   {ghiChu: ghiChu},
+    //   'post',
+    // );
+    const res : any = DeleteResExample
+    if(res.success === true){
+      showAlert("Thanh toán hóa đơn", "Đã gửi yêu cầu quý khách vui lòng chờ bên cửa hàng xác nhận thanh toán thành công", false)
+      setGhiChu(ghiChuOption===0?"Yêu cầu xác nhận tiền mặt":"Yêu cầu xác nhận chuyển khoản")
+      return;
+    }
+    showAlert("Thanh toán hóa đơn", res.msg, false)
+    return;
   };
 
   const huyHoaDon = () => {
@@ -250,6 +245,27 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
       }
     }
     return;
+  }
+
+  const handleHinhAnhSelect = (selected: any) => {
+    const uriImg = selected.uri
+    setUri(uriImg)
+  }
+
+  const handleOr = async () => {
+    const res : any = await authenticationAPI.HandleAuthentication(
+      '/khachhang/thanhtoan/createQR/' + idHD,
+      'get',
+    );
+    // const res : any = HoaDonResExample
+    if (res.success === true) {
+      const orderUrl = res.index;
+      Linking.openURL(orderUrl).catch((err) => {
+        console.error('Failed to open URL:', err);
+        // Handle error if unable to open URL
+        showAlert("Không thể mở QR code", "Đã xảy ra lỗi khi mở QR code");
+      });          
+    }
   }
 
   const MonItem = ({ item }: { item: any }) => {
@@ -366,13 +382,24 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
         {isActiveHuy && (
           <MyButtonComponent text="Hủy hóa đơn" onPress={huyHoaDon} color={(isActiveHuy)?appColors.primary:"gray"}/>
         )}
+        <ImageVerificationOption
+          visible={modalImageVisible}
+          onSelect={handleHinhAnhSelect}
+          onClose={() => setModalImageVisible(false)}
+          optionalTitle="Chọn hình ảnh xác nhận"
+          optionalDesc="Bạn có thể tải ảnh từ thư viện ảnh hoặc chụp trực tiếp ảnh chuyển khoản thành công"
+          imgUrl={uri}
+        />
         <ListOptionPicker
           visible={modalThanhToanVisible}
           optionalTitle={"Chọn phương thức thanh toán?"}
-          optionalDesc={"Xác nhận thanh toán tiền mặt khi giao hàng thành công\n\nXác nhận thanh toán chuyển khoản cho hóa đơn đã duyệt\n\nVui lòng chụp hình ảnh xác nhận"}
+          optionalDesc={"Xác nhận thanh toán tiền mặt khi giao hàng thành công\n\nXác nhận thanh toán chuyển khoản cho hóa đơn đã duyệt"}
           onSelect={handleThanhToanSelect}
           onClose={() => setModalThanhToanVisible(false)}
           options={optionsLyDoThanhToan}
+          onPickImage={() => setModalImageVisible(true)}
+          imgUri={uri}
+          handleQR={handleOr}
         />
     </View>
     </ScrollView>
