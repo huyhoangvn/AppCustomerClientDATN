@@ -21,9 +21,9 @@ import {Mon} from '../../models/Mon';
 import Swiper from 'react-native-swiper';
 import FlatListHomeComponent from '../../component/FlatListHomeComponent';
 import authenticationAPI from '../../apis/authApi';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 
-const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
+const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const [searchValue, setSearchValue] = useState('');
   const swiperRef = useRef<any>(null);
   const [autoplay, setAutoplay] = useState(true); // State để điều khiển autoplay
@@ -42,23 +42,16 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
   const data = [
     {
       id: 1,
-      imgSlide:
-        '../../assest/image/Veggie-mania.jpg',
+      imgSlide: 'https://toplist.vn/images/200px/do-do-tiem-ga-ran-516483.jpg',
     },
     {
       id: 2,
-      imgSlide:
-        '../../assest/image/Veggie-mania.jpg',
+      imgSlide: 'https://blog.dktcdn.net/files/topping-pizza-1.png',
     },
     {
       id: 3,
       imgSlide:
-        '../../assest/image/Veggie-mania.jpg',
-    },
-    {
-      id: 4,
-      imgSlide:
-        '../../assest/image/Veggie-mania.jpg',
+        'https://www.shutterstock.com/image-photo/burger-tomateoes-lettuce-pickles-on-600nw-2309539129.jpg',
     },
   ];
   const getTypeDish = async (index: any) => {
@@ -108,7 +101,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const getTopDish = async () => {
     try {
@@ -139,10 +132,10 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
 
   useEffect(() => {
     if (isFocused) {
-    getTopDish();
-    getTypeDish(0);
-    getTypeDish(1);
-    getImageSlide();
+      getTopDish();
+      getTypeDish(0);
+      getTypeDish(1);
+      getImageSlide();
     }
   }, [isFocused]);
   return (
@@ -165,10 +158,10 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
             ref={swiperRef}
             style={styles.wrapper}
             autoplay={autoplay} // Sử dụng state để điều khiển autoplay
-            autoplayTimeout={3}
+            autoplayTimeout={4}
             onScrollBeginDrag={onScrollBeginDrag} // Tạm thời tắt tự động chuyển slide khi người dùng thao tác
           >
-            {(imageSlide.length > 0 ? imageSlide : data).map((item:any, index) => (
+            {/* {(imageSlide.length > 0 ? imageSlide : data).map((item:any, index) => (
               <TouchableOpacity key={index} onPress={() => handlePress(item)}>
                 <View style={styles.slide}>
                   <Image
@@ -177,7 +170,38 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
                   />
                 </View>
               </TouchableOpacity>
-            ))}
+            ))}  */}
+            {imageSlide.length > 0
+              ? // Nếu imageSlide không rỗng, sử dụng imageSlide
+                imageSlide.map((item: any, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handlePress(item)}>
+                    <View style={styles.slide}>
+                      <Image
+                        source={{
+                          uri: `http://10.0.2.2:3000/public/images/${item.imgSlide}`,
+                        }}
+                        style={styles.image}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                ))
+              : // Nếu imageSlide rỗng, sử dụng data
+                data.map((item: any, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handlePress(item)}>
+                    <View style={styles.slide}>
+                      <Image
+                        source={{
+                          uri: item.imgSlide,
+                        }}
+                        style={styles.image}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                ))}
           </Swiper>
         </View>
       </View>
@@ -201,9 +225,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
                 onItemClick={(item: Mon) => {
                   navigation.navigate('DetailMonScreen', {idMon: item?._id});
                 }}
-                onSeeMoreClick={() => {
-
-                }}
+                onSeeMoreClick={() => {}}
               />
             </View>
           )}
@@ -223,7 +245,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
                 navigation.navigate('DetailMonScreen', {idMon: item?._id});
               }}
               onSeeMoreClick={() => {
-                navigation.navigate('SearchMonScreen')
+                navigation.navigate('SearchMonScreen');
               }}
               styleTag={{
                 color: appColors.coolPurple,
@@ -247,9 +269,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
               onItemClick={(item: Mon) => {
                 navigation.navigate('DetailMonScreen', {idMon: item?._id});
               }}
-              onSeeMoreClick={() => {
-
-              }}
+              onSeeMoreClick={() => {}}
               styleTag={{
                 color: appColors.coolPurple,
                 borderColor: appColors.coolPurple,
