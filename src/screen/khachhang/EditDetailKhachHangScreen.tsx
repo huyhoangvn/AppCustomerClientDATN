@@ -130,9 +130,10 @@ const setSelectedTrangThai =(item:any)=>{
             onImageSelect={handleImageSelect}
             imageUri={item.hinhAnh}
             style={{
-              width: wp(40),
-              height: hp(20),
-              borderRadius: wp(20),
+              borderRadius: wp(30),
+              overflow: 'hidden',
+              backgroundColor: 'white',
+              borderColor: appColors.primary,
               borderWidth: 1,
             }} 
           />
