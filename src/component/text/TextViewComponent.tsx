@@ -56,6 +56,7 @@ const TextViewComponent: React.FC<Props> = ({
     rightText: {
       fontSize: appFontSize.normal,
       fontWeight: rightBold ?"bold":"normal",
+      textAlign:'right',
       color: rightColor,
     }
   });

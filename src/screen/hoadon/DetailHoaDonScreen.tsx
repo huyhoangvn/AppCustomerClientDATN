@@ -109,7 +109,8 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   const [sdt, setSdt] = useState("")
   const [modalThanhToanVisible, setModalThanhToanVisible] = useState(false);
   const [modalImageVisible, setModalImageVisible] = useState(false);
-  const [uri, setUri] = useState("https://img.vietqr.io/image/BIDV-2223131322-print.png?amount=100000&addInfo=Thanh%20to%C3%A1n%20h%C3%B3a%20%C4%91%C6%A1n%20m%C3%A385654170&accountName=NGUYEN%20HUY%20HOANG")
+  const [phuongThucThanhToan, setPhuongThucThanhToan] = useState(0)
+  const [uri, setUri] = useState("")
 
   const getThongTinHD = async (id: string)=>{
     if(!id){return}
@@ -137,14 +138,16 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
         setTrangThai(index.trangThai)
         setTrangThaiMua(index.trangThaiMua)
         setTrangThaiThanhToan(index.trangThaiThanhToan)
-        setIsActiveThanhToan(index.trangThaiMua!==0)
+        setIsActiveThanhToan(index.trangThaiMua!==0 && index.trangThaiThanhToan!==1)
         setIsActiveHuy(((index.trangThaiMua === 0 && index.trangThai === true) || index.trangThai === false)?true:false)
         setPhiVanChuyen(formatCurrency(index.phiGiaoHang))
         setGhiChu(index.ghiChu)
+        setPhuongThucThanhToan(index.phuongThucThanhToan)
+        setUri(index.hinhAnhXacNhan)
         setDanhSachMonDat(list)
       }
     } catch (e) {
-
+      showAlert("Chi tiết hóa đơn", "Lỗi hiển thị hóa đơn", false)
     }
   }
 
@@ -180,24 +183,50 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
     // }
   }
 
-  const handleThanhToanSelect = (selected: any) => {
+  const generateRandomImageName = () => {
+    const prefix = 'IMG_6314_'; // Tiền tố cố định
+    const randomSuffix = Math.floor(Math.random() * 10000); // Số ngẫu nhiên từ 0 đến 9999
+    const extension = '.jpeg'; // Phần mở rộng của tệp
+  
+    return `${prefix}${randomSuffix}${extension}`;
+  };
+
+  const handleThanhToanSelect = async (selected: any) => {
     const ghiChuOption = selected.option1
     const uri = selected.uri
-    console.log(ghiChuOption)
-    console.log(uri)
     if(ghiChuOption === 1 && uri === ""){
       showAlert("Thanh toán hóa đơn", "Mời bạn chọn ảnh xác nhận", false)
       return;
     }
-    // const res : any = await authenticationAPI.HandleAuthentication(
-    //   '/nhanvien/hoadon/delete' + "/" + idHD,
-    //   {ghiChu: ghiChu},
-    //   'post',
-    // );
-    const res : any = DeleteResExample
+    let res : any = {}
+    if(ghiChuOption===1){
+      const formData = new FormData();
+      if (uri) {
+        formData.append('hinhAnhXacNhan', {
+          uri: uri,
+          name: generateRandomImageName(), // Tên của hình ảnh
+          type: 'image/jpeg', // Loại của hình ảnh
+        });
+      }
+      formData.append('ghiChu', ghiChuOption===0?"Yêu cầu xác nhận thanh toán bằng tiền mặt":"Yêu cầu xác nhận thanh toán chuyển khoản");
+      formData.append('phuongThucThanhToan', ghiChuOption);
+      res = await authenticationAPI.HandleAuthentication(
+        '/khachhang/hoadon/' + "thanh-toan-chuyen-khoan" + "/" + idHD,
+        formData,
+        'post',
+      );
+    } else {
+      res = await authenticationAPI.HandleAuthentication(
+        '/khachhang/hoadon/' + "thanh-toan-tien-mat" + "/" + idHD,
+        {ghiChu: ghiChuOption===0?"Yêu cầu xác nhận thanh toán bằng tiền mặt":"Yêu cầu xác nhận thanh toán chuyển khoản", phuongThucThanhToan: ghiChuOption},
+        'post',
+      );
+    }
+    // const res : any = DeleteResExample
     if(res.success === true){
       showAlert("Thanh toán hóa đơn", "Đã gửi yêu cầu quý khách vui lòng chờ bên cửa hàng xác nhận thanh toán thành công", false)
-      setGhiChu(ghiChuOption===0?"Yêu cầu xác nhận tiền mặt":"Yêu cầu xác nhận chuyển khoản")
+      setGhiChu(ghiChuOption===0?"Yêu cầu xác nhận thanh toán bằng tiền mặt":"Yêu cầu xác nhận thanh toán chuyển khoản")
+      setPhuongThucThanhToan(ghiChuOption)
       return;
     }
     showAlert("Thanh toán hóa đơn", res.msg, false)
@@ -327,23 +356,33 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
           rightText={phiVanChuyen}
         /> 
         <TextViewComponent
-          leftText="Thanh toán"
-          rightText={formatTrangThaiThanhToan(trangThaiThanhToan)}
-          rightColor={formatTrangThaiThanhToanColor(trangThaiThanhToan)}
-        />  
-        <TextViewComponent
           leftText="Thành tiền"
           rightText={formatCurrency(thanhTien)}
           leftBold={true}
           backgroundColor={appColors.secondary}
           showBorderBottom={false}
-        />   
+        />
         <FlatList
           scrollEnabled={false}
           data={danhSachMonDat}
           renderItem={({ item }: any) => <MonItem item={item}/>}
           keyExtractor={(item : any) => item.idMD}
           />
+        <TextViewComponent
+          leftText="Thanh toán"
+          rightText={formatTrangThaiThanhToan(trangThaiThanhToan)}
+          rightColor={formatTrangThaiThanhToanColor(trangThaiThanhToan)}
+        /> 
+        <TextViewComponent
+          leftText="Phương thức"
+          rightText={phuongThucThanhToan===0?"Tiền mặt":"Chuyển khoản"}
+        /> 
+        {ghiChu !== "" && (
+          <TextViewComponent
+            leftText="Ghi chú"
+            rightText={ghiChu}
+          />
+        )}
         <TextViewComponent
           leftText="Thời gian tạo"
           rightText={thoiGianTao}
@@ -358,12 +397,6 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
           <TextViewComponent
             leftText="Dự kiến giao"
             rightText={thoiGianGiaoHangDuKien}
-          />
-        )}
-        {ghiChu !== "" && (
-          <TextViewComponent
-            leftText="Ghi chú"
-            rightText={ghiChu}
           />
         )}
         <TextViewComponent
@@ -400,6 +433,7 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
           onPickImage={() => setModalImageVisible(true)}
           imgUri={uri}
           handleQR={handleOr}
+          initOption={phuongThucThanhToan}
         />
     </View>
     </ScrollView>
