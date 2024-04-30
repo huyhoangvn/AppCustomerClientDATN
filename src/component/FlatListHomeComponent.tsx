@@ -84,13 +84,7 @@ const FlatListHomeComponent: React.FC<Props> = ({
               }).format(item?.giaTien ?? 0)}
             </Text>
 
-            <Text
-              style={[
-                styleTag,
-                {borderWidth: 1, width: 75, paddingLeft: 4, marginTop: 2,borderRadius: 5},
-              ]}>
-              {textTag}
-            </Text>
+            
           </View>
         </View>
       </TouchableHighlight>

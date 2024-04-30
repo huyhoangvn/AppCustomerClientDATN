@@ -67,25 +67,26 @@ const ListHoaDonComponent: React.FC<Props>  = ({
               <View style={{paddingHorizontal: 5}}>
                 <View
                   style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                  <Text style={{ color: 'black'}}>
-                  Tổng tiền:{' '}
-                  {parseInt(item.tongTien || '').toLocaleString('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                  })}
-                </Text>
+                   <Text style={{ color: 'black', fontWeight: 'bold'}}>{item?.maHD}</Text> 
                   <Text>
                     {formattedDate || ''} - {formattedTime || ''}
                   </Text>
                 </View>
+                <Text style={{ color: 'black'}}>
+                  Tổng tiền:{' '}
+                  {parseInt(item?.tongTien || '').toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                  })}
+                </Text>
                
                 <Text style={{color: 'black',}}>
                   {/* {item.trangThaiMua === 1 ? "ok" : "Chưa mua"} */}
-                  Trạng thái giao: {getStatusText(item.trangThaiMua ?? 0)}
+                  Trạng thái giao: {getStatusText(item?.trangThaiMua ?? 0)}
                 </Text>
                 <Text style={{color: 'black'}}>
                   Thanh toán:
-                  {item.trangThaiThanhToan === 0 ? (
+                  {item?.trangThaiThanhToan === 0 ? (
                     <Text style={{color: 'red'}}> Chưa thanh toán</Text>
                   ) : (
                     <Text style={{color: 'green'}}> Đã thanh toán</Text>
