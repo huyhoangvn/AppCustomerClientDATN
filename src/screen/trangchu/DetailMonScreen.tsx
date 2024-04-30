@@ -285,7 +285,7 @@ const DetailMonScreen = ({ navigation} : any) =>  {
     if(!id){return;}
     try {
       const res : any = await authenticationAPI.HandleAuthentication(
-        '/khachhang/danhgia/get-danh-sach-theo-mon-filter' + "/" + id + "?trangThai=1",
+        '/khachhang/danhgia/get-danh-sach-theo-mon-filter' + "/" + id + "?trangThai=true",
         'get',
       );
       // const res : any = DanhSachDanhGiaResExample

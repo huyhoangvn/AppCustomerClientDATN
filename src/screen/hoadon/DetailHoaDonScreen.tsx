@@ -315,8 +315,8 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
         />
         <View style={styles.itemDetails}>
           <Text style={styles.itemName}>{item.tenMon}</Text>
-          <Text style={styles.normal}>{formatCurrency(item.giaTienDat)}</Text>
-          <Text style={styles.normal}>{item.soLuong}</Text>
+          <Text style={styles.normal}>{"Giá tiền "+formatCurrency(item.giaTienDat)}</Text>
+          <Text style={styles.normal}>{"Số lượng "+item.soLuong}</Text>
         </View>
       </TouchableOpacity>
     );
