@@ -21,6 +21,7 @@ import {Mon} from '../../models/Mon';
 import Swiper from 'react-native-swiper';
 import FlatListHomeComponent from '../../component/FlatListHomeComponent';
 import authenticationAPI from '../../apis/authApi';
+import { useIsFocused } from '@react-navigation/native';
 
 const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
   const [searchValue, setSearchValue] = useState('');
@@ -32,6 +33,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [nameTypeDish1, setNametypeDish1] = useState<string>();
   const [nameTypeDish2, setNametypeDish2] = useState<string>();
+  const [imageSlide, setImageSlide] = useState<string[]>([]);
 
   const openScreen = (screen: string) => {
     navigation.navigate(screen, {searchValue});
@@ -40,65 +42,25 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
   const data = [
     {
       id: 1,
-      poster_path:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+      imgSlide:
+        '../../assest/image/Veggie-mania.jpg',
     },
     {
       id: 2,
-      poster_path:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+      imgSlide:
+        '../../assest/image/Veggie-mania.jpg',
     },
     {
       id: 3,
-      poster_path:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+      imgSlide:
+        '../../assest/image/Veggie-mania.jpg',
     },
     {
       id: 4,
-      poster_path:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+      imgSlide:
+        '../../assest/image/Veggie-mania.jpg',
     },
   ];
-  // const dish: Mon[] = [
-  //   {
-  //     _id: '1',
-  //     tenMon: 'Pizza hải sản',
-  //     hinhAnh:
-  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-  //     giaTien: 100000,
-  //     soLuong: 2,
-  //   },
-  //   {
-  //     _id: '2',
-  //     tenMon: 'Pizza gà',
-  //     hinhAnh:
-  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-  //     giaTien: 300000,
-  //   },
-  //   {
-  //     _id: '3',
-  //     tenMon: 'Pizza bò',
-  //     hinhAnh:
-  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-  //     giaTien: 200000,
-  //   },
-
-  //   {
-  //     _id: '4',
-  //     tenMon: 'Pizza cua',
-  //     hinhAnh:
-  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-  //     giaTien: 500000,
-  //   },
-
-  //   {
-  //     _id: '5',
-  //     tenMon: 'Pizza rau cải',
-  //     hinhAnh:
-  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-  //     giaTien: 600000,
-  //   },
-  // ];
   const getTypeDish = async (index: any) => {
     try {
       setLoading(true);
@@ -129,6 +91,25 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
       setLoading(false);
     }
   };
+
+  const getImageSlide = async () => {
+    try {
+      setLoading(true); // Set loading to true before making the API call
+
+      const res: any = await authenticationAPI.HandleAuthentication(
+        `/nhanvien/slide`,
+        'get',
+      );
+      if (res.success === true) {
+        setImageSlide(res.data);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const getTopDish = async () => {
     try {
       setLoading(true); // Set loading to true before making the API call
@@ -148,18 +129,22 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
   };
 
   const handlePress = (item: any) => {
-    console.log('item11111', item);
+    navigation.navigate('DetailMonScreen', {idMon: item?.idMon});
   };
 
   const onScrollBeginDrag = () => {
     setAutoplay(false); // Tắt autoplay
   };
+  const isFocused = useIsFocused();
 
   useEffect(() => {
+    if (isFocused) {
     getTopDish();
     getTypeDish(0);
     getTypeDish(1);
-  }, []);
+    getImageSlide();
+    }
+  }, [isFocused]);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -180,14 +165,14 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
             ref={swiperRef}
             style={styles.wrapper}
             autoplay={autoplay} // Sử dụng state để điều khiển autoplay
-            autoplayTimeout={5}
+            autoplayTimeout={3}
             onScrollBeginDrag={onScrollBeginDrag} // Tạm thời tắt tự động chuyển slide khi người dùng thao tác
           >
-            {data.map((item, index) => (
+            {(imageSlide.length > 0 ? imageSlide : data).map((item:any, index) => (
               <TouchableOpacity key={index} onPress={() => handlePress(item)}>
                 <View style={styles.slide}>
                   <Image
-                    source={{uri: item.poster_path}}
+                    source={{uri: `http://10.0.2.2:3000/public/images/${item.imgSlide}` || item.imgSlide }}
                     style={styles.image}
                   />
                 </View>
