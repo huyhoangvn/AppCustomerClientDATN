@@ -73,7 +73,7 @@ const ListHoaDonComponent: React.FC<Props>  = ({
                   </Text>
                 </View>
                 <Text style={{ color: 'black'}}>
-                  Tổng tiền:{' '}
+                  Thành tiền:{' '}
                   {parseInt(item?.tongTien || '').toLocaleString('vi-VN', {
                     style: 'currency',
                     currency: 'VND',
