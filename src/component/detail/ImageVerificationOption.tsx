@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { appColors } from '../../constants/appColors';
@@ -32,6 +32,10 @@ const ImageVerificationOption: React.FC<ImageVerificationOptionProps> = ({
   imgUrl = ""
 }) => {
   const [uri, setUri] = useState(imgUrl);
+
+  useEffect(() => {
+    setUri(imgUrl);
+  }, [imgUrl]);
 
   // Handle confirm button press
   const handleConfirm = () => {

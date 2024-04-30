@@ -23,7 +23,8 @@ interface ListOptionPickerProps {
   optionalDesc?: string;
   onPickImage: () => void
   imgUri: string,
-  handleQR: () => void
+  handleQR: () => void,
+  initOption: number
 }
 
 const ListOptionPicker: React.FC<ListOptionPickerProps> = ({
@@ -36,9 +37,10 @@ const ListOptionPicker: React.FC<ListOptionPickerProps> = ({
   optionalDesc,
   onPickImage,
   imgUri = "",
-  handleQR
+  handleQR,
+  initOption
 }) => {
-  const initialSelectedOption = options.length > 0 ? options[0].value : '';
+  const initialSelectedOption = initOption;
   const initialSelectedOption2 = options2.length > 0 ? options2[0].value : '';
 
   const [selectedOption, setSelectedOption] = useState<string | number>(initialSelectedOption);
@@ -48,6 +50,10 @@ const ListOptionPicker: React.FC<ListOptionPickerProps> = ({
   useEffect(() => {
     setUri(imgUri);
   }, [imgUri]);
+
+  useEffect(() => {
+    setSelectedOption(initOption);
+  }, [initOption]);
 
   // Handle option selection
   const handleOptionSelect = (value: string | number) => {

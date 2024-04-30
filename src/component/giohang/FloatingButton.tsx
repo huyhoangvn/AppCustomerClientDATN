@@ -28,10 +28,11 @@ const FloatingButton: React.FC<FloatingButtonProps> = ({
 const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
+    bottom: 10,
+    right: 10,
     borderRadius: 50,
     padding: 15,
+    elevation: 5
   }
 });
 
