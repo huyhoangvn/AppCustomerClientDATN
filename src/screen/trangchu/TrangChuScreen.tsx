@@ -22,6 +22,7 @@ import Swiper from 'react-native-swiper';
 import FlatListHomeComponent from '../../component/FlatListHomeComponent';
 import authenticationAPI from '../../apis/authApi';
 import {useIsFocused} from '@react-navigation/native';
+import LoadingComponent from '../../component/LoadingComponent';
 
 const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const [searchValue, setSearchValue] = useState('');
@@ -57,7 +58,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const getTypeDish = async (index: any) => {
     try {
       setLoading(true);
-      if (index == 0) {
+      if (index == 1) {
         const res: any = await authenticationAPI.HandleAuthentication(
           `/khachhang/mon/theo-loai-mon?indexLM=${index}`,
           {},
@@ -106,13 +107,12 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const getTopDish = async () => {
     try {
       setLoading(true); // Set loading to true before making the API call
-
       const res: any = await authenticationAPI.HandleAuthentication(
         `/nhanvien/thongke/nam-tenLM`,
         'get',
       );
       if (res.success === true) {
-        setDishTop(res.list);
+        setDishTop(res.data);
       }
     } catch (error) {
       console.error(error);
@@ -131,13 +131,13 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    if (isFocused) {
+    // if (isFocused) {
       getTopDish();
-      getTypeDish(0);
       getTypeDish(1);
+      getTypeDish(2);
       getImageSlide();
-    }
-  }, [isFocused]);
+    // }
+  }, []);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -161,18 +161,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
             autoplayTimeout={4}
             onScrollBeginDrag={onScrollBeginDrag} // Tạm thời tắt tự động chuyển slide khi người dùng thao tác
           >
-            {/* {(imageSlide.length > 0 ? imageSlide : data).map((item:any, index) => (
-              <TouchableOpacity key={index} onPress={() => handlePress(item)}>
-                <View style={styles.slide}>
-                  <Image
-                    source={{uri: `http://10.0.2.2:3000/public/images/${item.imgSlide}` || item.imgSlide }}
-                    style={styles.image}
-                  />
-                </View>
-              </TouchableOpacity>
-            ))}  */}
-            {imageSlide.length > 0
-              ? // Nếu imageSlide không rỗng, sử dụng imageSlide
+            {imageSlide.length > 0 ? 
                 imageSlide.map((item: any, index) => (
                   <TouchableOpacity
                     key={index}
@@ -187,7 +176,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
                     </View>
                   </TouchableOpacity>
                 ))
-              : // Nếu imageSlide rỗng, sử dụng data
+              : 
                 data.map((item: any, index) => (
                   <TouchableOpacity
                     key={index}
@@ -213,7 +202,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
                 data={dishTop}
                 showIndicator={false}
                 textTitle="Món bán chạy"
-                textSeeMore="Xem thêm >"
+                textSeeMore="Xem thêm"
                 textTag="Món ngon"
                 styleTag={{
                   color: appColors.warmOrange,
@@ -225,7 +214,9 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
                 onItemClick={(item: Mon) => {
                   navigation.navigate('DetailMonScreen', {idMon: item?._id});
                 }}
-                onSeeMoreClick={() => {}}
+                onSeeMoreClick={() => {
+                  navigation.navigate('SearchMonScreen');
+                }}
               />
             </View>
           )}
@@ -237,7 +228,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
               showIndicator={false}
               textTitle={nameTypeDish1}
               textTag="Giải khát"
-              textSeeMore="Xem thêm >"
+              textSeeMore="Xem thêm"
               styleTitle={{
                 color: appColors.coolPurple,
               }}
@@ -262,14 +253,16 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
               showIndicator={false}
               textTitle={nameTypeDish2}
               textTag="Giải khát"
-              textSeeMore="Xem thêm >"
+              textSeeMore="Xem thêm"
               styleTitle={{
                 color: appColors.coolPurple,
               }}
               onItemClick={(item: Mon) => {
                 navigation.navigate('DetailMonScreen', {idMon: item?._id});
               }}
-              onSeeMoreClick={() => {}}
+              onSeeMoreClick={() => {
+                navigation.navigate('SearchMonScreen');
+              }}
               styleTag={{
                 color: appColors.coolPurple,
                 borderColor: appColors.coolPurple,
@@ -278,6 +271,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
           </View>
         )}
       </View>
+      <LoadingComponent visible={loading} />
     </ScrollView>
   );
 };

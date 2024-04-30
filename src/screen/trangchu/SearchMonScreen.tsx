@@ -51,7 +51,7 @@ const SearchMonScreen: React.FC<NavProps> = ({ navigation }) => {
 
   const handleSearch = async (tenMon: string, trang: any) => {
     try {
-
+      setLoading(true);
       const res: any = await authenticationAPI.HandleAuthentication(
         `/khachhang/mon?tenMon=${tenMon}&trang=${trang}`,
         'get',
