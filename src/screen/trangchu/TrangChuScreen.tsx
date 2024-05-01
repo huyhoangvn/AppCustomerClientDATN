@@ -108,7 +108,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
     try {
       setLoading(true); // Set loading to true before making the API call
       const res: any = await authenticationAPI.HandleAuthentication(
-        `/nhanvien/thongke/nam-tenLM`,
+        `/nhanvien/thongke/mon-ban-chay`,
         'get',
       );
       if (res.success === true) {
