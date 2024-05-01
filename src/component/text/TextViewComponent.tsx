@@ -38,13 +38,13 @@ const TextViewComponent: React.FC<Props> = ({
     },
     leftTextContainer: {
       flex: 0.5,
-      justifyContent:'flex-start',
+      justifyContent:'center',
       alignItems: 'flex-start',
       fontSize: appFontSize.normal,
     },
     rightTextContainer: {
       flex: 1,
-      justifyContent:'flex-end',
+      justifyContent:'center',
       alignItems:'flex-end',
       marginLeft: 10
     },
@@ -56,6 +56,7 @@ const TextViewComponent: React.FC<Props> = ({
     rightText: {
       fontSize: appFontSize.normal,
       fontWeight: rightBold ?"bold":"normal",
+      textAlign:'right',
       color: rightColor,
     }
   });

@@ -105,6 +105,7 @@ const VerificationScreen: React.FC<NavProps> = ({navigation, route}: any) => {
   const handleChangeVerification = () => {
     switch (status) {
       case 'register':
+        console.log('aaa');
         if (
           parseInt(newCode) === parseInt(code) ||
           parseInt(newCode) === parseInt(currentCode)

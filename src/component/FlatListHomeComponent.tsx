@@ -84,13 +84,7 @@ const FlatListHomeComponent: React.FC<Props> = ({
               }).format(item?.giaTien ?? 0)}
             </Text>
 
-            <Text
-              style={[
-                styleTag,
-                {borderWidth: 1, width: 75, paddingLeft: 4, marginTop: 2,borderRadius: 5},
-              ]}>
-              {textTag}
-            </Text>
+            
           </View>
         </View>
       </TouchableHighlight>
@@ -128,7 +122,7 @@ const FlatListHomeComponent: React.FC<Props> = ({
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor} // Sử dụng hàm keyExtractor đã chỉnh sửa
-        style={[styleFlatList, {height: 230, marginTop: 10}]}
+        style={[styleFlatList, {flex: 1, margin: 5}]}
         showsHorizontalScrollIndicator={showIndicator}
         // onScroll={() => { setScroll(true), setLastList(false) }}
         // onEndReached={() => { setLastList(true), setScroll(false) }}
@@ -145,7 +139,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     backgroundColor: appColors.white,
     elevation: 5,
-    paddingBottom: 20,
+    paddingBottom: 10,
+    margin: 10
   },
   viewTitle: {
     flexDirection: 'row',

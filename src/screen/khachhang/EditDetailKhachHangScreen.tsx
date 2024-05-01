@@ -16,6 +16,7 @@ import {
   faEnvelope,
   faLock,
   faUser,
+  faEdit
 } from '@fortawesome/free-solid-svg-icons';
 import {
   widthPercentageToDP as wp,
@@ -29,6 +30,8 @@ import AlertComponent from '../../component/AlertComponent';
 import LoadingComponent from '../../component/LoadingComponent';
 import {getData} from '../../utils/storageUtils';
 import ImagePickerComponent from '../../component/ImagePickerComponent';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import DropDownComponent from '../../component/DropDownComponent';
 
 const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any) => {
   
@@ -36,6 +39,7 @@ const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any)
   const [tenKH, setKH] = useState(item.tenKH);
   const [sdt, setSdt] = useState(item.sdt);
   const [diaChi, setAddress] = useState(item.diaChi);
+  const [gioiTinh, setGioiTinh] = useState(item.gioiTinh);
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [msg, setMsg] = useState('');
@@ -45,7 +49,14 @@ const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any)
   const handleShowAlert = () => {
     setShowAlert(true);
   };
-
+//Trạng thái select input
+const itemsStatus = [
+  {label: 'Nam', value: 2},
+  {label: 'Nữ', value: 0},
+];
+const setSelectedTrangThai =(item:any)=>{
+  setGioiTinh(item.value);
+};
   const handleCloseAlert = () => {
     setShowAlert(false);
   };
@@ -66,6 +77,7 @@ const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any)
       formData.append('tenKH', tenKH);
       formData.append('diaChi', diaChi);
       formData.append('sdt', sdt);
+      formData.append('gioiTinh', gioiTinh);
       console.log('zzzzzzzzzzzzz');
 
       const res:any = await authenticationAPI.HandleAuthentication(
@@ -111,21 +123,22 @@ const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any)
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20} // Điều chỉnh vị trí của bàn phím
   >
-    <ScrollView contentContainerStyle={{flexGrow: 1}}>
+    {/* <ScrollView contentContainerStyle={{flexGrow: 1}}> */}
       <View style={styles.container}>
         <View style={styles.main}>
           <ImagePickerComponent
             onImageSelect={handleImageSelect}
             imageUri={item.hinhAnh}
-            style={{borderRadius: wp(25), overflow: 'hidden'}}
+            style={{
+              borderRadius: wp(30),
+              overflow: 'hidden',
+              backgroundColor: 'white',
+              borderColor: appColors.primary,
+              borderWidth: 1,
+            }} 
           />
-
-          {/* <Image
-        style={{width: wp(40), height: hp(20), borderRadius: 5}}
-        source={{
-          uri: item.hinhAnh,
-        }}
-      /> */}
+        
+        
         </View>
         <View style={styles.footer}>
           <EditTextComponent
@@ -134,7 +147,7 @@ const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any)
             value={tenKH}
             iconColor="gray"
             onChangeText={setKH}
-            icon={faShop}
+            icon={faUser}
           />
 
           <EditTextComponent
@@ -154,12 +167,29 @@ const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any)
             onChangeText={setAddress}
             icon={faLocationDot}
           />
-          <ButtonComponent
+            <DropDownComponent
+            label="Giới tính" // Nhãn cho DropDownComponent
+            value={gioiTinh}
+            items={itemsStatus.map(item => ({
+              label: item.label,
+              value: item.value.toString(),
+            }))} // Danh sách các mục
+            containerStyle={{
+              width: wp(95),
+              marginTop: 5,
+              marginHorizontal: 9,
+            }}       
+            onChangeItem={(item) => setSelectedTrangThai(item)}
+            placeholder="Giới tính"
+          /> 
+          <View style={styles.buttonLuu}>
+           <ButtonComponent
             type="primary"
             text="Lưu"
-            textStyles={{color: 'white', fontSize: 20, fontWeight: 'bold'}}
             onPress={handelUpdateKhachHang}
-          />
+            />
+          </View>
+         
         </View>
         <AlertComponent
           visible={showAlert}
@@ -168,7 +198,7 @@ const EditDetailKhachHangScreen: React.FC<NavProps> = ({navigation, route}: any)
         />
         <LoadingComponent visible={loading ?? false} />
       </View>
-    </ScrollView>
+    {/* </ScrollView> */}
     </KeyboardAvoidingView>
 
   );
@@ -178,16 +208,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: appColors.white,
+    
   },
   main: {
-    height: hp(33),
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    
   },
   footer: {
-    height: hp(40),
     justifyContent: 'space-between',
+    marginTop: 10,
   },
+  buttonLuu:{
+    marginTop: 10,
+  }
 });
 
 export default EditDetailKhachHangScreen;

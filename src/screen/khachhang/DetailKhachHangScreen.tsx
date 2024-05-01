@@ -85,14 +85,18 @@ const DetailKhachHangScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
       {item && item.hinhAnh ? (
       <Image
        style={{
-         width: wp(40),
-         height: hp(20),
-         borderRadius: wp(20),
+        width: wp(40),
+        height: hp(20),
+        borderRadius: wp(20),
+        overflow: 'hidden',
+        backgroundColor: 'white',
+        borderColor: appColors.primary,
+        borderWidth: 1,
        }}
        source={{ uri: item.hinhAnh }}
       />
        ) : (
-       <DefaultAvatar />
+       <DefaultAvatar/>
        )}
      </View>
         <View style={styles.main}>
@@ -162,7 +166,7 @@ const DetailKhachHangScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
           boldTitle={false}
         /> 
       </View> 
-      <LoadingComponent visible={loading} />
+      {/* <LoadingComponent visible={loading} /> */}
       <AlertComponent
         visible={showAlert}
         message={msg}
@@ -176,11 +180,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: appColors.white,
-    justifyContent: 'space-between',
     paddingHorizontal: 10,
   },
   header: {
-    height: hp(20),
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -190,8 +193,6 @@ const styles = StyleSheet.create({
   viewText: {
     flexDirection: 'row',
     borderBottomWidth: 0.5,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
     justifyContent: 'space-between',
   },
  

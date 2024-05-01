@@ -51,10 +51,9 @@ const KhuyenMaiGoiYScreen: React.FC<NavProps> = ({ navigation, route }:any) => {
   const getDanhSacHkhuyenMai = async () => {
     try {
       const res : any = await authenticationAPI.HandleAuthentication(
-        '/nhanvien/khuyenmai/khuyen-mai' ,
+        '/khachhang/khuyenmai/danh-sach' ,
         'get',
       );
-      console.log(res);
       // const res: any = DanhSachkhuyenMaiData;
       if (res.success === true) {
         const { list } = res;
@@ -157,17 +156,9 @@ const addKMCuaToi = async (idKM:any) => {
     {
       return(
         <View style={styles.itemContainer}>
-        <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'black' }}>Tiêu đề: {item.tieuDe}</Text>
-        <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'black' }}>Phần trăm khuyến mãi: {item.phanTramKhuyenMai}%</Text>
+        <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'black' }}>{item.tieuDe}</Text>
+        <Text style={{ fontSize: 16, color: 'black' }}>Giảm {item.phanTramKhuyenMai}% hóa đơn</Text>
   
-        <View style={styles.dateContainer}>
-          <View style={styles.date}>
-            <Text>{item.ngayBatDau}-</Text>
-          </View>
-          <View style={styles.dateHetHan}>
-            <Text>{item.ngayHetHan}</Text>
-          </View>
-        </View>
         <View style={styles.buttonContainer}>
         <TouchableOpacity
             style={[styles.buttonAdd, item.trangThaiKM ? styles.buttonAdded : null]}
@@ -198,7 +189,7 @@ const addKMCuaToi = async (idKM:any) => {
           scrollEnabled={false}
           data={danhSachKhuyenMai}
           renderItem={renderItem}
-          keyExtractor={(item: any) => item.idKM}
+          keyExtractor={(item: any) => item._id}
         />
       </ScrollView>
     </View>
@@ -208,58 +199,45 @@ const addKMCuaToi = async (idKM:any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    paddingHorizontal: 8,
   },
   text: {
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: 'bold',
   },
   itemContainer: {
-    padding: 10,
+    padding: 8,
     borderWidth: 1,
     paddingHorizontal: 10,
     margin: 5,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
+    
   },
   buttonDetails: {
-    width: 100,
     backgroundColor: '#424ec4',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginRight: 120,
-    alignItems: 'center',
-
   },
   buttonAdd: {
-    width: 100,
     backgroundColor:appColors.primary,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    alignItems: 'center',
-
   },
   buttonChiTiet: {
     color: 'white',
     fontSize: 16,
+    alignContent: 'center',
   },
   buttonThem: {
     color: 'white',
     fontSize: 16,
-    
-  },
-  dateContainer: {
-    flexDirection: 'row',
-  },
-  date: {
-    justifyContent:'space-around',
-  },
-  dateHetHan:{
+    justifyContent: 'center',
   },
   buttonAdded:{
     backgroundColor: appColors.gray,

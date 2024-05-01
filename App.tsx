@@ -32,6 +32,7 @@ import { text } from '@fortawesome/fontawesome-svg-core';
 import VerificationScreen from './src/screen/register/VerificationScreen';
 import ForGotPasswordScreen from './src/screen/ForGotPassword/ForGotPasswordScreen';
 import NewPassScreen from './src/screen/ForGotPassword/NewPassScreen';
+import TermsServiceScreen from './src/screen/TermsServiceScreen';
 
 const CustomHeader: React.FC<{ title?: string }> = ({ title = 'Default Title' }) => (
   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -57,17 +58,7 @@ const navTheme = {
 
 
 const App: React.FC<AppProps> = () => {
-  const [tenKH, setTenKH] = useState("Tên Khách hàng");
 
-  useEffect(() => {
-    getTenKh(); // Fetch tenKH when component mounts
-  }, []); // Empty dependency array to run only once
-
-  const getTenKh = async () => {
-    const storedData = await getData();
-    const storedTen = storedData?.tenKH;
-    setTenKH(storedTen || "Tên Khách hàng");
-  };
 
   return (
     <Provider store={store}>
@@ -93,7 +84,7 @@ const App: React.FC<AppProps> = () => {
               <Stack.Screen
                 name="RegisterScreen"
                 component={RegisterScreen}
-                options={{headerShown: false}}
+                options={{headerShown: true, title: ''}}
                 // options={{title: 'Đăng ký'}}
               />
               <Stack.Screen
@@ -114,6 +105,12 @@ const App: React.FC<AppProps> = () => {
                 options={{headerShown: true, title: ''}}
                 // options={{title: 'Đăng ký'}}
               />
+              <Stack.Screen
+                name="TermsServiceScreen"
+                component={TermsServiceScreen}
+                options={{headerShown: true, title: ''}}
+                // options={{title: 'Đăng ký'}}
+              />
               {/* Trang chủ với nav bar */}
               <Stack.Screen
                 name="HomeScreen"
@@ -121,7 +118,7 @@ const App: React.FC<AppProps> = () => {
                 options={({navigation}) => ({
                   // title: 'Food Center',
                   headerRight: () => (
-                    <HeaderRightComponent navigation={navigation} tenKH={tenKH}/>
+                    <HeaderRightComponent navigation={navigation}/>
                   ),
                   headerTitle: () => <CustomHeader title="Food Center"/>
                 })}

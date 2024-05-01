@@ -14,6 +14,9 @@ import authenticationAPI from '../../apis/authApi';
 import { formatTrangThai, formatTrangThaiGiaoHang, formatTrangThaiThanhToan } from '../../utils/trangThaiFormat';
 import { formatTrangThaiColor, formatTrangThaiGiaoHangColor, formatTrangThaiThanhToanColor } from '../../utils/trangThaiColor';
 import { Linking } from 'react-native';
+import OptionPicker from '../../component/detail/OptionPicker';
+import ListOptionPicker from '../../component/drowpdown/ListOptionPicker';
+import ImageVerificationOption from '../../component/detail/ImageVerificationOption';
 
 const HoaDonResExample = {
   index: {
@@ -76,6 +79,10 @@ const DeleteResExample = {
 }
 
 const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
+  const optionsLyDoThanhToan = [
+    { key: 'Thanh toán tiền mặt', value: 0 },
+    { key: 'Thanh toán chuyển khoản', value: 1},
+  ];
   const route : any = useRoute();
   // Truy cập các tham số từ đối tượng route
   const idHD = route.params.idHD;
@@ -99,6 +106,11 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   const [isActiveThanhToan, setIsActiveThanhToan] = useState(false);
   const [isActiveHuy, setIsActiveHuy] = useState(false);
   const [phiVanChuyen, setPhiVanChuyen] = useState("")
+  const [sdt, setSdt] = useState("")
+  const [modalThanhToanVisible, setModalThanhToanVisible] = useState(false);
+  const [modalImageVisible, setModalImageVisible] = useState(false);
+  const [phuongThucThanhToan, setPhuongThucThanhToan] = useState(0)
+  const [uri, setUri] = useState("")
 
   const getThongTinHD = async (id: string)=>{
     if(!id){return}
@@ -120,18 +132,22 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
         setThoiGianDuyet(index.thoiGianDuyet)
         setThoiGianGiaoHangDuKien(index.thoiGianGiaoHangDuKien)
         setDiaChi(index.diaChiGiaoHang)
+        setSdt(index.sdt)
         setThanhTien(index.thanhTien)
         setPhanTramKhuyenMai(index.phanTramKhuyenMaiDat)
         setTrangThai(index.trangThai)
         setTrangThaiMua(index.trangThaiMua)
         setTrangThaiThanhToan(index.trangThaiThanhToan)
-        setIsActiveThanhToan(index.trangThaiMua===3)
+        setIsActiveThanhToan(index.trangThaiMua!==0 && index.trangThaiThanhToan!==1)
         setIsActiveHuy(((index.trangThaiMua === 0 && index.trangThai === true) || index.trangThai === false)?true:false)
         setPhiVanChuyen(formatCurrency(index.phiGiaoHang))
+        setGhiChu(index.ghiChu)
+        setPhuongThucThanhToan(index.phuongThucThanhToan)
+        setUri(index.hinhAnhXacNhan)
         setDanhSachMonDat(list)
       }
     } catch (e) {
-
+      showAlert("Chi tiết hóa đơn", "Lỗi hiển thị hóa đơn", false)
     }
   }
 
@@ -140,30 +156,82 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
   }, [])
 
   const thanhToan = () => {
-    console.log(isActiveThanhToan)
     if(isActiveThanhToan){
-      //Chuyển đến màn hình thanh toán
-      showAlert("Bạn có muốn thanh toán ?", "Thanh toán hóa đơn " + maHD, true)
-      .then(async (result) => {
-        if (result) {      
-          const res : any = await authenticationAPI.HandleAuthentication(
-          '/khachhang/thanhtoan/payZalo' + "/" + idHD,
-          {},
-          'post')
-          console.log(res)
-          if(res.success === true){
-            const orderUrl = res.index.order_url;
-            Linking.openURL(orderUrl).catch((err) => {
-              console.error('Failed to open URL:', err);
-              // Handle error if unable to open URL
-              showAlert("Không thể mở ZaloPay", "Đã xảy ra lỗi khi mở ZaloPay");
-            });          }
-        }
-      })
-    } else {
-      showAlert("Chưa thể thanh toán", "Quý khách vui lòng đợi đơn hàng được giao thành công để thực hiện giao dịch")
-    }
+      setModalThanhToanVisible(true);
+    }    
+    // if(isActiveThanhToan){
+    //   //Chuyển đến màn hình thanh toán
+    //   showAlert("Bạn có muốn thanh toán ?", "Thanh toán hóa đơn " + maHD, true)
+    //   .then(async (result) => {
+    //     if (result) {      
+    //       const res : any = await authenticationAPI.HandleAuthentication(
+    //       '/khachhang/thanhtoan/payZalo' + "/" + idHD,
+    //       {},
+    //       'post')
+    //       console.log(res)
+    //       if(res.success === true){
+    //         const orderUrl = res.index.order_url;
+    //         Linking.openURL(orderUrl).catch((err) => {
+    //           console.error('Failed to open URL:', err);
+    //           // Handle error if unable to open URL
+    //           showAlert("Không thể mở ZaloPay", "Đã xảy ra lỗi khi mở ZaloPay");
+    //         });          }
+    //     }
+    //   })
+    // } else {
+    //   showAlert("Chưa thể thanh toán", "Quý khách vui lòng đợi đơn hàng được giao thành công để thực hiện giao dịch")
+    // }
   }
+
+  const generateRandomImageName = () => {
+    const prefix = 'IMG_6314_'; // Tiền tố cố định
+    const randomSuffix = Math.floor(Math.random() * 10000); // Số ngẫu nhiên từ 0 đến 9999
+    const extension = '.jpeg'; // Phần mở rộng của tệp
+  
+    return `${prefix}${randomSuffix}${extension}`;
+  };
+
+  const handleThanhToanSelect = async (selected: any) => {
+    const ghiChuOption = selected.option1
+    const uri = selected.uri
+    if(ghiChuOption === 1 && uri === ""){
+      showAlert("Thanh toán hóa đơn", "Mời bạn chọn ảnh xác nhận", false)
+      return;
+    }
+    let res : any = {}
+    if(ghiChuOption===1){
+      const formData = new FormData();
+      if (uri) {
+        formData.append('hinhAnhXacNhan', {
+          uri: uri,
+          name: generateRandomImageName(), // Tên của hình ảnh
+          type: 'image/jpeg', // Loại của hình ảnh
+        });
+      }
+      formData.append('ghiChu', ghiChuOption===0?"Yêu cầu xác nhận thanh toán bằng tiền mặt":"Yêu cầu xác nhận thanh toán chuyển khoản");
+      formData.append('phuongThucThanhToan', ghiChuOption);
+      res = await authenticationAPI.HandleAuthentication(
+        '/khachhang/hoadon/' + "thanh-toan-chuyen-khoan" + "/" + idHD,
+        formData,
+        'post',
+      );
+    } else {
+      res = await authenticationAPI.HandleAuthentication(
+        '/khachhang/hoadon/' + "thanh-toan-tien-mat" + "/" + idHD,
+        {ghiChu: ghiChuOption===0?"Yêu cầu xác nhận thanh toán bằng tiền mặt":"Yêu cầu xác nhận thanh toán chuyển khoản", phuongThucThanhToan: ghiChuOption},
+        'post',
+      );
+    }
+    // const res : any = DeleteResExample
+    if(res.success === true){
+      showAlert("Thanh toán hóa đơn", "Đã gửi yêu cầu quý khách vui lòng chờ bên cửa hàng xác nhận thanh toán thành công", false)
+      setGhiChu(ghiChuOption===0?"Yêu cầu xác nhận thanh toán bằng tiền mặt":"Yêu cầu xác nhận thanh toán chuyển khoản")
+      setPhuongThucThanhToan(ghiChuOption)
+      return;
+    }
+    showAlert("Thanh toán hóa đơn", res.msg, false)
+    return;
+  };
 
   const huyHoaDon = () => {
     if(isActiveHuy){
@@ -208,6 +276,27 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
     return;
   }
 
+  const handleHinhAnhSelect = (selected: any) => {
+    const uriImg = selected.uri
+    setUri(uriImg)
+  }
+
+  const handleOr = async () => {
+    const res : any = await authenticationAPI.HandleAuthentication(
+      '/khachhang/thanhtoan/createQR/' + idHD,
+      'get',
+    );
+    // const res : any = HoaDonResExample
+    if (res.success === true) {
+      const orderUrl = res.index;
+      Linking.openURL(orderUrl).catch((err) => {
+        console.error('Failed to open URL:', err);
+        // Handle error if unable to open URL
+        showAlert("Không thể mở QR code", "Đã xảy ra lỗi khi mở QR code");
+      });          
+    }
+  }
+
   const MonItem = ({ item }: { item: any }) => {
 
     //openSearchScreen(item.idMon)
@@ -226,8 +315,8 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
         />
         <View style={styles.itemDetails}>
           <Text style={styles.itemName}>{item.tenMon}</Text>
-          <Text style={styles.normal}>{formatCurrency(item.giaTienDat)}</Text>
-          <Text style={styles.normal}>{item.soLuong}</Text>
+          <Text style={styles.normal}>{"Giá tiền "+formatCurrency(item.giaTienDat)}</Text>
+          <Text style={styles.normal}>{"Số lượng "+item.soLuong}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -255,27 +344,9 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
           rightText={diaChi}
         />
         <TextViewComponent
-          leftText="Thời gian tạo"
-          rightText={thoiGianTao}
+          leftText="Số điện thoại"
+          rightText={sdt}
         />
-        <TextViewComponent
-          leftText="Thời gian duyệt"
-          rightText={thoiGianDuyet}
-        />
-        <TextViewComponent
-          leftText="Thời gian giao"
-          rightText={thoiGianGiaoHangDuKien}
-        />
-        <TextViewComponent
-          leftText="Giao hàng"
-          rightText={formatTrangThaiGiaoHang(trangThaiMua)}
-          rightColor={formatTrangThaiGiaoHangColor(trangThaiMua)}
-        />
-        <TextViewComponent
-          leftText="Thanh toán"
-          rightText={formatTrangThaiThanhToan(trangThaiThanhToan)}
-          rightColor={formatTrangThaiThanhToanColor(trangThaiThanhToan)}
-        />   
         <TextViewComponent
           leftText="Khuyến mãi"
           rightText={phanTramKhuyenMai + "%"}
@@ -283,14 +354,14 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
         <TextViewComponent
           leftText="Phí giao hàng"
           rightText={phiVanChuyen}
-        />  
+        /> 
         <TextViewComponent
           leftText="Thành tiền"
           rightText={formatCurrency(thanhTien)}
           leftBold={true}
           backgroundColor={appColors.secondary}
           showBorderBottom={false}
-        /> 
+        />
         <FlatList
           scrollEnabled={false}
           data={danhSachMonDat}
@@ -298,16 +369,72 @@ const DetailHoaDonScreen: React.FC<NavProps> = ({ navigation }) =>  {
           keyExtractor={(item : any) => item.idMD}
           />
         <TextViewComponent
-          leftText="Ghi chú"
-          rightText={ghiChu}
+          leftText="Thanh toán"
+          rightText={formatTrangThaiThanhToan(trangThaiThanhToan)}
+          rightColor={formatTrangThaiThanhToanColor(trangThaiThanhToan)}
+        /> 
+        <TextViewComponent
+          leftText="Phương thức"
+          rightText={phuongThucThanhToan===0?"Tiền mặt":"Chuyển khoản"}
+        /> 
+        {ghiChu !== "" && (
+          <TextViewComponent
+            leftText="Ghi chú"
+            rightText={ghiChu}
+          />
+        )}
+        <TextViewComponent
+          leftText="Thời gian tạo"
+          rightText={thoiGianTao}
+        />
+        {thoiGianDuyet !== "00:00:00 00:00" && (
+        <TextViewComponent
+          leftText="Thời gian duyệt"
+          rightText={thoiGianDuyet}
+        />
+        )}
+        {thoiGianGiaoHangDuKien !== "00:00:00 00:00" && (
+          <TextViewComponent
+            leftText="Dự kiến giao"
+            rightText={thoiGianGiaoHangDuKien}
+          />
+        )}
+        <TextViewComponent
+          leftText="Giao hàng"
+          rightText={formatTrangThaiGiaoHang(trangThaiMua)}
+          rightColor={formatTrangThaiGiaoHangColor(trangThaiMua)}
         />
         <TextViewComponent
           leftText="Trạng thái"
           rightText={formatTrangThai(trangThai)}
           rightColor={formatTrangThaiColor(trangThai)}
         /> 
-        <MyButtonComponent text="Thanh toán" onPress={thanhToan} color={(isActiveThanhToan)?appColors.primary:"gray"}/>
-        <MyButtonComponent text="Hủy hóa đơn" onPress={huyHoaDon} color={(isActiveHuy)?appColors.primary:"gray"}/>
+        {isActiveThanhToan && (
+          <MyButtonComponent text="Thanh toán" onPress={thanhToan} color={(isActiveThanhToan)?appColors.primary:"gray"}/>
+        )}
+        {isActiveHuy && (
+          <MyButtonComponent text="Hủy hóa đơn" onPress={huyHoaDon} color={(isActiveHuy)?appColors.primary:"gray"}/>
+        )}
+        <ImageVerificationOption
+          visible={modalImageVisible}
+          onSelect={handleHinhAnhSelect}
+          onClose={() => setModalImageVisible(false)}
+          optionalTitle="Chọn hình ảnh xác nhận"
+          optionalDesc="Bạn có thể tải ảnh từ thư viện ảnh hoặc chụp trực tiếp ảnh chuyển khoản thành công"
+          imgUrl={uri}
+        />
+        <ListOptionPicker
+          visible={modalThanhToanVisible}
+          optionalTitle={"Chọn phương thức thanh toán?"}
+          optionalDesc={"Xác nhận thanh toán tiền mặt khi giao hàng thành công\n\nXác nhận thanh toán chuyển khoản cho hóa đơn đã duyệt"}
+          onSelect={handleThanhToanSelect}
+          onClose={() => setModalThanhToanVisible(false)}
+          options={optionsLyDoThanhToan}
+          onPickImage={() => setModalImageVisible(true)}
+          imgUri={uri}
+          handleQR={handleOr}
+          initOption={phuongThucThanhToan}
+        />
     </View>
     </ScrollView>
   );

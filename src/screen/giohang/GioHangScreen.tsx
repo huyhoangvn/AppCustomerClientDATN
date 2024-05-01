@@ -66,19 +66,19 @@ const xoaGioHangResExample = {
 
 const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
   const route : any = useRoute();
-  const [idKH, setIdKH] = useState("");
+  const [idKH, setIdKH] = useState("")
   const [danhSachGioHang, setDanhSachGioHang] = useState<any[]>([]);
   const isFocused = useIsFocused();
   let saveList: any[] = [];
 
   const handleSaveItem = (item: any, isSelected: boolean) => {
     if (isSelected) {
-      const index = saveList.findIndex((savedItem) => savedItem.idGH === item.idGH);
+      const index = saveList.findIndex((savedItem) => savedItem._id === item._id);
       if (index === -1) {
         saveList.push(item);
       }
     } else {
-      const index = saveList.findIndex((savedItem) => savedItem.idGH === item.idGH);
+      const index = saveList.findIndex((savedItem) => savedItem._id === item._id);
       if (index !== -1) {
         saveList.splice(index, 1);
       }
@@ -93,10 +93,9 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
   
   useEffect(() => {
     const fetchData = async () => {
-      const khachHangId = await getKhachHang();
-      await getDanhSachGioHang(khachHangId);
-      
-      setIdKH(khachHangId);
+      const idKHTemp = await getKhachHang();
+      await getDanhSachGioHang(idKHTemp);
+      setIdKH(idKHTemp)
     };
   
     if (isFocused) {
@@ -122,17 +121,17 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
     }
   }
   
-  const taoHoaDon = () => {
+  const taoHoaDon = (id : string) => {
     if(saveList.length == 0){
       showAlert("Không thể tạo đơn hàng!", "Quý khách hàng vui lòng chọn món trước")
       return;
     }
     const firstStoreId = saveList[0].idCH;
     const isInSameStore = saveList.every(item => item.idCH === firstStoreId);
-    const list = saveList.map(item => ({ ...item, soLuong: 1 }));
     if (isInSameStore) {
+      const list = saveList.map(item => ({ ...item, soLuong: 1 }));
       navigation.navigate('AddHoaDonScreen', {
-        idKH: idKH,
+        idKH: id,
         saveList: list // Danh sách những món sẽ đặt
       });
     } else {
@@ -210,7 +209,7 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
               <FontAwesomeIcon icon={faTimes} size={appIcon.normal}/>
             </TouchableOpacity>
           </View>
-          <Text style={styles.normal}>{item.tenCH}</Text>
+          <Text style={styles.normal}>{"Cửa hàng: "+item.tenCH}</Text>
           <Text style={styles.normal}>{formatCurrency(item.giaTien)}</Text>
         </View>
       </TouchableOpacity>
@@ -224,7 +223,7 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
           <View style={styles.contain}>
             <DeliveryNote
               title="Ấn vào nút bên dưới để tạo hóa đơn "
-              mainText="Hãy chọn những đơn cùng cửa hàng!"
+              mainText="Hãy chọn những món cùng cửa hàng!"
               icon={<BillCreateNote />}
               backgroundColor={appColors.lighterOrange}
             />
@@ -240,7 +239,7 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
           </View>
       </ScrollView>
       <FloatingButton
-        onPressItem={taoHoaDon}
+        onPressItem={()=>taoHoaDon(idKH)}
         buttonColor={appColors.primary} // Example custom button color
         iconColor={appColors.white} // Example custom icon color
         icon={faPlus} // Pass the icon
@@ -299,6 +298,7 @@ const styles = StyleSheet.create({
   normal: {
     fontSize: appFontSize.normal,
     color: appColors.text,
+    marginRight: 15
   }
   //<==Item==>
 });

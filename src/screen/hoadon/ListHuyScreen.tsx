@@ -3,36 +3,25 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
-  Image,
   KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableHighlight,
 } from 'react-native';
 import NavProps from '../../models/props/NavProps';
 import EditTextComponent from '../../component/EditTextComponent';
 import {
-  faCalendarDays,
   faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons';
 import {appColors} from '../../constants/appColors';
-import DropDownComponent from '../../component/DropDownComponent';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {text} from '@fortawesome/fontawesome-svg-core';
 import {HoaDon} from '../../models/HoaDon';
 import authenticationAPI from '../../apis/authApi';
 import AlertComponent from '../../component/AlertComponent';
 import LoadingComponent from '../../component/LoadingComponent';
 import {getData} from '../../utils/storageUtils';
-import EditText from '../../component/edittext/EditText';
-import {appFontSize} from '../../constants/appFontSizes';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
+import ListHoaDonComponent from '../../component/ListHoaDonComponent';
 const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [text, setText] = useState('Xem thêm');
@@ -46,25 +35,9 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
   const [payment, setPayment] = useState('');
   const [code, setCode] = useState('');
   const [date, setDate] = useState<any>();
-  const [selectedDate, setSelectedDate] = useState<Date>();
-  const [position, setPosition] = useState<any>();
+  const [startDate, setStartDate] = useState<Date>();
+  const [andDate, setAndDate] = useState<Date>();
 
-  const getStatusText = (status: number): string => {
-    switch (status) {
-      case 0:
-        return 'Chờ duyệt';
-      case 1:
-        return 'Đang chuẩn bị';
-      case 2:
-        return 'Đang giao hàng';
-      case 3:
-        return 'Giao hàng thành công';
-      case 4:
-        return 'Giao hàng thất bại';
-      default:
-        return 'Trạng thái không xác định';
-    }
-  };
   const handleShowAlert = () => {
     setShowAlert(true);
   };
@@ -74,7 +47,7 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
   };
 
   const actionSearch = async (item: string) => {
-    await getListInvoice(item, 0, page);
+    await getListInvoice(item, 0,startDate,andDate, page);
   };
 
   const handelDetail = (item: any) => {
@@ -84,19 +57,34 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
   };
 
   const handleGetAll = async () => {
-    await getListInvoice(code, 4, page + 1);
+    await getListInvoice(code, 0,startDate,andDate, page + 1);
   };
 
-  const getListInvoice = async (
-    code?: any,
-    status?: any,
-    page?: any,
-  ) => {
+  const searchStartDate = (item: Date | string) => {
+    setStartDate(item as Date);
+  };
+  const handleSelectStartDate = async (dateStart: Date | string) => {
+    setStartDate(dateStart as Date);
+    console.log("🚀 ~ handleSelectStartDate ~ dateStart:", dateStart)
+    await getListInvoice(code, 0,dateStart,andDate, page);
+  };
+
+  const searchEndDate = (item: Date | string) => {
+    setAndDate(item as Date);
+  };
+  const handleSelectEndDate = async (dateEnd: Date | string) => {
+    console.log("🚀 ~ handleSelectEndDate ~ dateEnd:", dateEnd)
+    setAndDate(dateEnd as Date);
+    await getListInvoice(code, 0,startDate,dateEnd, page);
+  };
+
+  const getListInvoice = async (code: any, status: any,  startDate: any,
+    endDate: any, page: any) => {
     try {
       const user = await getData();
       const idUser = user?.idKH;
       const res: any = await authenticationAPI.HandleAuthentication(
-        `/khachhang/hoaDon/${idUser}?maHD=${code}&trangThai=${status}&trang=${page}`,
+        `/khachhang/hoaDon/${idUser}?maHD=${code}&ngayBatDau=${startDate}&ngayKetThuc=${endDate}&trangThai=${status}&trang=${page}`,
         'get',
       );
 
@@ -120,7 +108,8 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
       }
       setCode(code);
       setStatus(status);
-      setDate(date);
+      setStartDate(startDate);
+      setAndDate(endDate);
     } catch (error) {
       console.error(error);
     } finally {
@@ -128,75 +117,15 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
     }
   };
 
-  const formatDate = (dateTimeString: any) => {
-    const dateTime = new Date(dateTimeString);
-
-    const day = dateTime.getDate();
-    const month = dateTime.getMonth() + 1; // JavaScript month is zero-based
-    const year = dateTime.getFullYear();
-
-    const formattedDate = `${day < 10 ? '0' : ''}${day}/${
-      month < 10 ? '0' : ''
-    }${month}/${year}`;
-
-    const hours = dateTime.getHours();
-    const minutes = dateTime.getMinutes();
-    const formattedTime = `${hours < 10 ? '0' : ''}${hours}:${
-      minutes < 10 ? '0' : ''
-    }${minutes}`;
-
-    return {formattedDate, formattedTime};
-  };
 
 
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    if(isFocused){
-      getListInvoice('', 0, page);
+    if (isFocused) {
+      getListInvoice('', 0,'','', page);
     }
   }, [isFocused]);
-
-  const renderItem = ({item}: {item: HoaDon}) => {
-    const {formattedDate, formattedTime} = formatDate(item.thoiGianTao);
-    return (
-        <TouchableHighlight   underlayColor="#F2F2F2" // Màu sắc khi chạm vào
-        onPress={() => handelDetail(item)}>
-          <View style={styles.item}>
-            <View style={{paddingHorizontal: 10}}>
-            <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text style={{fontWeight: 'bold', color: 'black'}}>
-                MHD:{item.maHD}
-              </Text>
-              <Text>
-                {formattedDate || ''} - {formattedTime || ''}
-              </Text>
-            </View>
-              <Text style={{fontWeight: 'bold', color: 'black'}}>
-                Tổng tiền:{' '}
-                {parseInt(item.tongTien || '').toLocaleString('vi-VN', {
-                  style: 'currency',
-                  currency: 'VND',
-                })}
-              </Text>
-              <Text style={{color: 'black', fontWeight: 'bold'}}>
-                {/* {item.trangThaiMua === 1 ? "ok" : "Chưa mua"} */}
-                Trạng thái mua: {getStatusText(item.trangThaiMua ?? 0)}
-              </Text>
-              <Text style={{fontWeight: 'bold', color: 'black'}}>
-                Thanh toán:
-                {item.trangThaiThanhToan === 0 ? (
-                  <Text style={{color: 'red'}}> Chưa thanh toán</Text>
-                ) : (
-                  <Text style={{color: 'green'}}> Đã thanh toán</Text>
-                )}
-              </Text>
-            </View>
-          </View>
-        </TouchableHighlight>
-    );
-  };
 
   return (
     <KeyboardAvoidingView
@@ -221,6 +150,40 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
             }}
             iconColor={appColors.primary}
           />
+            <View style={styles.selectDate}>
+            <EditTextComponent
+              label="date"
+              placeholder="Ngày bắt đầu"
+              value={startDate ? startDate.toString() : ''} // Convert
+              stylesEdit={{backgroundColor: 'white'}}
+              onChangeText={(text: string) => searchStartDate(text)}
+              stylesContainer={{
+                borderColor: 'black',
+                borderWidth: 1.5,
+                elevation: 0,
+                width: '45%',
+              }}
+              onDateSelected={item => handleSelectStartDate(item)}
+              iconColor={appColors.primary}
+            />
+
+            <EditTextComponent
+              label="date"
+              placeholder="Ngày kết thúc"
+              value={andDate ? andDate.toString() : ''} // Convert
+              stylesEdit={{backgroundColor: 'white'}}
+              onChangeText={(text: string) => searchEndDate(text)}
+              stylesContainer={{
+                backgroundColor: appColors.white,
+                borderColor: 'black',
+                borderWidth: 1.5,
+                elevation: 0,
+                width: '45%',
+              }}
+              onDateSelected={item => handleSelectEndDate(item)}
+              iconColor={appColors.primary}
+            />
+          </View>
         </View>
 
         <View style={styles.main}>
@@ -231,7 +194,7 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
               </Text>
               <TouchableOpacity
                 onPress={async () => {
-                  await getListInvoice('', 0, 1), setPage(1);
+                  await getListInvoice('', 0,'','', 1), setPage(1);
                 }}>
                 <Text
                   style={{
@@ -239,27 +202,15 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
                     marginTop: 20,
                     color: appColors.primary,
                     textDecorationLine: 'underline',
-                  }}>
-                </Text>
+                  }}></Text>
               </TouchableOpacity>
             </View>
           ) : (
-            <FlatList
+            <ListHoaDonComponent
               data={data}
-              renderItem={renderItem}
-              keyExtractor={item => item._id || ''}
-              scrollEnabled={true}
-              style={{height: hp(80)}}
-              // onScroll={() => { setScroll(true), setLastList(false) }} // Khi cuộn, đánh dấu là đã cuộn
-              // onEndReached={() => { setLastList(true), setScroll(false) }} // Kích hoạt khi đạt đến cuối danh sách
-              // onEndReachedThreshold={.1}
-              ListFooterComponent={() => (
-                <View style={{alignItems: 'center', paddingVertical: 10}}>
-                  <TouchableOpacity onPress={handleGetAll}>
-                    <Text style={{fontSize: appFontSize.normal}}>{text}</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+              handleDetail={handelDetail}
+              handleGetAll={handleGetAll}
+              text={text}
             />
           )}
         </View>
@@ -294,17 +245,19 @@ const styles = StyleSheet.create({
     flex: 2,
   },
 
-item: {
+  item: {
     marginVertical: 5,
     marginHorizontal: 10,
     padding: 15,
     flexDirection: 'column',
     borderRadius: 10,
     backgroundColor: appColors.white,
-    elevation: 10
+    elevation: 10,
+  },
+  selectDate: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 
 export default ListHuyScreen;
-
-

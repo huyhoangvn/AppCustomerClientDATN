@@ -21,9 +21,11 @@ import {Mon} from '../../models/Mon';
 import Swiper from 'react-native-swiper';
 import FlatListHomeComponent from '../../component/FlatListHomeComponent';
 import authenticationAPI from '../../apis/authApi';
+import {useIsFocused} from '@react-navigation/native';
+import LoadingComponent from '../../component/LoadingComponent';
 
-const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
-  const [searchValue, setSearchValue] = useState('');
+const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
+  const [search, setSearch] = useState('');
   const swiperRef = useRef<any>(null);
   const [autoplay, setAutoplay] = useState(true); // State để điều khiển autoplay
   const [typeDish1, setTypeDish1] = useState<Mon[]>([]);
@@ -32,77 +34,31 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [nameTypeDish1, setNametypeDish1] = useState<string>();
   const [nameTypeDish2, setNametypeDish2] = useState<string>();
+  const [imageSlide, setImageSlide] = useState<string[]>([]);
 
   const openScreen = (screen: string) => {
-    navigation.navigate(screen, {searchValue});
+    navigation.navigate(screen, {search: search});
   };
 
   const data = [
     {
       id: 1,
-      poster_path:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+      imgSlide: 'https://toplist.vn/images/200px/do-do-tiem-ga-ran-516483.jpg',
     },
     {
       id: 2,
-      poster_path:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+      imgSlide: 'https://blog.dktcdn.net/files/topping-pizza-1.png',
     },
     {
       id: 3,
-      poster_path:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-    },
-    {
-      id: 4,
-      poster_path:
-        'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
+      imgSlide:
+        'https://www.shutterstock.com/image-photo/burger-tomateoes-lettuce-pickles-on-600nw-2309539129.jpg',
     },
   ];
-  // const dish: Mon[] = [
-  //   {
-  //     _id: '1',
-  //     tenMon: 'Pizza hải sản',
-  //     hinhAnh:
-  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-  //     giaTien: 100000,
-  //     soLuong: 2,
-  //   },
-  //   {
-  //     _id: '2',
-  //     tenMon: 'Pizza gà',
-  //     hinhAnh:
-  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-  //     giaTien: 300000,
-  //   },
-  //   {
-  //     _id: '3',
-  //     tenMon: 'Pizza bò',
-  //     hinhAnh:
-  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-  //     giaTien: 200000,
-  //   },
-
-  //   {
-  //     _id: '4',
-  //     tenMon: 'Pizza cua',
-  //     hinhAnh:
-  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-  //     giaTien: 500000,
-  //   },
-
-  //   {
-  //     _id: '5',
-  //     tenMon: 'Pizza rau cải',
-  //     hinhAnh:
-  //       'https://vnvinaphone.vn/wp-content/uploads/2021/11/Veggie-mania.jpg',
-  //     giaTien: 600000,
-  //   },
-  // ];
   const getTypeDish = async (index: any) => {
     try {
       setLoading(true);
-      if (index == 0) {
+      if (index == 1) {
         const res: any = await authenticationAPI.HandleAuthentication(
           `/khachhang/mon/theo-loai-mon?indexLM=${index}`,
           {},
@@ -129,12 +85,30 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
       setLoading(false);
     }
   };
-  const getTopDish = async () => {
+
+  const getImageSlide = async () => {
     try {
       setLoading(true); // Set loading to true before making the API call
 
       const res: any = await authenticationAPI.HandleAuthentication(
-        `/nhanvien/thongke/nam-tenLM`,
+        `/khachhang/slide`,
+        'get',
+      );
+      if (res.success === true) {
+        setImageSlide(res.data);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getTopDish = async () => {
+    try {
+      setLoading(true); // Set loading to true before making the API call
+      const res: any = await authenticationAPI.HandleAuthentication(
+        `/khachhang/thongke/mon-ban-chay`,
         'get',
       );
       if (res.success === true) {
@@ -148,25 +122,30 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
   };
 
   const handlePress = (item: any) => {
-    console.log('item11111', item);
+    navigation.navigate('DetailMonScreen', {idMon: item?.idMon});
   };
 
   const onScrollBeginDrag = () => {
     setAutoplay(false); // Tắt autoplay
   };
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getTopDish();
-    getTypeDish(0);
-    getTypeDish(1);
+    // if (isFocused) {
+      getTopDish();
+      getTypeDish(1);
+      getTypeDish(2);
+      getImageSlide();
+    // }
   }, []);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.viewSearch}>
           <SearchHeader
-            setSearchValue={setSearchValue}
-            searchValue={searchValue}
+            setSearchValue={setSearch}
+            searchValue={search}
             searchAction={() => openScreen('SearchMonScreen')}
             navigation={navigation}
           />
@@ -180,19 +159,39 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
             ref={swiperRef}
             style={styles.wrapper}
             autoplay={autoplay} // Sử dụng state để điều khiển autoplay
-            autoplayTimeout={5}
+            autoplayTimeout={4}
             onScrollBeginDrag={onScrollBeginDrag} // Tạm thời tắt tự động chuyển slide khi người dùng thao tác
           >
-            {data.map((item, index) => (
-              <TouchableOpacity key={index} onPress={() => handlePress(item)}>
-                <View style={styles.slide}>
-                  <Image
-                    source={{uri: item.poster_path}}
-                    style={styles.image}
-                  />
-                </View>
-              </TouchableOpacity>
-            ))}
+            {imageSlide.length > 0 ? 
+                imageSlide.map((item: any, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handlePress(item)}>
+                    <View style={styles.slide}>
+                      <Image
+                        source={{
+                          uri: item.imgSlide,
+                        }}
+                        style={styles.image}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                ))
+              : 
+                data.map((item: any, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handlePress(item)}>
+                    <View style={styles.slide}>
+                      <Image
+                        source={{
+                          uri: item.imgSlide,
+                        }}
+                        style={styles.image}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                ))}
           </Swiper>
         </View>
       </View>
@@ -204,7 +203,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
                 data={dishTop}
                 showIndicator={false}
                 textTitle="Món bán chạy"
-                textSeeMore="Xem thêm >"
+                textSeeMore="Xem thêm"
                 textTag="Món ngon"
                 styleTag={{
                   color: appColors.warmOrange,
@@ -217,7 +216,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
                   navigation.navigate('DetailMonScreen', {idMon: item?._id});
                 }}
                 onSeeMoreClick={() => {
-
+                  navigation.navigate('SearchMonScreen');
                 }}
               />
             </View>
@@ -230,7 +229,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
               showIndicator={false}
               textTitle={nameTypeDish1}
               textTag="Giải khát"
-              textSeeMore="Xem thêm >"
+              textSeeMore="Xem thêm"
               styleTitle={{
                 color: appColors.coolPurple,
               }}
@@ -238,7 +237,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
                 navigation.navigate('DetailMonScreen', {idMon: item?._id});
               }}
               onSeeMoreClick={() => {
-                navigation.navigate('SearchMonScreen')
+                navigation.navigate('SearchMonScreen');
               }}
               styleTag={{
                 color: appColors.coolPurple,
@@ -255,7 +254,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
               showIndicator={false}
               textTitle={nameTypeDish2}
               textTag="Giải khát"
-              textSeeMore="Xem thêm >"
+              textSeeMore="Xem thêm"
               styleTitle={{
                 color: appColors.coolPurple,
               }}
@@ -263,7 +262,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
                 navigation.navigate('DetailMonScreen', {idMon: item?._id});
               }}
               onSeeMoreClick={() => {
-
+                navigation.navigate('SearchMonScreen');
               }}
               styleTag={{
                 color: appColors.coolPurple,
@@ -273,6 +272,7 @@ const TrangChuScreen: React.FC<NavProps> =  ({navigation}) => {
           </View>
         )}
       </View>
+      <LoadingComponent visible={loading} />
     </ScrollView>
   );
 };
