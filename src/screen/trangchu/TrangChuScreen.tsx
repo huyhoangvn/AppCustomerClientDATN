@@ -25,7 +25,7 @@ import {useIsFocused} from '@react-navigation/native';
 import LoadingComponent from '../../component/LoadingComponent';
 
 const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
-  const [searchValue, setSearchValue] = useState('');
+  const [search, setSearch] = useState('');
   const swiperRef = useRef<any>(null);
   const [autoplay, setAutoplay] = useState(true); // State để điều khiển autoplay
   const [typeDish1, setTypeDish1] = useState<Mon[]>([]);
@@ -37,7 +37,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const [imageSlide, setImageSlide] = useState<string[]>([]);
 
   const openScreen = (screen: string) => {
-    navigation.navigate(screen, {searchValue});
+    navigation.navigate(screen, {search: search});
   };
 
   const data = [
@@ -108,11 +108,11 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
     try {
       setLoading(true); // Set loading to true before making the API call
       const res: any = await authenticationAPI.HandleAuthentication(
-        `/nhanvien/thongke/mon-ban-chay`,
+        `/khachhang/thongke/mon-ban-chay`,
         'get',
       );
       if (res.success === true) {
-        setDishTop(res.data);
+        setDishTop(res.list);
       }
     } catch (error) {
       console.error(error);
@@ -144,8 +144,8 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
       <View style={styles.header}>
         <View style={styles.viewSearch}>
           <SearchHeader
-            setSearchValue={setSearchValue}
-            searchValue={searchValue}
+            setSearchValue={setSearch}
+            searchValue={search}
             searchAction={() => openScreen('SearchMonScreen')}
             navigation={navigation}
           />
@@ -155,7 +155,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
           style={{
             flex: 1,
           }}>
-          {/* <Swiper
+          <Swiper
             ref={swiperRef}
             style={styles.wrapper}
             autoplay={autoplay} // Sử dụng state để điều khiển autoplay
@@ -170,7 +170,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
                     <View style={styles.slide}>
                       <Image
                         source={{
-                          uri: `http://10.0.2.2:3000/public/images/${item.imgSlide}`,
+                          uri: item.imgSlide,
                         }}
                         style={styles.image}
                       />
@@ -192,7 +192,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
                     </View>
                   </TouchableOpacity>
                 ))}
-          </Swiper> */}
+          </Swiper>
         </View>
       </View>
       <View style={styles.main}>

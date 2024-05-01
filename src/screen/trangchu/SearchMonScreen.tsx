@@ -15,6 +15,9 @@ import authenticationAPI from '../../apis/authApi';
 import LoadingComponent from '../../component/LoadingComponent';
 
 const SearchMonScreen: React.FC<NavProps> = ({ navigation }) => {
+  const route: any = useRoute();
+  const search = route.params?.search || "";
+
   const [searchValue, setSearchValue] = useState("");
   const [listHienThi, setListHienThi] = useState<Mon[]>([]);
   const [textXemThem, setTextXemThem] = useState('Xem thêm');
@@ -28,7 +31,7 @@ const SearchMonScreen: React.FC<NavProps> = ({ navigation }) => {
   };
 
   const xemThemMon = async () => {
-    await handleSearch(tenMon, trang + 1);
+    await handleSearch(searchValue, trang + 1);
   };
 
   const goBackEvent = () => {
@@ -51,9 +54,9 @@ const SearchMonScreen: React.FC<NavProps> = ({ navigation }) => {
 
   const handleSearch = async (tenMon: string, trang: any) => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const res: any = await authenticationAPI.HandleAuthentication(
-        `/khachhang/mon?tenMon=${tenMon}&trang=${trang}`,
+        `/khachhang/mon?tenMon=${tenMon}&trang=${trang}&trangThai=1`,
         'get',
       );
 
@@ -75,15 +78,16 @@ const SearchMonScreen: React.FC<NavProps> = ({ navigation }) => {
       } else {
         setTextXemThem('Hết');
       }
-      setTenMon(tenMon);
+      setSearchValue(tenMon);
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false); 
+      // setLoading(false); 
     }
   };
   useEffect(() => {
-    handleSearch(tenMon, 1);    
+    setSearchValue(search)
+    handleSearch(search, 1);    
   }, []); 
   
 
@@ -158,7 +162,7 @@ const styles = StyleSheet.create({
     padding: 10
   },
   header: {
-    flex: 1,
+    paddingBottom: 10
   },
   main: {
     flex: 10,

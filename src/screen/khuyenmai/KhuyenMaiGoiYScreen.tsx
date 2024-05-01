@@ -51,7 +51,7 @@ const KhuyenMaiGoiYScreen: React.FC<NavProps> = ({ navigation, route }:any) => {
   const getDanhSacHkhuyenMai = async () => {
     try {
       const res : any = await authenticationAPI.HandleAuthentication(
-        '/nhanvien/khuyenmai/khuyen-mai' ,
+        '/khachhang/khuyenmai/danh-sach' ,
         'get',
       );
       // const res: any = DanhSachkhuyenMaiData;
