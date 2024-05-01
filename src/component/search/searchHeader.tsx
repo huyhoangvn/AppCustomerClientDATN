@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignContent: 'center',
+    margin: 10
   },
   backIcon: {
     flex: 1,
