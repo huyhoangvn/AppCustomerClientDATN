@@ -74,7 +74,7 @@ const ListHoaDonComponent: React.FC<Props>  = ({
               </View>
               <Text style={{ color: 'black'}}>
                 Thành tiền:{' '}
-                {parseInt(item?.tongTien || '').toLocaleString('vi-VN', {
+                {parseInt(item?.thanhTien || '').toLocaleString('vi-VN', {
                   style: 'currency',
                   currency: 'VND',
                 })}
