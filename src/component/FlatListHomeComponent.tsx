@@ -140,7 +140,9 @@ const styles = StyleSheet.create({
     backgroundColor: appColors.white,
     elevation: 5,
     paddingBottom: 10,
-    margin: 10
+    marginBottom: 10,
+    marginLeft: 10,
+    marginRight: 10
   },
   viewTitle: {
     flexDirection: 'row',

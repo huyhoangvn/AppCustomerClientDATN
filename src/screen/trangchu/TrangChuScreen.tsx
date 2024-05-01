@@ -57,7 +57,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   ];
   const getTypeDish = async (index: any) => {
     try {
-      setLoading(true);
+      // setLoading(true);
       if (index == 1) {
         const res: any = await authenticationAPI.HandleAuthentication(
           `/khachhang/mon/theo-loai-mon?indexLM=${index}`,
@@ -82,13 +82,13 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
   const getImageSlide = async () => {
     try {
-      setLoading(true); // Set loading to true before making the API call
+      // setLoading(true); // Set loading to true before making the API call
 
       const res: any = await authenticationAPI.HandleAuthentication(
         `/khachhang/slide`,
@@ -100,13 +100,13 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
   const getTopDish = async () => {
     try {
-      setLoading(true); // Set loading to true before making the API call
+      // setLoading(true); // Set loading to true before making the API call
       const res: any = await authenticationAPI.HandleAuthentication(
         `/khachhang/thongke/mon-ban-chay`,
         'get',
@@ -117,7 +117,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -140,65 +140,56 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.viewSearch}>
-          <SearchHeader
+    <ScrollView>
+        <SearchHeader
             setSearchValue={setSearch}
             searchValue={search}
             searchAction={() => openScreen('SearchMonScreen')}
             navigation={navigation}
-          />
-        </View>
-
-        <View
-          style={{
-            flex: 1,
-          }}>
-          <Swiper
-            ref={swiperRef}
-            style={styles.wrapper}
-            autoplay={autoplay} // Sử dụng state để điều khiển autoplay
-            autoplayTimeout={4}
-            onScrollBeginDrag={onScrollBeginDrag} // Tạm thời tắt tự động chuyển slide khi người dùng thao tác
-          >
-            {imageSlide.length > 0 ? 
-                imageSlide.map((item: any, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => handlePress(item)}>
-                    <View style={styles.slide}>
-                      <Image
-                        source={{
-                          uri: item.imgSlide,
-                        }}
-                        style={styles.image}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                ))
-              : 
-                data.map((item: any, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => handlePress(item)}>
-                    <View style={styles.slide}>
-                      <Image
-                        source={{
-                          uri: item.imgSlide,
-                        }}
-                        style={styles.image}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                ))}
-          </Swiper>
-        </View>
+        />
+      <View>
+        <Swiper
+          ref={swiperRef}
+          style={styles.wrapper}
+          autoplay={autoplay} // Sử dụng state để điều khiển autoplay
+          autoplayTimeout={4}
+          onScrollBeginDrag={onScrollBeginDrag} // Tạm thời tắt tự động chuyển slide khi người dùng thao tác
+        >
+          {imageSlide.length > 0 ? 
+              imageSlide.map((item: any, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handlePress(item)}>
+                  <View style={styles.slide}>
+                    <Image
+                      source={{
+                        uri: item.imgSlide,
+                      }}
+                      style={styles.image}
+                    />
+                  </View>
+                </TouchableOpacity>
+              ))
+            : 
+              data.map((item: any, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handlePress(item)}>
+                  <View style={styles.slide}>
+                    <Image
+                      source={{
+                        uri: item.imgSlide,
+                      }}
+                      style={styles.image}
+                    />
+                  </View>
+                </TouchableOpacity>
+              ))}
+        </Swiper>
       </View>
-      <View style={styles.main}>
-        {dishTop &&
-          dishTop.length > 0 && ( // Kiểm tra nếu dishTop tồn tại và có phần tử
-            <View style={{backgroundColor: appColors.white}}>
+      <View>
+        {dishTop && dishTop.length > 0 && ( // Kiểm tra nếu dishTop tồn tại và có phần tử
+            <View style={{backgroundColor: appColors.white, flex: 1}}>
               <FlatListHomeComponent
                 data={dishTop}
                 showIndicator={false}
@@ -223,7 +214,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
           )}
 
         {typeDish1 && typeDish1.length > 0 && (
-          <View style={{backgroundColor: appColors.white}}>
+          <View style={{backgroundColor: appColors.white,  flex: 1}}>
             <FlatListHomeComponent
               data={typeDish1}
               showIndicator={false}
@@ -248,7 +239,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
         )}
 
         {typeDish2 && typeDish2.length > 0 && (
-          <View style={{backgroundColor: appColors.white}}>
+          <View style={{backgroundColor: appColors.white,  flex: 1}}>
             <FlatListHomeComponent
               data={typeDish2}
               showIndicator={false}
@@ -272,18 +263,17 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
           </View>
         )}
       </View>
-      <LoadingComponent visible={loading} />
+      {/* <LoadingComponent visible={loading} /> */}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: appColors.white,
-  },
+  // container: {
+  //   flex: 1,
+  //   backgroundColor: appColors.white,
+  // },
   header: {
-    flex: 1,
     justifyContent: 'space-between',
   },
   viewSearch: {
@@ -292,11 +282,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
   },
-  main: {
-    flex: 1.5,
-  },
 
-  wrapper: {height: 200},
+  wrapper: {
+    height: 200
+  },
   slide: {
     justifyContent: 'center',
     alignItems: 'center',
