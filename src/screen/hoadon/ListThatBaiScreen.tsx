@@ -8,13 +8,9 @@ import {
 } from 'react-native';
 import NavProps from '../../models/props/NavProps';
 import EditTextComponent from '../../component/EditTextComponent';
-import {
-  faMagnifyingGlass,
-} from '@fortawesome/free-solid-svg-icons';
+import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
 import {appColors} from '../../constants/appColors';
-import {
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {HoaDon} from '../../models/HoaDon';
 import authenticationAPI from '../../apis/authApi';
 import AlertComponent from '../../component/AlertComponent';
@@ -34,36 +30,18 @@ const ListThatBaiScreen: React.FC<NavProps> = ({navigation}) => {
   const [purchase, setPurchase] = useState('');
   const [payment, setPayment] = useState('');
   const [code, setCode] = useState('');
-  const [date, setDate] = useState<any>();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [position, setPosition] = useState<any>();
+  const [startDate, setStartDate] = useState<Date>();
+  const [andDate, setAndDate] = useState<Date>();
 
-  const getStatusText = (status: number): string => {
-    switch (status) {
-      case 0:
-        return 'Chờ duyệt';
-      case 1:
-        return 'Đang chuẩn bị';
-      case 2:
-        return 'Đang giao hàng';
-      case 3:
-        return 'Giao hàng thành công';
-      case 4:
-        return 'Giao hàng thất bại';
-      default:
-        return 'Trạng thái không xác định';
-    }
-  };
-  const handleShowAlert = () => {
-    setShowAlert(true);
-  };
 
   const handleCloseAlert = () => {
     setShowAlert(false);
   };
 
   const actionSearch = async (item: string) => {
-    await getListInvoice(item, 4, page);
+    await getListInvoice(item, 4, startDate, andDate, page);
   };
 
   const handelDetail = (item: any) => {
@@ -73,19 +51,39 @@ const ListThatBaiScreen: React.FC<NavProps> = ({navigation}) => {
   };
 
   const handleGetAll = async () => {
-    await getListInvoice(code, 4, page + 1);
+    await getListInvoice(code, 4, startDate, andDate, page + 1);
+  };
+
+  const searchStartDate = (item: Date | string) => {
+    setStartDate(item as Date);
+  };
+  const handleSelectStartDate = async (dateStart: Date | string) => {
+    setStartDate(dateStart as Date);
+    console.log("🚀 ~ handleSelectStartDate ~ dateStart:", dateStart)
+    await getListInvoice(code, 4, dateStart, andDate, page);
+  };
+
+  const searchEndDate = (item: Date | string) => {
+    setAndDate(item as Date);
+  };
+  const handleSelectEndDate = async (dateEnd: Date | string) => {
+    console.log("🚀 ~ handleSelectEndDate ~ dateEnd:", dateEnd)
+    setAndDate(dateEnd as Date);
+    await getListInvoice(code, 4, startDate, dateEnd, page);
   };
 
   const getListInvoice = async (
     code?: any,
     purchaseStatus?: any,
+    startDate?: any,
+    endDate?: any,
     page?: any,
   ) => {
     try {
       const user = await getData();
       const idUser = user?.idKH;
       const res: any = await authenticationAPI.HandleAuthentication(
-        `/khachhang/hoaDon/${idUser}?maHD=${code}&trangThaiMua=${purchaseStatus}&trang=${page}`,
+        `/khachhang/hoaDon/${idUser}?maHD=${code}&trangThaiMua=${purchaseStatus}&ngayBatDau=${startDate}&ngayKetThuc=${endDate}&trang=${page}`,
         'get',
       );
 
@@ -109,19 +107,20 @@ const ListThatBaiScreen: React.FC<NavProps> = ({navigation}) => {
       }
       setCode(code);
       setPurchase(purchaseStatus);
-      setDate(date);
+      setStartDate;
+      setAndDate(endDate);
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
-  
+
   const isFocused = useIsFocused();
 
   useEffect(() => {
     if (isFocused) {
-      getListInvoice('', 4, page);
+      getListInvoice('', 4, '', '', page);
     }
   }, [isFocused]);
 
@@ -148,6 +147,40 @@ const ListThatBaiScreen: React.FC<NavProps> = ({navigation}) => {
             }}
             iconColor={appColors.primary}
           />
+          <View style={styles.selectDate}>
+            <EditTextComponent
+              label="date"
+              placeholder="Ngày bắt đầu"
+              value={startDate ? startDate.toString() : ''} // Convert
+              stylesEdit={{backgroundColor: 'white'}}
+              onChangeText={(text: string) => searchStartDate(text)}
+              stylesContainer={{
+                borderColor: 'black',
+                borderWidth: 1.5,
+                elevation: 0,
+                width: '45%',
+              }}
+              onDateSelected={item => handleSelectStartDate(item)}
+              iconColor={appColors.primary}
+            />
+
+            <EditTextComponent
+              label="date"
+              placeholder="Ngày kết thúc"
+              value={andDate ? andDate.toString() : ''} // Convert
+              stylesEdit={{backgroundColor: 'white'}}
+              onChangeText={(text: string) => searchEndDate(text)}
+              stylesContainer={{
+                backgroundColor: appColors.white,
+                borderColor: 'black',
+                borderWidth: 1.5,
+                elevation: 0,
+                width: '45%',
+              }}
+              onDateSelected={item => handleSelectEndDate(item)}
+              iconColor={appColors.primary}
+            />
+          </View>
         </View>
 
         <View style={styles.main}>
@@ -158,7 +191,8 @@ const ListThatBaiScreen: React.FC<NavProps> = ({navigation}) => {
               </Text>
               <TouchableOpacity
                 onPress={async () => {
-                  await getListInvoice('', 4, 1), setPage(1);
+                  await getListInvoice('', 4, '', '', 1),
+                    setPage(1);
                 }}>
                 <Text
                   style={{
@@ -218,6 +252,12 @@ const styles = StyleSheet.create({
     backgroundColor: appColors.white,
     elevation: 10,
   },
+  selectDate: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
 });
 
 export default ListThatBaiScreen;
+
+

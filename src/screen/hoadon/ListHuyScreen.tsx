@@ -35,25 +35,9 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
   const [payment, setPayment] = useState('');
   const [code, setCode] = useState('');
   const [date, setDate] = useState<any>();
-  const [selectedDate, setSelectedDate] = useState<Date>();
-  const [position, setPosition] = useState<any>();
+  const [startDate, setStartDate] = useState<Date>();
+  const [andDate, setAndDate] = useState<Date>();
 
-  const getStatusText = (status: number): string => {
-    switch (status) {
-      case 0:
-        return 'Chờ duyệt';
-      case 1:
-        return 'Đang chuẩn bị';
-      case 2:
-        return 'Đang giao hàng';
-      case 3:
-        return 'Giao hàng thành công';
-      case 4:
-        return 'Giao hàng thất bại';
-      default:
-        return 'Trạng thái không xác định';
-    }
-  };
   const handleShowAlert = () => {
     setShowAlert(true);
   };
@@ -63,7 +47,7 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
   };
 
   const actionSearch = async (item: string) => {
-    await getListInvoice(item, 0, page);
+    await getListInvoice(item, 0,startDate,andDate, page);
   };
 
   const handelDetail = (item: any) => {
@@ -73,15 +57,34 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
   };
 
   const handleGetAll = async () => {
-    await getListInvoice(code, 4, page + 1);
+    await getListInvoice(code, 0,startDate,andDate, page + 1);
   };
 
-  const getListInvoice = async (code?: any, status?: any, page?: any) => {
+  const searchStartDate = (item: Date | string) => {
+    setStartDate(item as Date);
+  };
+  const handleSelectStartDate = async (dateStart: Date | string) => {
+    setStartDate(dateStart as Date);
+    console.log("🚀 ~ handleSelectStartDate ~ dateStart:", dateStart)
+    await getListInvoice(code, 0,dateStart,andDate, page);
+  };
+
+  const searchEndDate = (item: Date | string) => {
+    setAndDate(item as Date);
+  };
+  const handleSelectEndDate = async (dateEnd: Date | string) => {
+    console.log("🚀 ~ handleSelectEndDate ~ dateEnd:", dateEnd)
+    setAndDate(dateEnd as Date);
+    await getListInvoice(code, 0,startDate,dateEnd, page);
+  };
+
+  const getListInvoice = async (code: any, status: any,  startDate: any,
+    endDate: any, page: any) => {
     try {
       const user = await getData();
       const idUser = user?.idKH;
       const res: any = await authenticationAPI.HandleAuthentication(
-        `/khachhang/hoaDon/${idUser}?maHD=${code}&trangThai=${status}&trang=${page}`,
+        `/khachhang/hoaDon/${idUser}?maHD=${code}&ngayBatDau=${startDate}&ngayKetThuc=${endDate}&trangThai=${status}&trang=${page}`,
         'get',
       );
 
@@ -105,7 +108,8 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
       }
       setCode(code);
       setStatus(status);
-      setDate(date);
+      setStartDate(startDate);
+      setAndDate(endDate);
     } catch (error) {
       console.error(error);
     } finally {
@@ -119,7 +123,7 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
 
   useEffect(() => {
     if (isFocused) {
-      getListInvoice('', 0, page);
+      getListInvoice('', 0,'','', page);
     }
   }, [isFocused]);
 
@@ -146,6 +150,40 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
             }}
             iconColor={appColors.primary}
           />
+            <View style={styles.selectDate}>
+            <EditTextComponent
+              label="date"
+              placeholder="Ngày bắt đầu"
+              value={startDate ? startDate.toString() : ''} // Convert
+              stylesEdit={{backgroundColor: 'white'}}
+              onChangeText={(text: string) => searchStartDate(text)}
+              stylesContainer={{
+                borderColor: 'black',
+                borderWidth: 1.5,
+                elevation: 0,
+                width: '45%',
+              }}
+              onDateSelected={item => handleSelectStartDate(item)}
+              iconColor={appColors.primary}
+            />
+
+            <EditTextComponent
+              label="date"
+              placeholder="Ngày kết thúc"
+              value={andDate ? andDate.toString() : ''} // Convert
+              stylesEdit={{backgroundColor: 'white'}}
+              onChangeText={(text: string) => searchEndDate(text)}
+              stylesContainer={{
+                backgroundColor: appColors.white,
+                borderColor: 'black',
+                borderWidth: 1.5,
+                elevation: 0,
+                width: '45%',
+              }}
+              onDateSelected={item => handleSelectEndDate(item)}
+              iconColor={appColors.primary}
+            />
+          </View>
         </View>
 
         <View style={styles.main}>
@@ -156,7 +194,7 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
               </Text>
               <TouchableOpacity
                 onPress={async () => {
-                  await getListInvoice('', 0, 1), setPage(1);
+                  await getListInvoice('', 0,'','', 1), setPage(1);
                 }}>
                 <Text
                   style={{
@@ -215,6 +253,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: appColors.white,
     elevation: 10,
+  },
+  selectDate: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 

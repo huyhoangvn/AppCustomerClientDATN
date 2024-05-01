@@ -91,7 +91,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
       setLoading(true); // Set loading to true before making the API call
 
       const res: any = await authenticationAPI.HandleAuthentication(
-        `/nhanvien/slide`,
+        `/khachhang/slide`,
         'get',
       );
       if (res.success === true) {
@@ -138,6 +138,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
       getImageSlide();
     // }
   }, []);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -154,7 +155,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
           style={{
             flex: 1,
           }}>
-          <Swiper
+          {/* <Swiper
             ref={swiperRef}
             style={styles.wrapper}
             autoplay={autoplay} // Sử dụng state để điều khiển autoplay
@@ -191,7 +192,7 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
                     </View>
                   </TouchableOpacity>
                 ))}
-          </Swiper>
+          </Swiper> */}
         </View>
       </View>
       <View style={styles.main}>
