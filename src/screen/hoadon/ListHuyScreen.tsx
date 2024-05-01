@@ -65,7 +65,6 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
   };
   const handleSelectStartDate = async (dateStart: Date | string) => {
     setStartDate(dateStart as Date);
-    console.log("🚀 ~ handleSelectStartDate ~ dateStart:", dateStart)
     await getListInvoice(code, 0,dateStart,andDate, page);
   };
 
@@ -73,7 +72,6 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
     setAndDate(item as Date);
   };
   const handleSelectEndDate = async (dateEnd: Date | string) => {
-    console.log("🚀 ~ handleSelectEndDate ~ dateEnd:", dateEnd)
     setAndDate(dateEnd as Date);
     await getListInvoice(code, 0,startDate,dateEnd, page);
   };
@@ -84,7 +82,7 @@ const ListHuyScreen: React.FC<NavProps> = ({navigation}) => {
       const user = await getData();
       const idUser = user?.idKH;
       const res: any = await authenticationAPI.HandleAuthentication(
-        `/khachhang/hoaDon/${idUser}?maHD=${code}&ngayBatDau=${startDate}&ngayKetThuc=${endDate}&trangThai=${status}&trang=${page}`,
+        `/khachhang/hoaDon/${idUser}?maHD=${code}&trangThai=${status}&ngayBatDau=${startDate}&ngayKetThuc=${endDate}&trang=${page}`,
         'get',
       );
 
