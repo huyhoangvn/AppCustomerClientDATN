@@ -245,39 +245,48 @@ const AddHoaDonScreen: React.FC<NavProps> = ({ navigation } : any) => {
   }
 
   const muaHang = async () => {
-    try {
-      const dataBody = {
-        idKH: idKH,
-        idCH: idCH,
-        idKM: idKM,
-        diaChiGiaoHang: diaChi,
-        list: danhSachDatMon.map(item => ({
-          idMon: item.idMon,
-          soLuong: item.soLuong
-        }))
-      }
-      const res : any = await authenticationAPI.HandleAuthentication(
-        '/khachhang/datmon/them',
-        dataBody,
-        'post',
-      );
-      // const res = themHoaDonRes
-      if (res.success === true) {
-        const { index } = res;
-        await showAlert("Thêm hóa đơn thành công", "Hiển thị chi tiết hóa đơn đã tạo", true)
-        .then(result => {
-          if (result) {
-            navigation.navigate('DetailHoaDonScreen', {
-              idHD: res.index,
-            });
+    showAlert("Bạn có muốn tạo hóa đơn?", "Tạo hóa đơn từ các món đã chọn", true)
+    .then(async (result) => {
+      if (result) {
+        try {
+          const dataBody = {
+            idKH: idKH,
+            idCH: idCH,
+            idKM: idKM,
+            diaChiGiaoHang: diaChi,
+            list: danhSachDatMon.map(item => ({
+              idMon: item.idMon,
+              soLuong: item.soLuong
+            }))
           }
-        })
-      } else {
-        showAlert("Thêm hóa đơn thất bại", res.msg)
+          console.log(danhSachDatMon.map(item => ({
+            idMon: item.idMon,
+            soLuong: item.soLuong
+          })))
+          const res : any = await authenticationAPI.HandleAuthentication(
+            '/khachhang/datmon/them',
+            dataBody,
+            'post',
+          );
+          // const res = themHoaDonRes
+          if (res.success === true) {
+            const { index } = res;
+            await showAlert("Thêm hóa đơn thành công", "Hiển thị chi tiết hóa đơn đã tạo", true)
+            .then(result => {
+              if (result) {
+                navigation.navigate('DetailHoaDonScreen', {
+                  idHD: res.index,
+                });
+              }
+            })
+          } else {
+            showAlert("Thêm hóa đơn thất bại", res.msg)
+          }
+        } catch (e) {
+          showAlert("Thêm hóa đơn thất bại", "Lỗi hệ thống")
+        }
       }
-    } catch (e) {
-      showAlert("Thêm hóa đơn thất bại", "Lỗi hệ thống")
-    }
+    })
   }
 
   const GioHangItem = ({ item , onSaveItem }: { item: any, onSaveItem: Function }) => {

@@ -166,7 +166,7 @@ const DetailKhachHangScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
           boldTitle={false}
         /> 
       </View> 
-      <LoadingComponent visible={loading} />
+      {/* <LoadingComponent visible={loading} /> */}
       <AlertComponent
         visible={showAlert}
         message={msg}
