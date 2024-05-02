@@ -40,14 +40,14 @@ const ForGotPasswordScreen: React.FC<NavProps> = ({navigation}) => {
     try {
         setLoading(true); // Bắt đầu hiển thị loading
         const res : any = await authenticationAPI.HandleAuthentication(
-          `/khachhang/find-account/${email}`,
+          `/verification/find-account/${email}`,
           null,
           'post',
         );
   
         if (res.success === true) {
             const resultVerification:any = await authenticationAPI.HandleAuthentication(
-              '/khachhang/verification',
+              '/verification',
               {
                 email: email,
               },

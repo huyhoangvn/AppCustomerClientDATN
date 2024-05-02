@@ -29,7 +29,9 @@ const TrangChuScreen: React.FC<NavProps> = ({navigation}) => {
   const swiperRef = useRef<any>(null);
   const [autoplay, setAutoplay] = useState(true); // State để điều khiển autoplay
   const [typeDish1, setTypeDish1] = useState<Mon[]>([]);
+  console.log("🚀 ~ typeDish1:", typeDish1)
   const [typeDish2, setTypeDish2] = useState<Mon[]>([]);
+  console.log("🚀 ~ typeDish2:", typeDish2)
   const [dishTop, setDishTop] = useState<Mon[]>([]);
   const [loading, setLoading] = useState(false);
   const [nameTypeDish1, setNametypeDish1] = useState<string>();

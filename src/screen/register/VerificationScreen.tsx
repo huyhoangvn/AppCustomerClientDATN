@@ -72,12 +72,12 @@ const VerificationScreen: React.FC<NavProps> = ({navigation, route}: any) => {
     setIsLoading(true);
     try {
       const res: any = await authenticationAPI.HandleAuthentication(
-        '/khachhang/dang-ky',
+        '/verification/dang-ky',
         {
           taiKhoan: email,
           matKhau: pass,
           tenKH: name,
-          sdt: phone,
+          sdt: phone.toString(),
         },
         'post',
       );
@@ -145,7 +145,7 @@ const VerificationScreen: React.FC<NavProps> = ({navigation, route}: any) => {
     setIsLoading(true);
     try {
       const res = await authenticationAPI.HandleAuthentication(
-        '/khachhang/verification',
+        '/verification',
         {email},
         'post',
       );

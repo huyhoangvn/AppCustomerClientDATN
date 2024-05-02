@@ -52,7 +52,7 @@ const NewPassScreen: React.FC<NavProps> = ({navigation, route}: any) => {
     try {
       setLoading(true);
       const res: any = await authenticationAPI.HandleAuthentication(
-        `/khachhang/forgot-password/${id}`,
+        `/verification/forgot-password/${id}`,
         {
           matKhau: newPass,
         },

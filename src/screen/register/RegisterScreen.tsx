@@ -89,7 +89,7 @@ const RegisterScreen: React.FC<NavProps> = ({navigation}) => {
     try {
       setIsLoading(true); // Bắt đầu hiển thị màn hình loading
       const res:any = await authenticationAPI.HandleAuthentication(
-        '/khachhang/verification',
+        '/verification',
         {
           email: userName,
         },
