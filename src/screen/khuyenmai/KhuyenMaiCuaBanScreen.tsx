@@ -26,11 +26,7 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
 
   // Dữ liệu khuyến mãi
 
-  useEffect(() => {
-    if(isFocused){
-      getDanhSacHkhuyenMai();
-    }
-    },[isFocused]);
+
    
    const getDanhSacHkhuyenMai = async()=>{
     try {
@@ -53,30 +49,31 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
 
     }
   }
- 
-  const removeFromList = async (idKM: any) => {
-    console.log(idKM);
-    if (!isItemAdded(idKM)) {
+  useEffect(() => {
+    if(isFocused){
+      getDanhSacHkhuyenMai();
+    }
+    },[isFocused]);
+  const removeFromList = async (id: any,) => {
+    if (!isItemAdded(id)) {
       showAlert("Bạn có muốn xóa ?", "Xóa vào khuyến mãi của bạn.", true)
         .then(async (result) => {
           if (result) {
             try {
-              const reslut = await getData();
-              const idKH = reslut?.idKH;
+              const reslut = await getData(); // Typo: reslut should be result
+              const idKH = reslut?.idKH; // Typo: reslut should be result
               const res: any = await authenticationAPI.HandleAuthentication(
-                `/khachhang/khuyenmaicuatoi/${idKM}`,
-                {
-                  idKH: idKH,
-                },
-                'delete' 
+                `/khachhang/khuyenmaicuatoi/${id}/${idKH}`,
+                {idKH: idKH},
+                'delete',
               );
-              if (res.success === true) {
-                const updatedDanhSachDatMon = danhSachKhuyenMai.filter(item => item._id !== idKM);
+              console.log(res);
+              if (res.success === true) { // Issue might be here, make sure res.success exists
+                const updatedDanhSachDatMon = danhSachKhuyenMai.filter(item => item._id !== id);
                 setDanhSachKhuyenMai(updatedDanhSachDatMon);
-                showAlert("Xóa khuyến mãi", res.message, false);
-              } else {
-                showAlert("Xóa khuyến mãi", "Xóa khuyến mãi thất bại", false);
-              }
+              } 
+              showAlert("Xóa khuyến mãi", res.msg, false);
+
             } catch (e) {
               showAlert("Xóa khuyến mãi", "Xóa khuyến mãi thất bại", false);
             }
@@ -88,7 +85,7 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
     } else {
       showAlert("Thông báo", "Khuyến mãi đã được Xóa trước đó", false);
     }
-  };
+};
   const isItemAdded = (itemId: any) => {
     return addedItems.includes(itemId);
   };
@@ -122,7 +119,6 @@ const KhuyenMaiCuaBanScreen: React.FC<NavProps> = ({ navigation, route }:any) =>
   //   )
   // } 
   const renderItem = ({ item }: { item: any }) => {
-  
     return(
       <View style={styles.itemContainer}>
       <View style={styles.itemHeal}>
