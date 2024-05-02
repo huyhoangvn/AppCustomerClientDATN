@@ -97,7 +97,6 @@ const GioHangScreen: React.FC<NavProps> = ({ navigation }) => {
       await getDanhSachGioHang(idKHTemp);
       setIdKH(idKHTemp)
     };
-  
     if (isFocused) {
       fetchData();
     }
