@@ -1,12 +1,3 @@
-Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-# using npm
-npm run android
-
 Demo ứng dụng:
 Người dùng truy cập đường dẫn để tải ứng dụng mua hàng về thiết bị android: [https://appho.st/d/oisMQWa4](https://appho.st/d/Nw3Sccj4) <br>
 Người dùng truy cập đường dẫn để tải ứng dụng bán hàng (merchant) về thiết bị android: [https://appho.st/d/oisMQWa4](https://appho.st/d/oisMQWa4) <br>
